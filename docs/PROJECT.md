@@ -1137,6 +1137,7 @@ Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Es
 | 43 | `BundleStore` con S3 y enrutador entre nodos | Hoy los bundles se sirven de disco o por HTTP (`bundles_url`), y `[serve] countries` reparte países sin un enrutador delante (fase 5) | M | ⬜ Cuando un nodo no baste |
 | 44 | Opciones de configuración previstas | Elegir provider por configuración, capas opcionales (`[serve.layers]`), pesos del ranking (`[serve.ranking]`) y activar o no los modos compatibles (§4.1) | M | ⬜ Cada una, cuando haga falta: el provider, con su segunda implementación |
 | 45 | Extracto del continente | Si los extractos de Geofabrik del ámbito pesan más que el del continente, bajar el continente (§7.4) | S | ⬜ |
+| 46 | Módulos descargables | Cada módulo, un paquete firmado que el host baja y carga al arrancar (como los packs), y el geocoder, en su propio repositorio (`candymaps/geko-geocoder`), con los packs y los idiomas | L | ⬜ Plan en [MODULES_PLAN.md](MODULES_PLAN.md) |
 ## 18. Rutas
 
 - `geko` lee siempre `/etc/geko/geko.toml` y guarda siempre sus datos en `/var/lib/geko`: descargas (`raw/`), ficheros de trabajo (`staging/`, `relocated/`, `canonical/`, `segments/`) y bundles publicados (`bundles/`). Ni el `geko.toml` ni la línea de órdenes cambian estas rutas.
