@@ -1,6 +1,6 @@
 # Módulos descargables: plan
 
-Estado: paso 1 hecho (2026-10-21); pasos 2–5 en curso. Punto 46 de PROJECT.md §17.
+Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) en curso; después, 3–5. Punto 46 de PROJECT.md §17.
 
 ## Objetivo
 
