@@ -23,7 +23,6 @@ use std::sync::OnceLock;
 use geko_core::country::CountryCode;
 use geko_core::regions::Regions;
 use geko_core::model::{License, SourceId};
-use geko_core::module::ModuleName;
 use geko_core::ports::{DatasetRequest, Downloader, FetchReport, RawDir, SourceProvider, SourceStats, StagingDir};
 use geko_core::scope::{Coverage, Partition, Scope};
 use geko_core::{GekoError, Result};
@@ -158,10 +157,6 @@ impl SourceProvider for OvertureSource {
 
     fn coverage(&self) -> Coverage {
         Coverage::Global
-    }
-
-    fn used_by(&self) -> &'static [ModuleName] {
-        &[ModuleName::Geocoder]
     }
 
     fn plan(&self, scope: &Scope, dl: &dyn Downloader, raw: &RawDir) -> Result<Vec<DatasetRequest>> {

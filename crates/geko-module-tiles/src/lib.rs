@@ -1,37 +1,33 @@
-use axum::Router;
-use axum::routing::get;
-use geko_core::Result;
-use geko_server::{ApiError, BundleView, Module, ModuleName};
+//! The tiles module (PROJECT.md §11), still a skeleton: it declares its routes, under `/tiles/`,
+//! and answers 503 until it builds a part of the bundle.
 
-#[derive(Default)]
+use geko_module_sdk::Result;
+use geko_module_sdk::module::{self, Context, Description, Method, Module, ModuleName, Request, Response, Route};
+
+pub const NAME: &str = "tiles";
+
+pub fn open(_: Context) -> Result<Box<dyn Module>> {
+    Ok(Box::new(TilesModule))
+}
+
 pub struct TilesModule;
 
-impl TilesModule {
-    pub fn new() -> Self {
-        Self
-    }
-}
-
-async fn no_bundle() -> ApiError {
-    ApiError::unavailable("no tiles bundle loaded")
-}
-
 impl Module for TilesModule {
-    fn name(&self) -> ModuleName {
-        ModuleName::Tiles
+    fn describe(&self) -> Description {
+        let route = |path: &str| Route { method: Method::Get, path: path.into(), pool: false, public: false };
+        Description {
+            name: ModuleName::new(NAME).expect("a valid name"),
+            version: env!("CARGO_PKG_VERSION").to_owned(),
+            contract: module::CONTRACT,
+            routes: vec![route("{z}/{x}/{y}"), route("tilejson.json")],
+            home: None,
+            openapi: None,
+            attribution: None,
+            commands: vec![],
+        }
     }
 
-    fn load(&self, _bundle: &BundleView) -> Result<()> {
-        Ok(())
-    }
-
-    fn router(&self) -> Router {
-        Router::new()
-            .route("/tiles/{z}/{x}/{y}", get(no_bundle))
-            .route("/tiles/tilejson.json", get(no_bundle))
-    }
-
-    fn shutdown(&self) -> Result<()> {
-        Ok(())
+    fn handle(&self, _: Request) -> Response {
+        Response::error(503, "no tiles bundle loaded")
     }
 }

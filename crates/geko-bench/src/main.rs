@@ -81,7 +81,9 @@ fn main() -> Result<()> {
     let [_, bundle, cases, bench] = &args[..] else { bail!("usage: geko-bench <bundle> <cases.jsonl> <parse|search|autocomplete|reverse>") };
     let bundle = Path::new(bundle);
     let manifest = BundleManifest::read(bundle)?;
-    let segment = manifest.segments.first().context("the bundle has no segment")?;
+    let geocoder = manifest.modules.iter().find(|m| m.name.as_str() == "geocoder").context("the bundle has no part of the geocoder")?;
+    let meta = geko_core::segment::Meta::of(geocoder)?;
+    let segment = meta.segments.first().context("the bundle has no segment")?;
     let dir = bundle.join(&segment.dir);
     let cases: Vec<Case> = std::fs::read_to_string(cases)?
         .lines()

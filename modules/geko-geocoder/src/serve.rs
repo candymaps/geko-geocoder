@@ -1,32 +1,25 @@
-//! Geocoder module (PROJECT.md §2.3, §10): loads the country segments of a bundle and serves
+//! What the geocoder serves (PROJECT.md §10): loads the country segments of a bundle and answers
 //! search, autocomplete, reverse and place lookups as GeoJSON. Providers are opened through a
-//! function given by the composition root, so this crate knows no concrete technology.
-
-mod cache;
-mod pelias;
-mod photon;
+//! function given by `sources`, so the answers know no concrete technology.
 
 use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::path::Path;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use arc_swap::ArcSwapOption;
-use axum::Router;
-use axum::extract::{Path as UrlPath, Query, State};
-use axum::http::header;
-use axum::response::{IntoResponse, Response};
-use axum::routing::get;
-use geko_core::bundle;
 use geko_core::country::CountryCode;
 use geko_core::geo::{BBox, Coord};
 use geko_core::model::{AdminLevelRef, MatchType, PlaceKind, PublicId};
 use geko_core::ports::{AddressParser, GeocodeEngine, ReverseIndex};
 use geko_core::query::{AddressComponents, Hit, Interpretation, InterpretationKind, KindFilter, ParsedQuery, QueryContext, RankingWeights};
 use geko_core::{GekoError, Result};
-use geko_server::{ApiError, BundleView, Module, ModuleName};
+use geko_core::segment::Meta;
+use geko_module_sdk::module::{BundleView, Request, Response};
+
+use crate::cache;
 
 /// Longest accepted `text`, in characters: a long text only costs time, never finds more.
 const MAX_TEXT_CHARS: usize = 256;
@@ -39,7 +32,7 @@ pub struct Segment {
 }
 
 /// Opens one country segment of a bundle (its directory and manifest entry).
-pub type SegmentOpener = Arc<dyn Fn(&Path, &bundle::Segment) -> Result<Segment> + Send + Sync>;
+pub type SegmentOpener = Arc<dyn Fn(&Path, &geko_core::segment::Segment) -> Result<Segment> + Send + Sync>;
 
 #[derive(Debug, Clone)]
 pub struct GeocoderConfig {
@@ -95,26 +88,55 @@ struct Shared {
     cache: cache::Cache,
 }
 
-pub struct GeocoderModule {
+/// The method of making the fused database, offered under ODbL 4.6 to whoever gets results.
+const FUSION_METHOD: &str = include_str!("../../../docs/FUSION_METHOD.md");
+/// The reference of the API of the geocoder, which the host lists at `/docs`.
+pub const OPENAPI: &str = include_str!("../openapi.yaml");
+const DEMO: &str = include_str!("demo.html");
+const GEOJSON: &str = "application/geo+json; charset=utf-8";
+
+pub struct Server {
     opener: SegmentOpener,
-    shared: Arc<Shared>,
+    shared: Shared,
 }
 
-impl GeocoderModule {
+impl Server {
     pub fn new(opener: SegmentOpener, config: GeocoderConfig) -> Self {
-        Self { opener, shared: Arc::new(Shared { cache: cache::Cache::new(config.cache_entries), config, loaded: ArcSwapOption::empty(), merged: AtomicU64::new(0) }) }
-    }
-}
-
-impl Module for GeocoderModule {
-    fn name(&self) -> ModuleName {
-        ModuleName::Geocoder
+        Self { opener, shared: Shared { cache: cache::Cache::new(config.cache_entries), config, loaded: ArcSwapOption::empty(), merged: AtomicU64::new(0) } }
     }
 
-    fn load(&self, view: &BundleView) -> Result<()> {
+    /// Answers a request to one of the routes of `crate::routes`.
+    pub fn handle(&self, request: Request) -> Response {
+        // From when the host received it: the wait for a free core is part of its time.
+        let now = Instant::now();
+        let started = now.checked_sub(Duration::from_micros(request.waited_us)).unwrap_or(now);
+        let shared = &self.shared;
+        let p: HashMap<String, String> = request.query.into_iter().collect();
+        let answer = match request.route.as_str() {
+            "" => return Response::new(200, "text/html; charset=utf-8", DEMO),
+            "openapi.yaml" => return Response::new(200, "application/yaml", OPENAPI),
+            "v1/attribution/method" => return Response::new(200, "text/markdown; charset=utf-8", FUSION_METHOD),
+            "v1/search" => search_now(shared, &p, false, started),
+            "v1/autocomplete" => search_now(shared, &p, true, started),
+            "v1/search/structured" => structured_now(shared, &p, started),
+            "v1/batch" => batch(shared, &request.body),
+            "v1/reverse" => reverse_now(shared, &p, started),
+            "v1/place/{id}" => match request.params.iter().find(|(k, _)| k == "id") {
+                Some((_, id)) => place(shared, id, started),
+                None => Err(ApiError::bad_request("an id is required")),
+            },
+            other => Err(ApiError::not_found(format!("no route {other}"))),
+        };
+        match answer {
+            Ok(Answer(body)) => Response::new(200, GEOJSON, body),
+            Err(e) => Response::error(e.status, &e.message),
+        }
+    }
+
+    pub fn load(&self, view: &BundleView) -> Result<()> {
         let wanted = &self.shared.config.countries;
         let mut segments = Vec::new();
-        for s in &view.manifest.segments {
+        for s in &Meta::of(&view.module)?.segments {
             let country = CountryCode::new(&s.country)?;
             if !wanted.is_empty() && !wanted.contains(&country) {
                 continue;
@@ -130,26 +152,11 @@ impl Module for GeocoderModule {
         Ok(())
     }
 
-    fn router(&self) -> Router {
-        Router::new()
-            .route("/", get(|| async { axum::response::Html(include_str!("demo.html")) }))
-            .route("/v1/search", get(search))
-            .route("/v1/search/structured", get(structured))
-            .route("/v1/batch", axum::routing::post(batch))
-            .merge(pelias::router())
-            .merge(photon::router())
-            .route("/v1/autocomplete", get(autocomplete))
-            .route("/v1/reverse", get(reverse))
-            .route("/v1/place/{id}", get(place))
-            .with_state(Arc::clone(&self.shared))
-    }
-
-    fn shutdown(&self) -> Result<()> {
+    pub fn shutdown(&self) {
         self.shared.loaded.store(None);
-        Ok(())
     }
 
-    fn metrics(&self, out: &mut String) {
+    pub fn metrics(&self, out: &mut String) {
         out.push_str("# HELP geko_merged_duplicates_total Duplicated results merged in answers (PROJECT.md 6.5.6): each is a fusion miss.\n# TYPE geko_merged_duplicates_total counter\n");
         let _ = writeln!(out, "geko_merged_duplicates_total {}", self.shared.merged.load(Ordering::Relaxed));
         if self.shared.cache.enabled() {
@@ -177,7 +184,26 @@ fn cache_key(p: &HashMap<String, String>, prefix: bool, text: &str) -> String {
     key
 }
 
-type Params = Query<HashMap<String, String>>;
+/// What a request that fails answers: its status and `{"error": message}`.
+#[derive(Debug)]
+struct ApiError {
+    status: u16,
+    message: String,
+}
+
+impl ApiError {
+    fn bad_request(message: impl Into<String>) -> Self {
+        Self { status: 400, message: message.into() }
+    }
+
+    fn not_found(message: impl Into<String>) -> Self {
+        Self { status: 404, message: message.into() }
+    }
+
+    fn unavailable(message: impl Into<String>) -> Self {
+        Self { status: 503, message: message.into() }
+    }
+}
 
 fn loaded(shared: &Shared) -> std::result::Result<Arc<Loaded>, ApiError> {
     shared.loaded.load_full().ok_or_else(|| ApiError::unavailable("no geocoder bundle loaded"))
@@ -422,12 +448,6 @@ fn feature(out: &mut String, f: &Found, confidence: f32, output: Output) {
 /// A GeoJSON answer, kept as text: a batch embeds several in one body.
 struct Answer(String);
 
-impl IntoResponse for Answer {
-    fn into_response(self) -> Response {
-        ([(header::CONTENT_TYPE, "application/geo+json; charset=utf-8")], self.0).into_response()
-    }
-}
-
 fn respond(
     loaded: &Loaded,
     query: serde_json::Value,
@@ -532,11 +552,6 @@ fn distance(segment: &Segment, hit: Hit, from: Coord) -> Option<f64> {
     segment.engine.place(hit.id).map(|p| p.point.distance_m(from))
 }
 
-async fn run_search(shared: Arc<Shared>, p: HashMap<String, String>, prefix: bool) -> std::result::Result<Answer, ApiError> {
-    let started = Instant::now();
-    geko_server::blocking(move || search_now(&shared, &p, prefix, started)).await
-}
-
 fn search_now(shared: &Shared, p: &HashMap<String, String>, prefix: bool, started: Instant) -> std::result::Result<Answer, ApiError> {
     let loaded = loaded(shared)?;
     let text = p.get("text").map(|t| t.trim()).filter(|t| !t.is_empty()).ok_or_else(|| ApiError::bad_request("`text` is required"))?;
@@ -611,11 +626,6 @@ struct StructuredFields {
     locality: Option<String>,
 }
 
-async fn structured(State(shared): State<Arc<Shared>>, Query(p): Params) -> std::result::Result<Answer, ApiError> {
-    let started = Instant::now();
-    geko_server::blocking(move || structured_now(&shared, &p, started)).await
-}
-
 fn structured_now(shared: &Shared, p: &HashMap<String, String>, started: Instant) -> std::result::Result<Answer, ApiError> {
     let loaded = loaded(shared)?;
     let field = |name: &str| -> std::result::Result<Option<String>, ApiError> {
@@ -663,42 +673,33 @@ struct BatchItem {
 }
 
 /// Several requests in one: answered in order, one after another on a single slot of the
-/// search pool, so a batch never takes every core from the requests of other clients.
-async fn batch(State(shared): State<Arc<Shared>>, axum::Json(body): axum::Json<BatchRequest>) -> std::result::Result<Answer, ApiError> {
+/// search pool (the route is on the pool), so a batch never takes every core from the requests
+/// of other clients.
+fn batch(shared: &Shared, body: &[u8]) -> std::result::Result<Answer, ApiError> {
+    let body: BatchRequest = serde_json::from_slice(body).map_err(|e| ApiError::bad_request(format!("invalid batch: {e}")))?;
     if body.requests.len() > shared.config.batch_max {
         return Err(ApiError::bad_request(format!("a batch holds at most {} requests", shared.config.batch_max)));
     }
-    geko_server::blocking(move || {
-        let mut out = String::from(r#"{"results":["#);
-        for (i, item) in body.requests.iter().enumerate() {
-            if i > 0 {
-                out.push(',');
-            }
-            let started = Instant::now();
-            let answer = match item.route.as_str() {
-                "search" => search_now(&shared, &item.params, false, started),
-                "autocomplete" => search_now(&shared, &item.params, true, started),
-                "structured" => structured_now(&shared, &item.params, started),
-                "reverse" => reverse_now(&shared, &item.params, started),
-                other => Err(ApiError::bad_request(format!("unknown route `{other}`"))),
-            };
-            match answer {
-                Ok(a) => out.push_str(&a.0),
-                Err(e) => out.push_str(&serde_json::json!({ "error": e.message(), "status": e.status().as_u16() }).to_string()),
-            }
+    let mut out = String::from(r#"{"results":["#);
+    for (i, item) in body.requests.iter().enumerate() {
+        if i > 0 {
+            out.push(',');
         }
-        out.push_str("]}");
-        Ok(Answer(out))
-    })
-    .await
-}
-
-async fn search(State(shared): State<Arc<Shared>>, Query(p): Params) -> std::result::Result<Answer, ApiError> {
-    run_search(shared, p, false).await
-}
-
-async fn autocomplete(State(shared): State<Arc<Shared>>, Query(p): Params) -> std::result::Result<Answer, ApiError> {
-    run_search(shared, p, true).await
+        let started = Instant::now();
+        let answer = match item.route.as_str() {
+            "search" => search_now(shared, &item.params, false, started),
+            "autocomplete" => search_now(shared, &item.params, true, started),
+            "structured" => structured_now(shared, &item.params, started),
+            "reverse" => reverse_now(shared, &item.params, started),
+            other => Err(ApiError::bad_request(format!("unknown route `{other}`"))),
+        };
+        match answer {
+            Ok(a) => out.push_str(&a.0),
+            Err(e) => out.push_str(&serde_json::json!({ "error": e.message, "status": e.status }).to_string()),
+        }
+    }
+    out.push_str("]}");
+    Ok(Answer(out))
 }
 
 fn layers(list: Option<&String>) -> std::result::Result<KindFilter, ApiError> {
@@ -719,10 +720,6 @@ fn layers(list: Option<&String>) -> std::result::Result<KindFilter, ApiError> {
         }
     }
     Ok(KindFilter::only(&kinds))
-}
-
-async fn reverse(State(shared): State<Arc<Shared>>, Query(p): Params) -> std::result::Result<Answer, ApiError> {
-    reverse_now(&shared, &p, Instant::now())
 }
 
 fn reverse_now(shared: &Shared, p: &HashMap<String, String>, started: Instant) -> std::result::Result<Answer, ApiError> {
@@ -752,10 +749,9 @@ fn reverse_now(shared: &Shared, p: &HashMap<String, String>, started: Instant) -
     Ok(respond(&loaded, query, &found, Some(("admin", admin)), started, Output::of(&ctx, p), Confidence::Relative))
 }
 
-async fn place(State(shared): State<Arc<Shared>>, UrlPath(id): UrlPath<String>) -> std::result::Result<Answer, ApiError> {
-    let started = Instant::now();
-    let loaded = loaded(&shared)?;
-    let public = PublicId::parse(&id).map_err(|e| ApiError::bad_request(e.to_string()))?;
+fn place(shared: &Shared, id: &str, started: Instant) -> std::result::Result<Answer, ApiError> {
+    let loaded = loaded(shared)?;
+    let public = PublicId::parse(id).map_err(|e| ApiError::bad_request(e.to_string()))?;
     let segment = loaded
         .segments
         .iter()

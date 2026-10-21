@@ -1,6 +1,6 @@
 # Módulos descargables: plan
 
-Estado: borrador para refinar (2026-10-21). Punto 46 de PROJECT.md §17.
+Estado: paso 1 hecho (2026-10-21); pasos 2–5 en curso. Punto 46 de PROJECT.md §17.
 
 ## Objetivo
 
@@ -16,7 +16,7 @@ Que cada módulo funcional (hoy `geocoder`; después `tiles` y otros) sea un **p
 | Datos | Ninguno | Packs de país (`countries/`, con `golden/`) e idiomas (`languages/`: traducen tipos de vía en las consultas, nada que use otro módulo) |
 | Documentación | PROJECT.md §2–§4, §7, §12, §18 | PROJECT.md §5–§9, §13; «Optimizaciones» de AGENTS.md; `FUSION_METHOD.md` |
 
-Regla: **si un tipo, un dato o un puerto solo tiene sentido para un módulo, vive en el módulo.** El host no sabe qué es un pack: el módulo declara qué paquetes de datos necesita para el ámbito y el host los baja con el mismo mecanismo genérico que los módulos.
+Regla: **si un tipo, un dato o un puerto solo tiene sentido para un módulo, vive en el módulo.** El host no sabe qué es un pack: el módulo baja los paquetes de datos que necesita para el ámbito con el mecanismo genérico de artefactos firmados de la SDK, el mismo con que el host baja los módulos (decidido, 2026-10-21: así el host no necesita conocer su destino ni su formato).
 
 ## La SDK (el contrato)
 
@@ -28,16 +28,18 @@ geko-module-sdk = { git = "https://github.com/candymaps/geko", tag = "sdk-1" }
 
 Si el repositorio del host es privado, la CI del módulo necesita un token de lectura. La SDK contiene solo:
 
-- `describe`: nombre, versión, contrato, plataforma, capacidades opcionales, licencias, rutas HTTP que atiende (método y patrón), su parte de `openapi.yaml`, órdenes de depuración y paquetes de datos que necesita para un ámbito (registro, etiqueta, destino).
+- `describe`: nombre, versión, contrato, plataforma, capacidades opcionales, rutas HTTP que atiende (método, patrón, si van al pool de búsqueda y si son públicas sin clave de API), su página de inicio, su `openapi.yaml`, lo que añade a `/v1/attribution` y sus órdenes.
 - `plan` y `fetch`: del ámbito y su apartado de configuración a los datos que hacen falta, descargados con el `Downloader` que ofrece el host (caché, `offline`, licencias, descargas en paralelo).
-- `build`: sus etapas por país, con sus sellos de §8.3 en su propio directorio de trabajo, y la lista de artefactos que deja bajo `segments/<país>/`. El host los publica como ficheros opacos (ruta, hash, tamaño).
+- `prepare`: lo que necesitan las órdenes que generan (el geocoder baja ahí los packs del ámbito).
+- `build`: sus etapas por país, con sus sellos de §8.3 en su propio directorio de trabajo, y las partes del bundle que deja (directorios de origen y destino), sus licencias, sus metadatos (el geocoder, sus segmentos) y sus etapas para el informe. El host las publica como ficheros opacos (ruta, hash, tamaño), y el manifiesto (formato 2) guarda de cada módulo su nombre, versión, contrato y metadatos. Después, `published` (el geocoder borra las descargas) y `next_build` (cuándo volver a generar en `geko up`).
 - `load(bundle)`, `handle(Request) -> Response` (síncrono: el host monta axum, aplica acceso y límites, y llama desde su pool), `metrics(&mut String)`, `shutdown`.
-- `command(args)`: órdenes de depuración (`geko geocoder query …`), reenviadas tal cual.
-- Configuración: el host pasa al módulo el contenido de su fichero (`geocoder.toml`, sección siguiente) sin interpretarlo; el módulo lo valida.
+- `command(args)`: órdenes del módulo (`geko geocoder query …`), reenviadas tal cual.
+- `purge`: sus datos que la configuración ya no pide (`geko purge data`) y sus paquetes de fuera del ámbito (`geko purge packages`; antes `geko purge country-packs`).
+- Configuración: el host pasa al módulo el contenido de su fichero (`geko-geocoder.toml`, sección siguiente) sin interpretarlo; el módulo lo valida.
 
 `router()` desaparece del puerto: un `Router` de axum no cruza ni un proceso ni una `.so`.
 
-**Rutas bajo el nombre del módulo.** El módulo declara sus rutas relativas (`v1/search`) y el host las monta siempre bajo `/<módulo>/`: dos módulos no pueden pisarse, y uno nuevo no toca las rutas de los demás. El geocoder queda en `/geocoder/v1/search`, `/geocoder/v1/search/structured`, `/geocoder/v1/autocomplete`, `/geocoder/v1/reverse`, `/geocoder/v1/place/{id}` y `/geocoder/v1/batch`, con su demo en `/geocoder/`; las teselas, en `/tiles/…`. El host se queda sin prefijo con lo común: `/health`, `/metrics`, `/v1/attribution` y `/v1/attribution/method` (licencias de todo el bundle), `/openapi.yaml` (une las partes de cada módulo) y `/docs`. `/` lleva a la demo del primer módulo activo que tenga una. Se actualizan `openapi.yaml`, la demo, `geko-eval` (la URL de las consultas), `ci/test.sh` y la documentación de la API (PROJECT.md §10).
+**Rutas bajo el nombre del módulo.** El módulo declara sus rutas relativas (`v1/search`) y el host las monta siempre bajo `/<módulo>/`: dos módulos no pueden pisarse, y uno nuevo no toca las rutas de los demás. El geocoder queda en `/geocoder/v1/search`, `/geocoder/v1/search/structured`, `/geocoder/v1/autocomplete`, `/geocoder/v1/reverse`, `/geocoder/v1/place/{id}` y `/geocoder/v1/batch`, con su demo en `/geocoder/`; las teselas, en `/tiles/…`. El host se queda sin prefijo con lo común: `/health`, `/metrics`, `/v1/attribution` (licencias de todo el bundle, más lo que añade cada módulo: `{bundle, contact, sources, geocoder: {derivative_database: {license, notice, method}}}`), `/openapi.yaml` (solo las rutas del host) y `/docs` (Swagger con la del host y la de cada módulo). El método de la base derivada es del geocoder: `/geocoder/v1/attribution/method`. `/` lleva a la demo del primer módulo activo que tenga una. Se actualizan `openapi.yaml`, la demo, `geko-eval` (la URL de las consultas), `ci/test.sh` y la documentación de la API (PROJECT.md §10).
 
 **Sin modos compatibles.** Se eliminan los modos Pelias (`/pelias/v1/*`) y Photon (`/photon/*`): `pelias.rs` y `photon.rs` del geocoder, su comprobación en `ci/test.sh` (variante `results`), su parte de `openapi.yaml` y de la documentación (PROJECT.md §10, §15; AGENTS.md). La comparación con Pelias de §13.2 (`--scope pelias`) se queda: consulta un Pelias de verdad con el cliente de `geko-eval`, no el modo de geko.
 
@@ -45,10 +47,10 @@ Un cambio del módulo (ranking, formato del índice, fuente nueva, ruta nueva, o
 
 ## Configuración
 
-Cada módulo tiene su propio fichero, `/etc/geko/<módulo>.toml` (`geocoder.toml`), junto al `geko.toml`; con `GEKO_CONFIG`, se busca en la carpeta de ese fichero. `geko.toml` se queda solo con lo del host: qué módulos se activan y de dónde se bajan, el ámbito, las descargas, los bundles y el HTTP común.
+Cada módulo tiene su propio fichero, `/etc/geko/geko-<módulo>.toml` (`geko-geocoder.toml`), junto al `geko.toml`; con `GEKO_CONFIG`, se busca en la carpeta de ese fichero. `geko.toml` se queda solo con lo del host: qué módulos se activan y de dónde se bajan, el ámbito, las descargas, los bundles y el HTTP común.
 
 - El host lee el fichero del módulo solo si el módulo está activo (un módulo desactivado no abre ficheros) y se lo pasa sin interpretarlo. Si no existe, el módulo usa sus valores por defecto. Lo valida el módulo, con errores que nombran el fichero y la clave.
-- El ejemplo con todas las opciones y sus valores por defecto vive con el módulo (`modules/geocoder/geocoder.toml`, y después en su repositorio), y lo documenta él. `make install` lo copia a `/etc/geko/` si no hay ninguno, como hace con `geko.toml`.
+- El ejemplo con todas las opciones y sus valores por defecto vive con el módulo (`modules/geko-geocoder/geko-geocoder.toml`, y después en su repositorio), y lo documenta él. `make install` lo copia a `/etc/geko/` si no hay ninguno, como hace con `geko.toml`.
 - Una opción nueva del geocoder no toca ni el host ni `geko.toml`.
 - Las opciones que afectan a la generación (las de las fuentes) entran en los sellos de las etapas del módulo, como hoy.
 
@@ -57,11 +59,11 @@ Cada módulo tiene su propio fichero, `/etc/geko/<módulo>.toml` (`geocoder.toml
 | `[modules] geocoder`, `tiles` | Se quedan en `geko.toml`, con `[modules.<módulo>] version` y `registry` (nuevos) |
 | `[[scope]]` (`country`, `regions`) | Se queda en `geko.toml`: es el ámbito de todos los módulos. El host solo comprueba los códigos ISO; que una región exista en el pack lo comprueba el geocoder |
 | `[data]` (todas) | Se quedan: las usa el `Downloader` del host |
-| `[sources.osm]`, `[sources.overture]`, `[sources.cartociudad]` y las demás fuentes | `geocoder.toml`, `[sources.*]` |
-| `[packs] registry` | `geocoder.toml`, `[packs] registry` (los packs son del geocoder) |
+| `[sources.osm]`, `[sources.overture]`, `[sources.cartociudad]` y las demás fuentes | `geko-geocoder.toml`, `[sources.*]` |
+| `[packs] registry` | `geko-geocoder.toml`, `[packs] registry` (los packs son del geocoder) |
 | `[build] keep` | Se queda: versiones de los bundles |
 | `[serve] listen`, `reload_secs`, `bundles_url`, `cors_origins`, `api_keys`, `rate_limit_per_s`, `rate_limit_burst`, `attribution_contact` | Se quedan: HTTP común y recarga de bundles |
-| `[serve] countries`, `preload`, `search_budget_ms`, `autocomplete_budget_ms`, `slow_query_ms`, `same_entity_m`, `batch_max`, `cache_entries` | `geocoder.toml`, `[serve]` (segmentos, índice y API del geocoder) |
+| `[serve] countries`, `preload`, `search_budget_ms`, `autocomplete_budget_ms`, `slow_query_ms`, `same_entity_m`, `batch_max`, `cache_entries` | `geko-geocoder.toml`, `[serve]` (segmentos, índice y API del geocoder) |
 
 ```toml
 # /etc/geko/geko.toml (host)
@@ -83,7 +85,7 @@ regions = ["ES-PM"]
 ```
 
 ```toml
-# /etc/geko/geocoder.toml (módulo geocoder)
+# /etc/geko/geko-geocoder.toml (módulo geocoder)
 [packs]
 registry = "ghcr.io/candymaps/geko-geocoder/countries"
 
@@ -114,7 +116,7 @@ El host solo maneja `Arc<dyn Module>`; el adaptador decide cómo se ejecuta el p
 |---|---|---|
 | `StaticModule` | Enlazado en el binario, como hoy | Monorrepo (paso 1), tests, golden con valgrind |
 | `ProcessModule` | El host lanza el ejecutable del paquete y le habla por un socket Unix con mensajes versionados | Aislado (un fallo no tira el host), sin acoplamiento de compilador, el build devuelve la memoria al acabar, cambio de versión en caliente (arrancar el nuevo, cambiar, parar el viejo). Cuesta un salto por petición |
-| `DylibModule` | `dlopen` de la `.so` del paquete, con `abi_stable` (comprueba la disposición de tipos al cargar) | Mismo proceso, sin salto. Cada función exportada envuelta en `catch_unwind` (un pánico que cruza la frontera aborta el proceso, y choca con `panic = "unwind"`); cada lado libera su memoria (el host usa mimalloc). Una `.so` no se descarga con seguridad: cambiar de versión exige reiniciar |
+| `DylibModule` | `dlopen` de la `.so` del paquete, con una frontera `extern "C"` mínima que pasa los mismos mensajes serializados que `ProcessModule` (decidido, 2026-10-21, en vez de `abi_stable`: un solo protocolo para los dos, y el saludo con el contrato es el primer mensaje) | Mismo proceso, sin salto. Cada función exportada envuelta en `catch_unwind` (un pánico que cruza la frontera aborta el proceso, y choca con `panic = "unwind"`); cada lado libera su memoria (el host usa mimalloc). Una `.so` no se descarga con seguridad: cambiar de versión exige reiniciar |
 
 Se implementan los dos dinámicos y se miden A/B con España completa (latencia, caudal con 16 a la vez, instrucciones). Si el salto del proceso queda dentro del ruido, `ProcessModule`; si se nota en la mediana de 0,1–0,5 ms, `DylibModule`.
 
@@ -126,7 +128,7 @@ Se implementan los dos dinámicos y se miden A/B con España completa (latencia,
 - **Versión incompatible con el host:**
   1. Antes de descargar el binario, el host lee solo los metadatos de esa versión (anotaciones del manifiesto OCI o un `module.json` pequeño): contrato, plataforma, host mínimo. Si no encaja, error en `plan`, `fetch`, `build`, `up` y `serve`, antes de tocar fuentes, con las versiones compatibles y la salida («quita `version` para usar la última compatible»). Nunca se elige otra en silencio.
   2. Tras descargar, se repite la comprobación con el manifiesto firmado.
-  3. Al cargar, saludo del adaptador: primer mensaje con el contrato (`ProcessModule`) o comprobación de `abi_stable` (`DylibModule`). Cubre también los módulos locales (`GEKO_MODULES`).
+  3. Al cargar, saludo del adaptador: primer mensaje con el contrato, en los dos adaptadores dinámicos. Cubre también los módulos locales (`GEKO_MODULES`).
   - Si el host deja de entender el contrato del bundle en servicio: no carga el nuevo y sigue con el que tiene (error en el log y en `/health`); si no hay ninguno cargado, `serve` no arranca y dice que hay que regenerar o volver a un host compatible. En `geko up`, una versión fijada incompatible hace fallar el build y se sigue sirviendo el bundle actual.
 - **Publicación del host:** en la CI del host, el trabajo `publish` de `ci.yml` comprueba en el registro, antes de publicar nada, que hay algún módulo publicado para cada contrato que declara el host. Si falta, no publica la imagen, ni crea la etiqueta `v<versión>`, ni la release de GitHub. Para no bloquearse al estrenar un contrato, el módulo se publica antes: su CI prueba con el host compilado desde la etiqueta de la SDK (`sdk-<n>`), no con una imagen publicada. Dejar de soportar un contrato es versión mayor del host, anunciada.
 - **Errores claros** para: ningún módulo del contrato, versión fijada inexistente, firma inválida, `offline` sin el módulo. Con el registro inalcanzable, la copia en disco.
@@ -134,12 +136,12 @@ Se implementan los dos dinámicos y se miden A/B con España completa (latencia,
 
 ## Descarga y verificación
 
-Lo genérico de `geko-country-pack` (`registry.rs`, `signature.rs`) pasa a un crate del host para artefactos firmados: OCI con etiquetas, firma ed25519 contra `TRUSTED_KEYS` y hash de cada fichero, copia en disco si el registro falla, `offline`, copias a mano sin `.digest`, directorio local sin descarga y `purge`. Sirve para:
+Lo genérico de `geko-country-pack` (`registry.rs`, `signature.rs`) pasa a un crate de artefactos firmados (`geko-artifact`, en el paso 3), que usan el host y, por la SDK, los módulos: OCI con etiquetas, firma ed25519 contra `TRUSTED_KEYS` y hash de cada fichero, copia en disco si el registro falla, `offline`, copias a mano sin `.digest`, directorio local sin descarga y `purge`. Sirve para:
 
 - **Módulos**, por plataforma (`linux-x86_64`), en `/var/lib/geko/modules/<módulo>/<versión>/`; `GEKO_MODULES` usa los locales y nunca descarga. Solo se ejecuta código firmado, salvo el de ese directorio local.
-- **Paquetes de datos que declara un módulo** (los packs de país del geocoder), donde el módulo diga dentro de su directorio. El formato de los packs (`format-2`) pasa a ser cosa del módulo.
+- **Paquetes de datos de un módulo** (los packs de país del geocoder), que baja el propio módulo dentro de su directorio. El formato de los packs (`format-2`) pasa a ser cosa del módulo.
 
-`geko purge modules` borra los módulos que ya no pide la configuración ni ningún bundle conservado.
+`geko purge modules` borra los módulos que ya no pide la configuración ni ningún bundle conservado, y `geko purge packages` los paquetes de datos de fuera del ámbito.
 
 **Imagen de Docker del host sin módulos.** La imagen `ghcr.io/candymaps/geko` es solo el host; los módulos no son imágenes de Docker, sino artefactos OCI (`ghcr.io/candymaps/geko-geocoder`), como los packs. Al arrancar, baja al volumen (`/var/lib/geko/modules/`) los que estén activos en `geko.toml`, como hoy los packs del ámbito; uno desactivado no se baja. En los arranques siguientes usa la copia del volumen, y con el registro inalcanzable arranca con ella. Sin copia y sin red, o con `offline` y sin el módulo, no arranca y lo dice. La imagen no cambia al publicar un módulo: solo con el código del host.
 
@@ -152,17 +154,17 @@ Cada paso deja el golden de `es` y `lu` igual (tolerancia 0) y el segmento idén
 1. **Separar el geocoder dentro del mismo binario (`StaticModule`).**
    - `crates/geko-module-sdk` con el contrato de arriba.
    - Al geocoder: la fusión de `geko-build`, las etapas de índice e inversa de `geko-app/src/plan.rs`, las fábricas de `geko-app/src/sources.rs`, `GeocoderConfig` (`geko-app/src/modules.rs`), `parse`, `query` y `reverse` de `geko-app/src/main.rs`, la creación del normalizador y el analizador (hoy en `geko-country-pack`), los providers, sus puertos, sus suites de conformidad y los tipos de `geko-core` que solo usa él.
-   - Ponerlo en `modules/geocoder/` con su propio workspace (o excluido del principal), dependiendo del host solo por la SDK, con una regla de dependencias en `ci/test.sh --variant code` que lo compruebe. Con él, `countries/` y `languages/`.
+   - Ponerlo en `modules/geko-geocoder/` (hecho: dentro del workspace principal hasta extraer el repositorio en el paso 7), dependiendo del host solo por la SDK, con una regla de dependencias en `ci/test.sh --variant code` que lo compruebe. Con él, `countries/` y `languages/`.
    - El host deja de leer los packs: solo baja los paquetes que el módulo declara.
    - Rutas bajo `/geocoder/` y eliminación de los modos Pelias y Photon. Es el único cambio de este paso que cambia lo que se ve desde fuera; el golden debe dar los mismos aciertos con las rutas nuevas.
-   - Configuración: las opciones del geocoder salen de `geko.toml` (y de `geko-app/src/config.rs`) a `geocoder.toml`, leído por el módulo; el error para las opciones movidas; `make install`, `ci/test.sh` y la imagen de Docker copian también `geocoder.toml`.
+   - Configuración: las opciones del geocoder salen de `geko.toml` (y de `geko-app/src/config.rs`) a `geko-geocoder.toml`, leído por el módulo; el error para las opciones movidas; `make install`, `ci/test.sh` y la imagen de Docker copian también `geko-geocoder.toml`.
 2. **Adaptadores dinámicos.** `ProcessModule` y `DylibModule`; el módulo se compila como ejecutable y como `.so` en el mismo repositorio, y el host lo carga de `GEKO_MODULES`. Medición A/B (valgrind tendrá que seguir al hijo, `--trace-children=yes`). Se elige adaptador.
 3. **Registro, versiones y compatibilidad.** Crate de artefactos firmados; descarga con `[modules]`; etiquetas `contract-<n>`, versión y commit; `[modules.<m>] version` y `registry`; versión del módulo en el manifiesto del bundle y en los sellos de las etapas; comprobaciones de compatibilidad en los tres momentos y sus errores; `geko purge modules`; `geko plan`.
 4. **CI, imagen y Makefile.** `publish` publica el módulo cuando cambia su código, y no publica el host sin módulo para cada contrato. `ci/test.sh` y `pre-push` usan el módulo compilado en local. Pruebas cruzadas: la CI del módulo pasa el golden con la última imagen del host de su contrato; la del host, la conformidad del contrato contra el último módulo de cada contrato que soporta. `Dockerfile` sin módulos: los baja al arrancar. `publish` crea la etiqueta `sdk-<n>` cuando cambia la SDK.
 5. **`tiles` al mismo contrato**, como segunda implementación.
 6. **Estabilizar `contract-1`** con unas semanas de uso real y su suite de conformidad en el host.
-7. **Extraer el repositorio** `candymaps/geko-geocoder` con `git filter-repo` (`modules/geocoder/`, `countries/`, `languages/` y su documentación), con la SDK publicada por el host como dependencia de git con etiqueta (o un registro de Cargo; si es privado, la CI del módulo necesita un token).
-8. **Documentación** en cada paso: AGENTS.md (la regla de las *features* de Cargo), PROJECT.md §2.3, §2.4, §3, §3.1, §4, §4.1, §12, §14, §18, §19, README, `geko.toml` y `geocoder.toml`.
+7. **Extraer el repositorio** `candymaps/geko-geocoder` con `git filter-repo` (`modules/geko-geocoder/`, `countries/`, `languages/` y su documentación), con la SDK publicada por el host como dependencia de git con etiqueta (o un registro de Cargo; si es privado, la CI del módulo necesita un token).
+8. **Documentación** en cada paso: AGENTS.md (la regla de las *features* de Cargo), PROJECT.md §2.3, §2.4, §3, §3.1, §4, §4.1, §12, §14, §18, §19, README, `geko.toml` y `geko-geocoder.toml`.
 
 ## Efecto esperado en lo que se mide
 

@@ -9,7 +9,6 @@ use std::fs;
 use std::path::PathBuf;
 
 use geko_core::model::{License, SourceId};
-use geko_core::module::ModuleName;
 use geko_core::ports::{
     Checksum, DatasetRequest, DownloadRequest, Downloader, FetchReport, RawDir, SourceProvider, SourceStats, StagingDir,
 };
@@ -95,10 +94,6 @@ impl SourceProvider for OsmSource {
 
     fn coverage(&self) -> Coverage {
         Coverage::Global
-    }
-
-    fn used_by(&self) -> &'static [ModuleName] {
-        &[ModuleName::Geocoder, ModuleName::Tiles]
     }
 
     fn plan(&self, scope: &Scope, dl: &dyn Downloader, raw: &RawDir) -> Result<Vec<DatasetRequest>> {

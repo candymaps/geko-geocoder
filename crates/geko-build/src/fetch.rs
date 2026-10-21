@@ -207,7 +207,6 @@ mod tests {
     use super::*;
     use geko_core::country::CountryCode;
     use geko_core::model::License;
-    use geko_core::module::ModuleName;
     use geko_core::ports::{DownloadOutcome, DownloadRequest, SourceProvider, SourceStats, StagingDir};
     use geko_core::scope::{Coverage, Partition};
 
@@ -234,9 +233,6 @@ mod tests {
         }
         fn coverage(&self) -> Coverage {
             Coverage::Global
-        }
-        fn used_by(&self) -> &'static [ModuleName] {
-            &[ModuleName::Geocoder]
         }
         fn plan(&self, _: &Scope, _: &dyn Downloader, raw: &RawDir) -> Result<Vec<DatasetRequest>> {
             Ok(vec![DatasetRequest {
@@ -306,9 +302,6 @@ mod tests {
         }
         fn coverage(&self) -> Coverage {
             Coverage::Global
-        }
-        fn used_by(&self) -> &'static [ModuleName] {
-            &[ModuleName::Geocoder]
         }
         fn plan(&self, _: &Scope, _: &dyn Downloader, _: &RawDir) -> Result<Vec<DatasetRequest>> {
             Ok(vec![])
@@ -392,9 +385,6 @@ mod tests {
         }
         fn coverage(&self) -> Coverage {
             Coverage::Global
-        }
-        fn used_by(&self) -> &'static [ModuleName] {
-            &[ModuleName::Geocoder]
         }
         fn plan(&self, _: &Scope, _: &dyn Downloader, _: &RawDir) -> Result<Vec<DatasetRequest>> {
             Ok(vec![])

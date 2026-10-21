@@ -46,12 +46,13 @@ help: ## This list
 bin: ## Compile geko in release
 	cargo build --release -p geko-app
 
-install: bin ## Install geko, /etc/geko/geko.toml (the repository's, if there is none) and /var/lib/geko
+install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the repository's, if they are not) and /var/lib/geko
 	cmp -s $(BIN) /usr/local/bin/geko || sudo install -m 755 $(BIN) /usr/local/bin/geko
 	[ -f /etc/geko/geko.toml ] || sudo install -D -m 644 geko.toml /etc/geko/geko.toml
+	[ -f /etc/geko/geko-geocoder.toml ] || sudo install -D -m 644 modules/geko-geocoder/geko-geocoder.toml /etc/geko/geko-geocoder.toml
 	[ -d /var/lib/geko ] || sudo install -d -o $$(id -un) -g $$(id -gn) /var/lib/geko
 
-serve: install ## Serve the published bundle on LISTEN (the demo page is at /)
+serve: install ## Serve the published bundle on LISTEN (the demo page is at /geocoder/)
 	$(GEKO) serve --listen $(LISTEN)
 
 up: install ## Serve, and build in the background what the configuration asks for (now and every max_age_days)
@@ -61,13 +62,13 @@ data: install ## Download and build what the configuration asks for
 	$(GEKO) build
 
 query: install ## A search with timings: make query Q="gran via 1, madrid"
-	$(GEKO) query "$(Q)" --debug
+	$(GEKO) geocoder query "$(Q)" --debug
 
 parse: install ## The readings of a query: make parse Q="gran via 1, madrid"
-	$(GEKO) parse "$(Q)"
+	$(GEKO) geocoder parse "$(Q)"
 
 reverse: install ## Reverse geocoding: make reverse LAT=40.4168 LON=-3.7038
-	$(GEKO) reverse $(LAT) $(LON)
+	$(GEKO) geocoder reverse $(LAT) $(LON)
 
 image: bin ## Docker image IMAGE with the last release build (docker build compiles it instead)
 	@need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(BIN) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
@@ -83,7 +84,7 @@ dev: ## Compile the working tree and (re)create the container geko-dev with DEV_
 	docker rm -f geko-dev > /dev/null 2>&1 || true
 	docker run -d --name geko-dev -p $(DEV_PORT):8080 -v geko-dev-data:/var/lib/geko \
 	  -v "$(abspath $(DEV_CONFIG))":/etc/geko/geko.toml:ro -v "$(CURDIR)/countries":/packs:ro -e GEKO_PACKS=/packs geko:dev
-	@echo "geko-dev builds, then serves http://localhost:$(DEV_PORT)/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
+	@echo "geko-dev builds, then serves http://localhost:$(DEV_PORT)/geocoder/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
 	docker logs -f geko-dev
 
 release: ## Compile, make the image and push it to REGISTRY (needs a clean tree and docker login ghcr.io)

@@ -7,13 +7,12 @@ license.workspace = true
 
 [dependencies]
 geko-core.workspace = true
+geko-module-sdk.workspace = true
 geko-geom.workspace = true
 arrow-array = "55"
 arrow-select = "55"
 arrow-schema = "55"
 h3o = "0.7"
-hex = "0.4"
-sha2 = "0.10"
 parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
 rayon = "1"
 rstar = "0.12"

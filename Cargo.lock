@@ -726,23 +726,17 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "geko-build",
- "geko-core",
- "geko-country-pack",
  "geko-fetch",
- "geko-geom",
  "geko-module-geocoder",
+ "geko-module-sdk",
  "geko-module-tiles",
  "geko-server",
- "geocode-fst",
+ "hex",
  "mimalloc",
- "reverse-rstar",
  "serde",
  "serde_json",
  "sha2",
- "source-ogc-features",
- "source-osm",
- "source-overture",
+ "tempfile",
  "tokio",
  "toml",
  "tracing",
@@ -772,15 +766,14 @@ dependencies = [
  "country-pack-es",
  "geko-core",
  "geko-geom",
+ "geko-module-sdk",
  "h3o",
- "hex",
  "parquet",
  "rayon",
  "rstar",
  "rustc-hash",
  "serde",
  "serde_json",
- "sha2",
  "tempfile",
  "tracing",
 ]
@@ -799,9 +792,9 @@ dependencies = [
 name = "geko-core"
 version = "0.1.0"
 dependencies = [
+ "geko-module-sdk",
  "serde",
  "serde_json",
- "thiserror 2.0.21",
 ]
 
 [[package]]
@@ -845,8 +838,7 @@ dependencies = [
 name = "geko-fetch"
 version = "0.1.0"
 dependencies = [
- "geko-conformance",
- "geko-core",
+ "geko-module-sdk",
  "hex",
  "md-5",
  "serde",
@@ -870,21 +862,42 @@ name = "geko-module-geocoder"
 version = "0.1.0"
 dependencies = [
  "arc-swap",
- "axum",
+ "clap",
+ "geko-build",
  "geko-core",
- "geko-server",
+ "geko-country-pack",
+ "geko-fetch",
+ "geko-geom",
+ "geko-module-sdk",
+ "geocode-fst",
+ "reverse-rstar",
  "serde",
  "serde_json",
+ "sha2",
+ "source-ogc-features",
+ "source-osm",
+ "source-overture",
+ "toml",
  "tracing",
+]
+
+[[package]]
+name = "geko-module-sdk"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.21",
 ]
 
 [[package]]
 name = "geko-module-tiles"
 version = "0.1.0"
 dependencies = [
- "axum",
- "geko-core",
- "geko-server",
+ "geko-module-sdk",
 ]
 
 [[package]]
@@ -893,7 +906,7 @@ version = "0.1.0"
 dependencies = [
  "arc-swap",
  "axum",
- "geko-core",
+ "geko-module-sdk",
  "serde",
  "serde_json",
  "tempfile",

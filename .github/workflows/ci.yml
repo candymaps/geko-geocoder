@@ -39,7 +39,7 @@ jobs:
           all=$(for d in countries/*/golden; do basename "$(dirname "$d")"; done)
           engine=1 packs=1 countries=$all
           if git cat-file -e "$before^{commit}" 2> /dev/null; then
-            git diff --quiet "$before" HEAD -- crates providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker && engine=0
+            git diff --quiet "$before" HEAD -- crates modules providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker && engine=0
             git diff --quiet "$before" HEAD -- countries && packs=0
             if [ "$engine" = 0 ]; then
               countries=$(for c in $all; do git diff --quiet "$before" HEAD -- "countries/$c" || echo "$c"; done)
@@ -167,7 +167,7 @@ jobs:
           image=1
           before="${{ github.event.before }}"
           if [ "$release" = 0 ] && git cat-file -e "$before^{commit}" 2> /dev/null \
-            && git diff --quiet "$before" HEAD -- crates providers languages Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker; then
+            && git diff --quiet "$before" HEAD -- crates modules providers languages Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker; then
             image=0
           fi
           {

@@ -6,6 +6,4 @@ publish.workspace = true
 license.workspace = true
 
 [dependencies]
-geko-core.workspace = true
-geko-server.workspace = true
-axum.workspace = true
+geko-module-sdk.workspace = true

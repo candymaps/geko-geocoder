@@ -122,7 +122,7 @@ async function ask(route, params) {
     } : {}),
     size: 8,
   });
-  const r = await fetch(`/v1/${route}?${q}`);
+  const r = await fetch(`v1/${route}?${q}`);
   if (id !== latest) return null;
   if (!r.ok) { status.textContent = (await r.json()).error || r.statusText; return null; }
   const body = await r.json();

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "providers/*", "countries/*"]
+members = ["crates/*", "modules/*", "providers/*", "countries/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -10,6 +10,7 @@ license = "AGPL-3.0-only"
 
 [workspace.dependencies]
 geko-core = { path = "crates/geko-core" }
+geko-module-sdk = { path = "crates/geko-module-sdk" }
 geko-server = { path = "crates/geko-server" }
 geko-build = { path = "crates/geko-build" }
 geko-fetch = { path = "crates/geko-fetch" }
@@ -25,7 +26,7 @@ geko-eval = { path = "crates/geko-eval" }
 geko-conformance = { path = "crates/geko-conformance" }
 reverse-rstar = { path = "providers/reverse-rstar" }
 source-ogc-features = { path = "providers/source-ogc-features" }
-geko-module-geocoder = { path = "crates/geko-module-geocoder" }
+geko-module-geocoder = { path = "modules/geko-geocoder" }
 geko-module-tiles = { path = "crates/geko-module-tiles" }
 
 anyhow = "1"

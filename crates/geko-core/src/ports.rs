@@ -2,65 +2,14 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::{GekoError, Result};
+use crate::Result;
 use crate::country::CountryCode;
 use crate::geo::Coord;
 use crate::model::{AdminChain, HouseNumber, License, LocalId, PlaceRef, PublicId, SourceId, StreetParts};
-use crate::module::ModuleName;
 use crate::query::{Hit, KindFilter, ParsedQuery, QueryContext};
 use crate::scope::{Coverage, Partition, Scope};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Checksum {
-    Md5(String),
-    Sha256(String),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct DownloadRequest {
-    pub url: String,
-    pub checksum: Option<Checksum>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct DownloadOutcome {
-    /// False when the local copy was kept (up to date, refresh policy or offline mode).
-    pub downloaded: bool,
-    pub sha256: String,
-    pub size: u64,
-}
-
-/// Owns caching, refresh policy and offline mode, so providers only say what they need.
-pub trait Downloader: Send + Sync {
-    /// Writes to `dest` atomically: on error, `dest` is left untouched.
-    fn fetch(&self, req: &DownloadRequest, dest: &Path) -> Result<DownloadOutcome>;
-
-    /// Whether this build asks the sources for changes to what it already downloaded. When not
-    /// (the data are not due for a check, `[data] max_age_days`), a source keeps every download
-    /// it has, without contacting anyone, and downloads only what is missing.
-    fn checks_for_updates(&self) -> bool {
-        true
-    }
-
-    /// Whether a download removed after a bundle was published (`[data] keep_downloads = false`),
-    /// of which only its record is left, counts as kept. It does, except when a staging that
-    /// reads it has to be repeated: then the downloader brings it back.
-    fn keeps_removed(&self) -> bool {
-        true
-    }
-
-    /// Size in bytes of a remote file, for formats read in parts (a Parquet footer and some of
-    /// its row groups) rather than whole.
-    fn remote_size(&self, url: &str) -> Result<u64> {
-        Err(GekoError::Config(format!("this downloader cannot read {url} in parts")))
-    }
-
-    /// Bytes `start..start + len` of a remote file. Not cached: the caller keeps what it reads.
-    fn fetch_range(&self, url: &str, start: u64, len: u64) -> Result<Vec<u8>> {
-        let _ = (start, len);
-        Err(GekoError::Config(format!("this downloader cannot read {url} in parts")))
-    }
-}
+pub use geko_module_sdk::download::{Checksum, DownloadOutcome, DownloadRequest, Downloader};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DatasetRequest {
@@ -102,8 +51,6 @@ pub trait SourceProvider: Send + Sync {
     fn id(&self) -> SourceId;
     fn license(&self) -> License;
     fn coverage(&self) -> Coverage;
-    /// Modules that need this source; it is not downloaded unless one of them is active.
-    fn used_by(&self) -> &'static [ModuleName];
     /// What `fetch` would download for `scope`. May download small catalog metadata
     /// (e.g. an extract index) into `raw`, never the datasets themselves.
     fn plan(&self, scope: &Scope, dl: &dyn Downloader, raw: &RawDir) -> Result<Vec<DatasetRequest>>;

@@ -28,7 +28,7 @@ Hardware de referencia del nodo de servicio: **Linux, 4 vCPU, 8 GB de RAM, disco
 - Toponimia rural (en España: Nomenclátor del IGN y del INE).
 - Búsqueda por referencia catastral, por polígono y parcela, por punto kilométrico y por coordenadas en varios formatos.
 - Nombres antiguos de calles como alias.
-- Geocodificación por lotes, búsqueda estructurada y modos compatibles con las API de Pelias y de Photon.
+- Geocodificación por lotes y búsqueda estructurada, con nombres de parámetros como los de Pelias.
 - Índice jerárquico propio por segmentos de país, con latencias de un orden de magnitud menores.
 - Descarga, generación y despliegue automáticos e incrementales.
 
@@ -181,8 +181,8 @@ La generación y el servicio corren en **máquinas distintas**. La generación n
 | `geko build` | Descarga lo que falte o haya cambiado y genera el bundle (solo las particiones afectadas) |
 | `geko serve` | Sirve un bundle. **Nunca descarga fuentes**, solo bundles ya generados |
 | `geko up` | `serve` y, en segundo plano, `build`: ahora y cada `[data] max_age_days`, sin cron. Sirve el bundle publicado mientras genera el nuevo y lo recoge al terminar, con la recarga de siempre; si un build falla, sigue con el que tiene y reintenta a la hora. Con `offline` o `refresh = never` genera una sola vez. Es la orden de la imagen de Docker |
-| `geko purge [data \| country-packs [--all]]` | Borra lo que la configuración ya no pide: descargas y ficheros de trabajo, y packs descargados de países fuera del ámbito; sin subcomando, todo. `build --purge` y `up --purge` lo hacen antes de generar |
-| `geko parse`, `geko query`, `geko reverse` | Depuración: interpretaciones de una consulta, búsqueda con tiempos e inversa, sobre el segmento generado |
+| `geko purge [data | packages [--all]]` | Borra lo que la configuración ya no pide: descargas y ficheros de trabajo, y paquetes de datos que bajaron los módulos (los packs de país del geocoder) fuera del ámbito;| country-packs [--all]]` | Borra lo que la configuración ya no pide: descargas y ficheros de trabajo, y packs descargados de países fuera del ámbito; sin subcomando, todo. `build --purge` y `up --purge` lo hacen antes de generar |
+| `geko <módulo> <orden>` | Las órdenes de un módulo activo; `geko <módulo>` las lista. Las del geocoder son de depuración: `geko geocoder parse`, `query` y `reverse` (interpretaciones de una consulta, búsqueda con tiempos e inversa, sobre el segmento generado) |
 
 ### 3.2 Plataformas
 
@@ -263,13 +263,13 @@ pub trait TileSource: Send + Sync {
 
 ### 4.1 Configuración
 
-La configuración está siempre en `/etc/geko/geko.toml` y los datos siempre en `/var/lib/geko`; ninguna de las dos rutas se cambia desde el fichero ni desde la línea de órdenes. Las variables `GEKO_CONFIG` y `GEKO_DATA` las cambian para las comprobaciones y la CI. `geko build --purge` borra antes de generar las descargas y los ficheros de trabajo de los países, regiones y fuentes que la configuración ya no pide.
+La configuración está siempre en `/etc/geko/geko.toml`, con la de cada módulo a su lado (`geko-geocoder.toml`, o el fichero que diga `[modules.<módulo>] config`), y los datos siempre en `/var/lib/geko`; ninguna de las dos rutas se cambia desde el fichero ni desde la línea de órdenes. Las variables `GEKO_CONFIG` y `GEKO_DATA` las cambian para las comprobaciones y la CI. `geko build --purge` borra antes de generar las descargas y los ficheros de trabajo de los países, regiones y fuentes que la configuración ya no pide.
 
 ```toml
 # geko.toml (todas las opciones, con sus valores por defecto, en el geko.toml del repositorio)
 
 [modules]
-geocoder = true
+geocoder = true                 # o una tabla: { enabled = true, config = "geko-geocoder.toml" }
 tiles    = true
 
 [[scope]]
@@ -287,6 +287,25 @@ offline         = false         # true: no descargar nada; fallar si falta algo
 accept_licenses = false         # debe ponerse a true para descargar (sección 7.5)
 parallel_downloads = 4
 
+[build]
+keep = 1                        # versiones publicadas que se conservan (2 para poder volver atrás)
+
+[serve]
+listen    = "0.0.0.0:8080"
+reload_secs = 30                # cada cuánto se mira si hay un bundle nuevo
+cors_origins           = []     # orígenes desde los que una página puede llamar a la API ("*": cualquiera)
+api_keys               = []     # claves que exige cada petición (Authorization: Bearer, X-Api-Key o api_key=); vacío: abierta
+rate_limit_per_s       = 0      # peticiones por segundo de una misma dirección de cliente (0: sin límite)
+rate_limit_burst       = 0      # ráfaga por encima de ese ritmo (0: el doble del ritmo)
+bundles_url            = ""     # dirección HTTP de los bundles publicados en otra máquina; cada recarga trae solo lo que cambió
+attribution_contact    = ""     # dónde pedir el código de la base derivada (ODbL 4.6), en /v1/attribution
+```
+
+Las opciones del geocoder van en su fichero; si alguna sigue en `geko.toml`, el arranque falla diciendo que se mueva:
+
+```toml
+# geko-geocoder.toml (todas, con sus valores por defecto, en modules/geko-geocoder/geko-geocoder.toml)
+
 # Fuentes: las compiladas y las que declaran los packs del ámbito se usan si cubren algún país
 # del ámbito; sus apartados son opcionales y solo cambian opciones o las desactivan. OSM es
 # obligatoria (enabled = false es un error).
@@ -303,31 +322,20 @@ max_unchanged_days = 365
 [packs]
 registry = "ghcr.io/candymaps/geko/countries"   # de dónde se descargan los packs de país
 
-[build]
-keep = 1                        # versiones publicadas que se conservan (2 para poder volver atrás)
-
 [serve]
-listen    = "0.0.0.0:8080"
 countries = []                  # vacío = todos los del bundle
 preload   = true                # fijar en RAM la parte caliente (sección 9.6)
-reload_secs = 30                # cada cuánto se mira si hay un bundle nuevo
 search_budget_ms       = 15     # presupuesto de tiempo de una búsqueda (0: sin límite)
 autocomplete_budget_ms = 5      # y de una petición de autocompletado; la lectura más probable siempre se completa
 slow_query_ms          = 50     # las peticiones más lentas se registran con su consulta (0: ninguna)
 same_entity_m          = 100    # resultados con el mismo nombre a menos de esto se funden en la respuesta (6.5.6)
-cors_origins           = []     # orígenes desde los que una página puede llamar a la API ("*": cualquiera)
-api_keys               = []     # claves que exige cada petición (Authorization: Bearer, X-Api-Key o api_key=); vacío: abierta
-rate_limit_per_s       = 0      # peticiones por segundo de una misma dirección de cliente (0: sin límite)
-rate_limit_burst       = 0      # ráfaga por encima de ese ritmo (0: el doble del ritmo)
-batch_max              = 100    # peticiones como mucho en un /v1/batch
+batch_max              = 100    # peticiones como mucho en un /geocoder/v1/batch
 cache_entries          = 0      # respuestas de búsqueda y autocompletado guardadas, unos 2,5 KB cada una (0: ninguna)
-bundles_url            = ""     # dirección HTTP de los bundles publicados en otra máquina; cada recarga trae solo lo que cambió
-attribution_contact    = ""     # dónde pedir el código de la base derivada (ODbL 4.6), en /v1/attribution
 ```
 
-Previstos y sin implementar: elegir provider por configuración (`[build] geocode`, `[serve] geocode`…), capas opcionales (`[serve.layers] parcels`), pesos del ranking (`[serve.ranking]`) y activar o no los modos compatibles (hoy siempre activos).
+Previstos y sin implementar: elegir provider por configuración (`[build] geocode`, `[serve] geocode`…), capas opcionales (`[serve.layers] parcels`) y pesos del ranking (`[serve.ranking]`).
 
-`geko-app` mantiene un registro de factorías por puerto, y otro de providers genéricos por tipo de servicio para las fuentes que declaran los packs (`kind`). Un provider solo se registra si su *feature* está compilado, y solo se instancia si lo necesita un módulo activo y cubre algún país del ámbito. Las fuentes compiladas se usan por defecto, sin apartado en `geko.toml`; el apartado solo cambia sus opciones o las desactiva. Las fuentes obligatorias (OSM, la base de todos los países) no se pueden desactivar.
+`geko-module-geocoder` mantiene un registro de factorías por puerto, y otro de providers genéricos por tipo de servicio para las fuentes que declaran los packs (`kind`). Un provider solo se registra si su *feature* está compilado, y solo se instancia si lo necesita un módulo activo y cubre algún país del ámbito. Las fuentes compiladas se usan por defecto, sin apartado en `geko-geocoder.toml`; el apartado solo cambia sus opciones o las desactiva. Las fuentes obligatorias (OSM, la base de todos los países) no se pueden desactivar.
 
 ## 5. Contratos de datos (generación)
 
@@ -451,8 +459,8 @@ Fusionar OSM con otras fuentes crea una base de datos derivada sujeta a ODbL (sh
 
 **Decisión (2026-10-18), mientras el repositorio siga privado:** la obligación de la cláusula 4.6 se cumple ofreciendo **el método** de hacer la base derivada, no la base: una descripción pública del algoritmo de fusión y el compromiso de dar el código necesario para reproducirla a quien reciba resultados y lo pida. Las fuentes añadidas a OSM ya son públicas.
 
-- `/v1/attribution` (sin clave de API): las licencias y atribuciones de las fuentes del bundle, que lista su manifiesto; el aviso de base derivada; dónde está el método, y a quién pedir el código (`[serve] attribution_contact`).
-- `/v1/attribution/method`: la descripción del método ([FUSION_METHOD.md](FUSION_METHOD.md)), embebida en el binario. Hay que mantenerla al día cuando cambien las reglas de fusión.
+- `/v1/attribution` (sin clave de API, del host): las licencias y atribuciones de las fuentes del bundle, que lista su manifiesto; a quién pedir el código (`[serve] attribution_contact`), y lo que añade cada módulo: el geocoder, en `geocoder.derivative_database`, el aviso de base derivada y dónde está el método.
+- `/geocoder/v1/attribution/method`: la descripción del método ([FUSION_METHOD.md](FUSION_METHOD.md)), embebida en el módulo. Hay que mantenerla al día cuando cambien las reglas de fusión.
 - Cada respuesta del geocodificador lleva `geocoding.attribution`, y la página de demostración muestra las atribuciones en el mapa.
 - CartoCiudad (CC BY 4.0) permite redistribuir lo derivado con otra licencia, si se mantiene su atribución.
 
@@ -784,51 +792,44 @@ Cada parte va en ficheros separados del segmento, para poder tratarlas distinto.
 
 ## 10. API
 
-La referencia de las rutas ya implementadas (parámetros, respuestas y errores) está en [openapi.yaml](../openapi.yaml), en la raíz del repositorio; `geko serve` la sirve en `/openapi.yaml` y en `/docs` (Swagger UI).
+La referencia de las rutas ya implementadas (parámetros, respuestas y errores) está en dos ficheros: las del host en [openapi.yaml](../openapi.yaml), en la raíz del repositorio, servida en `/openapi.yaml`, y las del geocoder en [modules/geko-geocoder/openapi.yaml](../modules/geko-geocoder/openapi.yaml), servida en `/geocoder/openapi.yaml`. `/docs` (Swagger UI) las muestra todas.
+
+Cada módulo sirve sus rutas bajo su nombre (`/geocoder/…`, `/tiles/…`; docs/MODULES_PLAN.md): dos módulos no pueden pisarse. `/` lleva a la página del primer módulo que tenga una.
 
 ### 10.1 Rutas
 
 ```
-GET  /                     página de demostración: buscador, autocompletado e inversa sobre un mapa (módulo geocoder)
-GET  /v1/search?text=&focus.lat=&focus.lon=&boundary.*=&boundary.country=&size=&lang=&debug=
-GET  /v1/search/structured?address=&housenumber=&street=&postalcode=&locality=&country=&size=&lang=
-GET  /v1/autocomplete?text=&focus.lat=&focus.lon=&boundary.country=&size=&lang=
-GET  /v1/reverse?lat=&lon=&size=&layers=
-GET  /v1/place/{id}
-POST /v1/batch
+GET  /                              redirige a /geocoder/
 GET  /v1/attribution
+GET  /openapi.yaml, /docs
+GET  /health
+GET  /metrics
 
-GET  /pelias/v1/*                    # modo compatible con la API de Pelias
-GET  /photon/api, /photon/reverse    # modo compatible con la API de Photon
+GET  /geocoder/                     página de demostración: buscador, autocompletado e inversa sobre un mapa
+GET  /geocoder/openapi.yaml
+GET  /geocoder/v1/attribution/method
+GET  /geocoder/v1/search?text=&focus.lat=&focus.lon=&boundary.*=&boundary.country=&size=&lang=&debug=
+GET  /geocoder/v1/search/structured?address=&housenumber=&street=&postalcode=&locality=&country=&size=&lang=
+GET  /geocoder/v1/autocomplete?text=&focus.lat=&focus.lon=&boundary.country=&size=&lang=
+GET  /geocoder/v1/reverse?lat=&lon=&size=&layers=
+GET  /geocoder/v1/place/{id}
+POST /geocoder/v1/batch
 
 GET  /tiles/{z}/{x}/{y}.mvt
 GET  /tiles/tilejson.json
 GET  /tiles/style.json
 GET  /tiles/glyphs/{fontstack}/{range}.pbf
 GET  /tiles/sprites/{name}.{json|png}
-
-GET  /health
-GET  /metrics
 ```
 
 `text` admite como máximo 256 caracteres (400 si es más largo) y el motor solo busca sus 12 primeras palabras: un texto más largo solo cuesta tiempo.
 
 `lang` (código de lengua, como `ca`, `fr` o `en`) da el nombre, la calle y el municipio de cada resultado, también en su etiqueta, en esa lengua cuando los datos lo tienen (`name:<lengua>` de OSM). Si no lo tienen, sale el nombre principal. Sin `lang`, el nombre principal, que es el de la fuente de mayor prioridad. Las coordenadas también se aceptan con los nombres de Pelias (`point.lat`/`point.lon` en la inversa, `focus.point.lat`/`focus.point.lon` en el foco), para que un cliente escrito para Pelias funcione sin cambios.
 
-**Modo Pelias** (`/pelias/v1/search`, `autocomplete`, `search/structured`, `reverse` y `place?ids=`): los parámetros y el formato de respuesta de Pelias, para que un cliente de Pelias cambie de motor cambiando solo la URL. La búsqueda es la de geko; solo se traducen nombres y formas:
-- capas: `venue` es POI, `postalcode` es CP, `locality` es municipio o núcleo, `localadmin` el municipio, `county` la provincia;
-- propiedades: `id`, `gid`, `layer`, `source` (la fuente principal), `source_id`, `postalcode`, `match_type` (`exact`, `interpolated` o `fallback`), `accuracy` (`point` o `centroid`), `distance` en km, `country_code`, `label` y `addendum.concordances["wd:id"]`;
-- las unidades administrativas que contienen cada resultado, de la inversa (`admin`): `country`, `region` y `county` (la provincia), con su código en `country_a`, `region_a` y `county_a` si lo hay, `localadmin` y `locality` (el municipio, con su `_gid`; `locality` es el núcleo si lo hay) y `neighbourhood`. No hay `macroregion` ni `continent`, que en Pelias salen de Who's On First;
-- `boundary.circle.lat`, `boundary.circle.lon` y `boundary.circle.radius` (en km, 50 por defecto): se busca en el rectángulo que lo contiene y se quitan de la respuesta los resultados fuera del círculo.
+`admin=true` añade a cada resultado las unidades administrativas que lo contienen (`admin`, como en la inversa).
 
-**Modo Photon** (`/photon/api?q=&limit=&lat=&lon=&lang=&layer=&bbox=&osm_tag=` y `/photon/reverse?lat=&lon=`): los parámetros y el formato de Photon. `/photon/api` es autocompletado, como en Photon. `layer` y `osm_tag` se pueden repetir; `bbox` es `minLon,minLat,maxLon,maxLat`; `osm_tag` filtra como en Photon (`clave`, `clave:valor`, `:valor`, negados con `!`, y `clave:!valor`), pidiendo a geko tantos resultados como permite `max_size` y cortando después a `limit`. Propiedades: `type` (`house`, `street`, `city`, `locality`, `county`, `state`, `postcode`), `name`, `housenumber`, `street`, `postcode`, `countrycode`, las unidades que contienen el resultado (`country`, `state`, `county`, `city`, `locality` y `district`), `osm_key` y `osm_value` (la categoría del POI, o las etiquetas de OSM de su clase para calles, portales y lugares), `osm_type` y `osm_id` (si la entidad viene de OSM) y `gid`.
-
-`admin=true` en las rutas propias añade a cada resultado las unidades administrativas que lo contienen (`admin`, como en la inversa); los modos Pelias y Photon la usan para sus propiedades.
-
-Los dos modos se comprueban en el golden (`ci/test.sh --variant results`): las consultas de referencia y las de la inversa, lanzadas por `/pelias` y `/photon`, deben acertar lo mismo, consulta a consulta, que la API propia (Photon frente al autocompletado).
-
-- Las rutas de geocodificación solo existen con el módulo `geocoder` activo, y las de `/tiles/*` solo con el módulo `tiles`. Si un módulo está desactivado, sus rutas devuelven 404. `/health` informa de los módulos, países y capas activos.
-- `/v1/batch` (POST, `{"requests": [{"route", "params"}]}`) tiene un tamaño máximo configurable (`[serve] batch_max`, 100) y se responde en orden, consulta tras consulta, en una sola plaza del pool de búsqueda: un lote no quita todos los núcleos a las peticiones de los demás clientes.
+- Las rutas de `/geocoder/*` solo existen con el módulo `geocoder` activo, y las de `/tiles/*` solo con el módulo `tiles`. Si un módulo está desactivado, sus rutas devuelven 404. `/health` informa de los módulos, países y capas activos.
+- `/geocoder/v1/batch` (POST, `{"requests": [{"route", "params"}]}`) tiene un tamaño máximo configurable (`[serve] batch_max` de `geko-geocoder.toml`, 100) y se responde en orden, consulta tras consulta, en una sola plaza del pool de búsqueda: un lote no quita todos los núcleos a las peticiones de los demás clientes.
 
 ### 10.2 Respuesta
 
@@ -1052,23 +1053,27 @@ Si las tasas de duplicados superan su objetivo, el build falla. Los ejemplos de 
 ```
 geko/
   Cargo.toml                 # workspace
-  geko.toml                  # configuración de ejemplo, con todas las opciones
+  geko.toml                  # configuración de ejemplo del host, con todas las opciones
+  openapi.yaml               # rutas del host
   Dockerfile, docker/        # imagen ghcr.io/candymaps/geko, sin packs
   ci/                        # test.sh (comprobaciones), golden-snapshot.sh (datos del golden), packs.sh (publicar packs), oras.sh
   schemas/                   # esquemas de staging (staging/*.md) y del canónico (canonical.md), versionados
   crates/
+    geko-module-sdk/         # contrato de los módulos (Module), tipos que comparten con el host, bundle, etapas
     geko-core/               # dominio, traits, lógica pura (sin dependencias de tecnología)
     geko-conformance/        # suites de tests genéricas por puerto
     geko-fetch/              # Downloader HTTP, caché raw, cliente de registros OCI
     geko-build/              # generación: staging, fusión (Rust), publicación, incrementalidad, purge
     geko-geom/               # geometría común: anillos, punto en polígono, WKB, distancias
     geko-country-pack/       # lee, verifica y descarga los packs de país; geko-pack-sign
-    geko-server/             # servicio común: transporte, bundles, health, metrics
-    geko-module-geocoder/    # módulo geocoder, feature `geocoder`
+    geko-server/             # servicio común: transporte, montaje de los módulos, bundles, health, metrics
     geko-module-tiles/       # módulo tiles, feature `tiles` (esqueleto)
     geko-eval/               # consultas de referencia, comparación con Pelias, comprobaciones
     geko-bench/              # instrucciones de las piezas calientes (callgrind)
-    geko-app/                # binario, CLI, registro de providers y módulos, composición
+    geko-app/                # el host: binario, CLI, configuración, módulos enlazados, publicación del bundle
+  modules/
+    geko-geocoder/           # módulo geocoder (crate geko-module-geocoder, feature `geocoder`): fuentes, generación,
+                             # servicio, órdenes; README.md, geko-geocoder.toml (su configuración de ejemplo) y openapi.yaml
   providers/                 # genéricos, válidos para cualquier país
     source-osm/  source-overture/  source-ogc-features/
     text-rules/              # normalizador y analizador de reglas, que leen los datos del pack
@@ -1135,9 +1140,9 @@ Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Es
 | 41 | Compilación optimizada | `rkyv`, SIMD, PGO entrenado con las consultas de referencia, binarios `x86-64-v3`/`x86-64-v2` o `multiversion` (§11, fase 4) | M | ⬜ Medir con instrucciones (`geko-bench`) y con el hardware de referencia |
 | 42 | Diffs diarios de OSM y regeneración programada | Hoy cada build descarga los extractos enteros y se programa fuera de geko (§12, fase 5) | L | ⬜ |
 | 43 | `BundleStore` con S3 y enrutador entre nodos | Hoy los bundles se sirven de disco o por HTTP (`bundles_url`), y `[serve] countries` reparte países sin un enrutador delante (fase 5) | M | ⬜ Cuando un nodo no baste |
-| 44 | Opciones de configuración previstas | Elegir provider por configuración, capas opcionales (`[serve.layers]`), pesos del ranking (`[serve.ranking]`) y activar o no los modos compatibles (§4.1) | M | ⬜ Cada una, cuando haga falta: el provider, con su segunda implementación |
+| 44 | Opciones de configuración previstas | Elegir provider por configuración, capas opcionales (`[serve.layers]`), pesos del ranking (`[serve.ranking]`) (§4.1) | M | ⬜ Cada una, cuando haga falta: el provider, con su segunda implementación |
 | 45 | Extracto del continente | Si los extractos de Geofabrik del ámbito pesan más que el del continente, bajar el continente (§7.4) | S | ⬜ |
-| 46 | Módulos descargables | Cada módulo, un paquete firmado que el host baja y carga al arrancar (como los packs), y el geocoder, en su propio repositorio (`candymaps/geko-geocoder`), con los packs y los idiomas | L | ⬜ Plan en [MODULES_PLAN.md](MODULES_PLAN.md) |
+| 46 | Módulos descargables | Cada módulo, un paquete firmado que el host baja y carga al arrancar (como los packs), y el geocoder, en su propio repositorio (`candymaps/geko-geocoder`), con los packs y los idiomas | L | ⬜ Plan en [MODULES_PLAN.md](MODULES_PLAN.md). Paso 1 hecho (2026-10-21): el geocoder, en `modules/geko-geocoder/`, detrás del contrato de `geko-module-sdk`, enlazado en el binario |
 ## 18. Rutas
 
 - `geko` lee siempre `/etc/geko/geko.toml` y guarda siempre sus datos en `/var/lib/geko`: descargas (`raw/`), ficheros de trabajo (`staging/`, `relocated/`, `canonical/`, `segments/`) y bundles publicados (`bundles/`). Ni el `geko.toml` ni la línea de órdenes cambian estas rutas.
@@ -1146,7 +1151,7 @@ Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Es
 - Las variables de entorno `GEKO_CONFIG` y `GEKO_DATA` cambian las dos rutas, y `GEKO_PACKS` la de los packs. Son para las comprobaciones (`ci/test.sh`) y la CI, que generan varios países a la vez y no escriben en `/etc` ni en `/var/lib`.
 - Al cambiar el ámbito, lo que ya no está en él se queda en `/var/lib/geko`, por si vuelve. Se borra con `geko purge`:
   - `geko purge data`: las descargas y los ficheros de trabajo de los países, las regiones y las fuentes que la configuración ya no pide. `geko build --purge` y `geko up --purge` hacen lo mismo antes de generar.
-  - `geko purge country-packs`: los packs descargados de los países fuera del ámbito; con `--all`, todos (se vuelven a bajar al generar). Los copiados a mano se quedan.
+  - `geko purge packages`: los paquetes que bajaron los módulos (los packs de país del geocoder) de los países fuera del ámbito; con `--all`, todos (se vuelven a bajar al generar). Los copiados a mano se quedan.
   - `geko purge`, sin más: todo lo anterior.
   - Las versiones antiguas de los bundles las retira `[build] keep`: por defecto solo se conserva la que se sirve; con 2 se puede volver a la anterior. Un servicio que aún tenga cargada la versión retirada sigue funcionando hasta cargar la nueva.
 
@@ -1179,7 +1184,8 @@ Hecho tras la fase 1 (el detalle, en `git show 8679454:docs/BACKLOG.md`; lo pend
 
 - **Packs de país como datos:** leídos al arrancar, firmados y publicados en ghcr.io; `geko` baja los de su ámbito, y la imagen de Docker sirve para cualquier combinación de países sin llevar ninguno (§2.4).
 - **Segundo país:** Luxemburgo, con su pack (`countries/lu/`) y su golden, sin tocar el motor salvo arreglos genéricos ([countries/README.md](../countries/README.md)).
-- **Servicio:** página de demostración en `/`, `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
+- **Host y módulos** (2026-10-21, [MODULES_PLAN.md](MODULES_PLAN.md), paso 1): el host (`geko-app`, `geko-server`) solo conoce los módulos por el contrato de `geko-module-sdk`. El geocoder vive en `modules/geko-geocoder/`, con su configuración (`geko-geocoder.toml`) y sus rutas bajo `/geocoder/`. Se quitaron los modos compatibles con Pelias y Photon.
+- **Servicio:** página de demostración en `/geocoder/`, `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
 - Las últimas medidas completas, del 2026-10-18, en [docs/2026-10-18_ANALYSIS_RESULTS.md](2026-10-18_ANALYSIS_RESULTS.md).
 
 ## 20. Comprobaciones y evaluación
@@ -1198,7 +1204,7 @@ ci/test.sh [--variant <variantes>] [--scope <ámbitos>] [--include-performance]
 |---|---|
 | `code` | clippy (avisos como errores), reglas de dependencias, licencias y avisos de seguridad (cargo-deny) y cada combinación de features |
 | `contracts` | tests unitarios y suites de conformidad de cada puerto |
-| `results` | aciertos consulta a consulta y en cada pulsación, calibración de `confidence`, duplicados y modos Pelias y Photon |
+| `results` | aciertos consulta a consulta y en cada pulsación, calibración de `confidence` y duplicados |
 | `data` | recuentos e integridad del canónico, tamaño del bundle y determinismo del build |
 | `robustness` | fuzz y recarga del bundle con carga |
 | `instructions` | instrucciones de las rutas calientes, con valgrind (obligatorio; `GEKO_BENCH=0` las salta), frente a las del último commit subido (`GEKO_BASE` para otro), contadas en la misma pasada y en la misma máquina |
@@ -1299,8 +1305,8 @@ Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, co
 Primero, la ruta del repositorio en WSL, por ejemplo `$GEKO_REPO = '/mnt/d/geko'` para `D:\geko`. Desde la línea de órdenes:
 
 ```powershell
-wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko query 'carrer de sant miquel 30, palma'"
-wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko reverse 39.5675 2.6482"
+wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko geocoder query 'carrer de sant miquel 30, palma'"
+wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko geocoder reverse 39.5675 2.6482"
 ```
 
 Como servicio HTTP (deja la consola ocupada; se para con Ctrl+C):

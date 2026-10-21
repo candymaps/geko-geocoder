@@ -1,0 +1,32 @@
+# Every section and option of the geocoder module, with its default value unless a comment says
+# otherwise. geko reads it beside geko.toml (/etc/geko/geko-geocoder.toml), or from the file that
+# `[modules.geocoder] config` names; without it, every default.
+
+# Every source accepts `enabled = false`, except OSM, which cannot be disabled.
+[sources.osm]
+mirror = "auto"                     # or the URL of a mirror with Geofabrik's layout
+
+[sources.overture]                  # Overture Maps Places, for every country
+enabled        = true
+base           = "https://overturemaps-us-west-2.s3.amazonaws.com"
+release        = "latest"           # or a release such as "2026-09-23.1"
+min_confidence = 0.8                # places Overture is less sure exist are left out (0 to 1)
+
+[sources.cartociudad]               # Spain pack; any key of countries/es/sources/cartociudad.toml can be overridden
+enabled            = true           # false builds Spain without CartoCiudad
+page_size          = 10000          # features per request
+parallel_requests  = 4              # requests at the same time, kept low out of courtesy to a public service
+max_unchanged_days = 365            # a download older than this is made again whatever the catalog says
+
+[packs]
+registry = "ghcr.io/candymaps/geko/countries"   # where the country packs are downloaded from
+
+[serve]
+countries              = []         # empty: every country of the bundle
+preload                = true       # load the hot index files into RAM at startup
+search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
+autocomplete_budget_ms = 5          # and of an autocomplete request
+slow_query_ms          = 50         # requests slower than this are logged with their query (0: none)
+same_entity_m          = 100        # results with the same name closer than this are merged (PROJECT.md 6.5.6)
+batch_max              = 100        # most requests in one /geocoder/v1/batch
+cache_entries          = 50000      # default 0 (none); search and autocomplete answers kept for repeated queries, about 2.5 KB each

@@ -14,7 +14,6 @@ use std::path::PathBuf;
 
 use geko_core::country::CountryCode;
 use geko_core::model::{License, SourceId};
-use geko_core::module::ModuleName;
 use geko_core::ports::{DatasetRequest, Downloader, FetchReport, RawDir, SourceProvider, SourceStats, StagingDir};
 use geko_core::regions::Regions;
 use geko_core::scope::{Coverage, Partition, Scope};
@@ -209,10 +208,6 @@ impl SourceProvider for OgcFeaturesSource {
 
     fn coverage(&self) -> Coverage {
         Coverage::Countries(vec![self.country])
-    }
-
-    fn used_by(&self) -> &'static [ModuleName] {
-        &[ModuleName::Geocoder]
     }
 
     fn plan(&self, scope: &Scope, _: &dyn Downloader, raw: &RawDir) -> Result<Vec<DatasetRequest>> {

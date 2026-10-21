@@ -9,7 +9,6 @@
 //! }
 //! ```
 
-pub mod download;
 pub mod fixture;
 pub mod geocode;
 pub mod reverse;

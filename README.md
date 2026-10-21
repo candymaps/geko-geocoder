@@ -20,7 +20,7 @@
 
 A modular, multi-country geospatial engine. Each service is a module, enabled in `geko.toml`, on top of the same data:
 
-- **Geocoding** (available): turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse).
+- **Geocoding** (available, [modules/geko-geocoder](modules/geko-geocoder/README.md)): turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse).
 - **Vector tiles, routing…** (planned): new modules that plug in without changing the others.
 
 They all share the same foundation:
@@ -50,7 +50,7 @@ country = "ES"            # ISO 3166-1; one [[scope]] per country (LU…)
 accept_licenses = true    # you accept the licenses of the sources: ODbL (OSM), CDLA (Overture), CC BY (CartoCiudad)
 ```
 
-Every section and option geko accepts is in [geko.toml](geko.toml), at the root of the repository, with its default value and what it does: use it as the reference to configure geko.
+Every section and option of geko itself is in [geko.toml](geko.toml), at the root of the repository, with its default value and what it does: use it as the reference to configure geko. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
 
 Without a mounted `geko.toml`, the image uses its sample one: Luxembourg, with the licenses not accepted, so it stops right away asking you to accept them. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
 
@@ -61,22 +61,13 @@ docker run -d --name geko -p 8080:8080 -v geko-data:/var/lib/geko \
   -v "$PWD/geko.toml:/etc/geko/geko.toml:ro" ghcr.io/candymaps/geko
 ```
 
+To change the options of a module, mount its file too, beside it (`-v "$PWD/geko-geocoder.toml:/etc/geko/geko-geocoder.toml:ro"`).
+
 The first time, it downloads the data for those countries, builds the indexes and serves them (it answers 503 until then): about 2 minutes for Luxembourg, around an hour for all of Spain (about 8 GB of disk while building and 5 GB afterwards, and 3 GB of memory). Follow it with `docker logs -f geko`. Later starts reuse the `geko-data` volume and only rebuild what changed.
 
-**3. Use it** (geocoding module):
-
-- Test page, with a map: <http://localhost:8080/>
-- Search: <http://localhost:8080/v1/search?text=gran+via+1,+madrid>
-- Autocomplete: `/v1/autocomplete?text=gran+v`; reverse: `/v1/reverse?lat=40.4168&lon=-3.7038`
-- The full API: [openapi.yaml](openapi.yaml), which `geko serve` also serves at `/openapi.yaml` and, browsable with Swagger UI, at `/docs`.
+**3. Use it.** Each module serves its routes under its name: the geocoder at <http://localhost:8080/geocoder/> (its test page, with a map; `/` leads there), with its API in [its README](modules/geko-geocoder/README.md#usage). Common to all of them: `/health`, `/metrics`, the licenses and attribution of the served data at `/v1/attribution`, and the API of the host and of every active module, browsable with Swagger UI, at `/docs` (the host's, [openapi.yaml](openapi.yaml), also at `/openapi.yaml`).
 
 To update: `docker pull ghcr.io/candymaps/geko`, remove the container and start it again with the same command; the data stays in the volume.
-
-## Data sources
-
-By default, the data comes from OpenStreetMap and Overture Maps Places (POIs), for any country. Each country can also contribute its own sources in its pack (`countries/<country>/`), and geko merges them all into a single source of truth, with no duplicates. Spain, for example, adds CartoCiudad ([countries/es/README.md](countries/es/README.md)). OSM cannot be disabled; Overture can, with `enabled = false` in `[sources.overture]`.
-
-Downloading requires `accept_licenses = true` in `[data]`, after reviewing the licenses listed by `geko plan`. The options of each source and of data updates are in [PROJECT.md](docs/PROJECT.md), §4.1 and §7.
 
 ## License
 
@@ -93,8 +84,8 @@ Read the full terms in [LICENSE](LICENSE).
 | Technology | What it is used for |
 |---|---|
 | **Rust** (2024 edition) | The whole engine: download, build, merge, indexes and serving |
-| `clap` | Command line: `geko plan`, `fetch`, `build`, `serve`, `query`, `reverse`, `parse` |
-| `serde`, `serde_json`, `toml` | Configuration (`geko.toml`), bundle and index manifests, JSON responses |
+| `clap` | Command line: `geko plan`, `fetch`, `build`, `serve`, `up`, `purge` and the commands of each module (`geko geocoder query`…) |
+| `serde`, `serde_json`, `toml` | Configuration (`geko.toml`), bundle manifest, JSON responses |
 | `thiserror`, `anyhow` | Typed errors in the libraries and errors with context in the binary |
 | `tracing`, `tracing-subscriber` | Activity logging (downloads, timing of each phase, reloads) |
 | `mimalloc` | Memory allocator. With glibc's, reading OSM spent 32 s in system calls |
@@ -105,54 +96,14 @@ Read the full terms in [LICENSE](LICENSE).
 |---|---|
 | `ureq` (with `rustls`) | Synchronous HTTP client with pure-Rust TLS: downloads with resume, ETag and retries |
 | `sha2`, `md-5`, `hex` | Checksums: md5 of the Geofabrik extracts, sha256 of downloads and bundle artifacts |
-| `zstd` | Compression of the pages downloaded from CartoCiudad (1.2 GB of JSON become 35 MB) |
-| Geofabrik | OpenStreetMap extracts by country and region, with their extract index |
-| IDEE's OGC API Features | CartoCiudad addresses, downloaded by postcode |
-
-### Source reading and data formats
-
-| Technology | What it is used for |
-|---|---|
-| `osmpbf` | Reading OpenStreetMap `.pbf` files, block by block |
-| `flate2` with `zlib-rs` | Decompressing OSM blocks (much faster than the default backend) |
-| `rayon` | Data parallelism: OSM reading, merging and index building |
-| `roaring` | Compact id sets: required OSM nodes and list unions in the engine |
-| **Apache Parquet** (`arrow-array`, `arrow-schema`, `parquet`) | Format of the intermediate data: each source's staging and the merged canonical data (`schemas/`) |
-
-### Geometry and space
-
-| Technology | What it is used for |
-|---|---|
-| `geko-geom` (own) | Joining segments into rings, point in polygon with banded edges, WKB and distances in meters |
-| `rstar` | R-tree: assigning a municipality to each point during the merge, and administrative boundary boxes for reverse geocoding |
-| `h3o` (H3) | Hexagonal cells of the postcode zones, to infer postcodes |
-
-### Merging and country rules
-
-| Technology | What it is used for |
-|---|---|
-| Own merge in Rust (`geko-build`) | Entity resolution with *union-find*, master record, inferred attributes, ids and importance |
-| `text-rules` (own, generic) | Text normalization and query parsing for any country, with the data of its pack: street types, connectors, floor and door words, postcode format. Decimal, DMS and UTM coordinates |
-| `geko-country-pack` (own) | Reads the country packs at startup: text data, regions and what each source needs to know about the country |
-| `countries/es/` pack (data) | Spain: street types in Spanish, Catalan, Galician and Basque, address words, postcode format, provinces and autonomous communities |
-
-### Geocoding module: search and reverse
-
-| Technology | What it is used for |
-|---|---|
-| `fst` | Indexes of words, full names, prefixes and public ids, as compact automata |
-| Levenshtein automata (`fst`) | Typo tolerance in search |
-| `memmap2` | Memory-mapped index files: they open in milliseconds, without copying them |
-| `bytemuck` | Reading the index arrays straight from the mapped file, without copies |
-| Hilbert-packed R-tree (own, in `reverse-rstar`) | Reverse geocoding (addresses, streets every 20 m, POIs and places), read from mapped files |
 
 ### HTTP service
 
 | Technology | What it is used for |
 |---|---|
-| `axum` | HTTP routes of each module's API (geocoding: `/v1/search`, `/v1/autocomplete`, `/v1/reverse`, `/v1/place`; shared: `/health`, `/metrics`) |
+| `axum` | HTTP server of the host: it mounts the routes of each module under its name (`/geocoder/…`) and serves the shared ones (`/health`, `/metrics`, `/v1/attribution`, `/docs`) |
 | `tokio` | Asynchronous server; only `geko serve` uses it |
-| `arc-swap` | Atomic swap of the index version on hot reload |
+| `arc-swap` | Atomic swap of the bundle version on hot reload |
 
 ### Tooling
 

@@ -76,16 +76,18 @@ test() {
     cargo test --workspace --locked
 }
 
-# Modules, sources and country packs are chosen by Cargo feature: each one left out must still
-# compile and pass clippy. Without the pack of Spain, or with only another one, the engine must
-# not depend on it.
+# Modules and sources are chosen by Cargo feature: each one left out must still compile and pass
+# clippy. The host with each module or none, and the geocoder with only the providers it cannot do
+# without.
 features() {
     local set failed=0
-    for set in "" geocoder,source-osm,geocode-fst,reverse-rstar \
-        tiles,source-osm geocoder,tiles,source-osm,geocode-fst,reverse-rstar; do
+    for set in "" geocoder tiles; do
         echo "geko-app features: [${set}]"
         cargo clippy -p geko-app --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
     done
+    set=source-osm,geocode-fst,reverse-rstar
+    echo "geko-module-geocoder features: [$set]"
+    cargo clippy -p geko-module-geocoder --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
     return $failed
 }
 
@@ -111,13 +113,18 @@ only() {
 # one of them is either a rule broken or a decision to write down here.
 architecture() {
     local failed=0
-    only "geko-core depends on" "serde serde_json thiserror" "$(direct_dependencies geko-core)" || failed=1
+    only "geko-core depends on" "geko-module-sdk serde serde_json" "$(direct_dependencies geko-core)" || failed=1
+    # The host knows no module but through the contract of the SDK (docs/MODULES_PLAN.md): nothing
+    # of the geocoder in geko-server, and in geko-app only the module itself, linked in.
+    only "geko-module-sdk depends on" "hex serde serde_json sha2 thiserror" "$(direct_dependencies geko-module-sdk)" || failed=1
+    only "geko-server depends on" "arc-swap axum geko-module-sdk serde serde_json tokio tower-http tracing" "$(direct_dependencies geko-server)" || failed=1
+    only "geko-app depends on" "anyhow clap geko-fetch geko-module-geocoder geko-module-sdk geko-module-tiles geko-server hex mimalloc serde serde_json sha2 tokio toml tracing tracing-subscriber" "$(direct_dependencies geko-app)" || failed=1
     only "fst is used by" "geocode-fst" "$(direct_dependents fst)" || failed=1
     only "levenshtein_automata is used by" "geocode-fst" "$(direct_dependents levenshtein_automata)" || failed=1
     only "osmpbf is used by" "source-osm" "$(direct_dependents osmpbf)" || failed=1
     only "ureq is used by" "geko-fetch geko-eval" "$(direct_dependents ureq)" || failed=1
     only "tokio is used by" "geko-server geko-app" "$(direct_dependents tokio)" || failed=1
-    local http="geko-server geko-module-geocoder geko-module-tiles"
+    local http="geko-server"
     only "axum is used by" "$http" "$(direct_dependents axum)" || failed=1
     only "tower-http is used by" "$http" "$(direct_dependents tower-http)" || failed=1
     return $failed
@@ -215,6 +222,39 @@ base_binaries() {
     echo "$target"
 }
 
+# The layout of the configuration that the binaries of `commit` read: `modules` (the geocoder
+# behind the host, docs/MODULES_PLAN.md, with its own file and its routes under /geocoder) or
+# `legacy` (before them: everything in geko.toml, the routes at the root).
+config_format() {
+    if git cat-file -e "$1:crates/geko-module-sdk/Cargo.toml" 2> /dev/null; then echo modules; else echo legacy; fi
+}
+
+# Where the geocoder of a server on `port` answers, in the layout `format`.
+geocoder_url() { if [ "$2" = modules ]; then echo "http://127.0.0.1:$1/geocoder"; else echo "http://127.0.0.1:$1"; fi; }
+
+# Writes the configuration `file` of a run of the geocoder alone, in the layout `format`: with
+# `modules`, what the geocoder reads goes to its own file beside it, `<name>-geocoder.toml`.
+# `host` is what the host reads before `[serve]` (the scope, `[data]`), `serve` the lines of its
+# `[serve]`, `geocoder_serve` those of the `[serve]` of the geocoder, and `disabled` the sources
+# left out, space separated.
+geko_config() {
+    local file=$1 format=$2 host=$3 serve=$4 geocoder_serve=$5 disabled=$6 own="${1%.toml}-geocoder.toml" source
+    {
+        printf '[modules]\ntiles = false\n'
+        if [ "$format" = modules ]; then printf '\n[modules.geocoder]\nconfig = "%s"\n' "$(basename "$own")"; else echo "geocoder = true"; fi
+        printf '\n%s\n\n[serve]\n%s\n' "$host" "$serve"
+        [ "$format" = modules ] || printf '%s\n' "$geocoder_serve"
+    } > "$file"
+    local sources=$file
+    if [ "$format" = modules ]; then
+        printf '[serve]\n%s\n' "$geocoder_serve" > "$own"
+        sources=$own
+    fi
+    for source in $disabled; do
+        printf '\n[sources.%s]\nenabled = false\n' "$source" >> "$sources"
+    done
+}
+
 # geko with the configuration file `config`, whose data live in the directory that holds it.
 run_geko() { local bin=$1 config=$2; shift 2; GEKO_CONFIG="$config" GEKO_DATA="$(dirname "$config")" "$bin/geko" "$@"; }
 
@@ -268,12 +308,12 @@ check_data() {
 # while 16 autocomplete requests at a time keep it busy: no request may fail, and the server
 # must end up serving the new version.
 reload_under_load() {
-    local bin=$1 dir=$2 port=$3 cases=$4
+    local bin=$1 dir=$2 port=$3 url=$4 cases=$5
     local bundles="$dir/bundles" current copy failed=0
     current=$(readlink "$bundles/current")
     copy="$current-reload"
     rm -rf "${bundles:?}/$copy" && cp -al "$bundles/$current" "$bundles/$copy"
-    "$bin/geko-eval" load --url "http://127.0.0.1:$port" --cases "$cases" --route autocomplete --concurrency 16 \
+    "$bin/geko-eval" load --url "$url" --cases "$cases" --route autocomplete --concurrency 16 \
         --seconds 8 --no-errors --out "$dir/reports/reload.json" &
     local load=$!
     sleep 5
@@ -318,10 +358,9 @@ determinism() {
 # Builds and serves the golden regions (see the top of this file): sets $bin, $dir, $port, $golden
 # and $baseline for the caller, and $server, which the caller must stop.
 golden_serve() {
-    local country regions scope_regions="" offline=false
-    dir=$(golden_dir) country=$(golden_country) regions=$(golden_regions) port="${GEKO_GOLDEN_PORT:-18080}"
+    local country offline=false
+    dir=$(golden_dir) country=$(golden_country) port="${GEKO_GOLDEN_PORT:-18080}"
     golden="countries/$country/golden" baseline="countries/$country/golden/baseline"
-    [ -z "$regions" ] || scope_regions="regions = [$(echo "$regions" | sed 's/[^,][^,]*/"&"/g; s/,/, /g')]"
     mkdir -p "$dir/reports"
     if [ "${GEKO_GOLDEN_FRESH:-0}" = 1 ] || [ ! -f "$golden/snapshot" ]; then
         rm -f "$dir/raw/.snapshot"
@@ -333,59 +372,28 @@ golden_serve() {
     local profile="${GEKO_GOLDEN_PROFILE:-release}"
     cargo build --profile "$profile" --locked -p geko-app -p geko-eval
     bin="${CARGO_TARGET_DIR:-target}/$profile"
-    cat > "$dir/geko.toml" <<EOF
-[modules]
-geocoder = true
-tiles    = false
-
-[[scope]]
-country = "${country^^}"
-$scope_regions
-
-[data]
-accept_licenses = true
-offline         = $offline
-keep_downloads  = true
-
-[serve]
-listen      = "127.0.0.1:$port"
-reload_secs = 1
-# Without the time budget, which cuts wherever the machine is slowest at the moment: the hits,
-# every keystroke too, must be the same on any machine. Spain checks the budget under load.
-search_budget_ms       = 0
-autocomplete_budget_ms = 0
-EOF
-    for source in ${GEKO_GOLDEN_DISABLE-overture}; do
-        printf '\n[sources.%s]\nenabled = false\n' "$source" >> "$dir/geko.toml"
-    done
+    golden_config "$dir/geko.toml" modules "$offline" "$port"
     run_geko "$bin" "$dir/geko.toml" build
     serve "$bin" "$dir/geko.toml" "$dir/serve.log" "$port"
+    url=$(geocoder_url "$port" modules)
 }
 
-# The Pelias and Photon modes must find what the native API finds: they only translate names
-# and shapes. Photon searches as the text is typed, so it is compared with native autocomplete.
-compatible_modes() {
-    local bin="$1" dir="$2" port="$3" golden="$4" failed=0 set
-    local out="$dir/reports/compatible" url="http://127.0.0.1:$port"
-    mkdir -p "$out"
-    for set in generated reverse; do
-        [ -f "$golden/$set.jsonl" ] || continue
-        sed 's/"autocomplete":false/"autocomplete":true/' "$golden/$set.jsonl" > "$out/$set-typed.jsonl"
-        "$bin/geko-eval" run --name native --url "$url" --cases "$golden/$set.jsonl" --out "$out/$set-native.json" > /dev/null
-        "$bin/geko-eval" run --name native-typed --url "$url" --cases "$out/$set-typed.jsonl" --out "$out/$set-native-typed.json" > /dev/null
-        "$bin/geko-eval" run --name pelias --url "$url/pelias" --cases "$golden/$set.jsonl" --out "$out/$set-pelias.json" > /dev/null
-        "$bin/geko-eval" run --name photon --api photon --url "$url/photon" --cases "$golden/$set.jsonl" --out "$out/$set-photon.json" > /dev/null
-        echo "compatible modes, $set:"
-        "$bin/geko-eval" check --baseline "$out/$set-native.json" --report "$out/$set-pelias.json" --ignore-latency --hits-only | grep -E "LOST|lost and|^Error" || true
-        "$bin/geko-eval" check --baseline "$out/$set-native.json" --report "$out/$set-pelias.json" --ignore-latency --hits-only > /dev/null || failed=1
-        "$bin/geko-eval" check --baseline "$out/$set-native-typed.json" --report "$out/$set-photon.json" --ignore-latency --hits-only | grep -E "LOST|lost and|^Error" || true
-        "$bin/geko-eval" check --baseline "$out/$set-native-typed.json" --report "$out/$set-photon.json" --ignore-latency --hits-only > /dev/null || failed=1
-    done
-    return $failed
+# The configuration of the golden in the layout `format`, serving on `port`.
+golden_config() {
+    local file=$1 format=$2 offline=$3 port=$4 regions scope_regions=""
+    regions=$(golden_regions)
+    [ -z "$regions" ] || scope_regions="regions = [$(echo "$regions" | sed 's/[^,][^,]*/"&"/g; s/,/, /g')]"
+    local host
+    host=$(printf '[[scope]]\ncountry = "%s"\n%s\n\n[data]\naccept_licenses = true\noffline         = %s\nkeep_downloads  = true' \
+        "$(golden_country | tr '[:lower:]' '[:upper:]')" "$scope_regions" "$offline")
+    # Without the time budget, which cuts wherever the machine is slowest at the moment: the hits,
+    # every keystroke too, must be the same on any machine. Spain checks the budget under load.
+    geko_config "$file" "$format" "$host" "$(printf 'listen      = "127.0.0.1:%s"\nreload_secs = 1' "$port")" \
+        "$(printf 'search_budget_ms       = 0\nautocomplete_budget_ms = 0')" "${GEKO_GOLDEN_DISABLE-overture}"
 }
 
 golden() {
-    local bin dir port golden baseline server opened_ms cases
+    local bin dir port url golden baseline server opened_ms cases
     local tolerance="${GEKO_GOLDEN_TOLERANCE:-0}" update="${GEKO_GOLDEN_UPDATE:-0}" failed=0
     golden_serve
     trap 'kill $server 2>/dev/null || true' RETURN
@@ -412,7 +420,7 @@ golden() {
         for set in ${GEKO_GOLDEN_SETS:-$(grep -v "^#" "$golden/sets") keystrokes}; do
             cases="$golden/$set.jsonl"
             [ "$set" = keystrokes ] && cases="$dir/reports/keystrokes.jsonl"
-            "$bin/geko-eval" run --name "$set" --url "http://127.0.0.1:$port" --cases "$cases" --out "$dir/reports/$set.json" > /dev/null
+            "$bin/geko-eval" run --name "$set" --url "$url" --cases "$cases" --out "$dir/reports/$set.json" > /dev/null
             if [ "$update" = 1 ]; then
                 mkdir -p "$baseline" && cp "$dir/reports/$set.json" "$baseline/$set.json"
             else
@@ -428,12 +436,11 @@ golden() {
                 echo "no latencies of this machine to compare with: GEKO_LATENCY_UPDATE=1 records them" >&2
             fi
         done
-        compatible_modes "$bin" "$dir" "$port" "$golden" || failed=1
     fi
     if wants robustness; then
-        "$bin/geko-eval" fuzz --url "http://127.0.0.1:$port" --cases "$golden/generated.jsonl" \
+        "$bin/geko-eval" fuzz --url "$url" --cases "$golden/generated.jsonl" \
             --requests "${GEKO_FUZZ_REQUESTS:-5000}" --seed "${GEKO_FUZZ_SEED:-1}" --out "$dir/reports/fuzz.json" || failed=1
-        reload_under_load "$bin" "$dir" "$port" "$golden/generated.jsonl" || failed=1
+        reload_under_load "$bin" "$dir" "$port" "$url" "$golden/generated.jsonl" || failed=1
     fi
     kill "$server" 2>/dev/null || true
     wait "$server" 2>/dev/null || true
@@ -453,18 +460,18 @@ golden() {
 # data change little. Environment: GEKO_PELIAS_URL, the address of the instance of Pelias
 # (required), with the OSM data of the golden regions.
 pelias() {
-    local bin dir port golden baseline server opened_ms failed=0 set
-    local url="${GEKO_PELIAS_URL:?--scope pelias needs GEKO_PELIAS_URL, the address of an instance of Pelias with the same OSM data}"
+    local bin dir port url golden baseline server opened_ms failed=0 set
+    local pelias_url="${GEKO_PELIAS_URL:?--scope pelias needs GEKO_PELIAS_URL, the address of an instance of Pelias with the same OSM data}"
     golden_serve
     trap 'kill $server 2>/dev/null || true' RETURN
     mkdir -p "$dir/pelias"
     for set in generated-osm holdout-osm; do
         local cached="$dir/pelias/$set.json"
         if [ -z "$(find "$cached" -mtime -"${GEKO_PELIAS_MAX_AGE_DAYS:-30}" 2>/dev/null)" ]; then
-            "$bin/geko-eval" run --name pelias --url "$url" --cases "$golden/$set.jsonl" --delay-ms 200 --out "$cached.part" > /dev/null
+            "$bin/geko-eval" run --name pelias --url "$pelias_url" --cases "$golden/$set.jsonl" --delay-ms 200 --out "$cached.part" > /dev/null
             mv "$cached.part" "$cached"
         fi
-        "$bin/geko-eval" run --name geko --url "http://127.0.0.1:$port" --cases "$golden/$set.jsonl" --out "$dir/reports/$set.json" > /dev/null
+        "$bin/geko-eval" run --name geko --url "$url" --cases "$golden/$set.jsonl" --out "$dir/reports/$set.json" > /dev/null
         "$bin/geko-eval" check --baseline "$cached" --report "$dir/reports/$set.json" --ignore-latency --hits-only --total-lead 10 || failed=1
     done
     return $failed
@@ -554,21 +561,23 @@ bench() {
     bundle="$dir/bundles/current"
     if ! instructions "$target/ci/geko-bench" "$bundle" "$cases" "$reverse" "$dir/reports/bench-base.txt" 2> /dev/null; then
         echo "the base cannot read this bundle: it builds its own from the same data"
-        bundle=$(golden_base_bundle "$target/release" "$dir") || return 1
+        bundle=$(golden_base_bundle "$target/release" "$dir" "$(config_format "$base")") || return 1
         instructions "$target/ci/geko-bench" "$bundle" "$cases" "$reverse" "$dir/reports/bench-base.txt" || return 1
     fi
     echo "instructions, base $(git rev-parse --short "$base") and new:"
     compare_instructions "$dir/reports/bench-base.txt" "$dir/reports/bench.txt"
 }
 
-# The bundle that the base binaries in `base_bin` build from the downloads of the golden in `dir`
-# (linked, not copied), in $AB_DIR/golden-<country>, kept between runs. Prints its path.
+# The bundle that the base binaries in `base_bin`, which read configurations in the layout
+# `format`, build from the downloads of the golden in `dir` (linked, not copied), in
+# $AB_DIR/golden-<country>, kept between runs. Prints its path.
 golden_base_bundle() {
-    local base_bin=$1 dir=$2 data
+    local base_bin=$1 dir=$2 format=$3 data
     data="$AB_DIR/golden-$(golden_country)"
     mkdir -p "$data"
     rm -rf "$data/raw" && cp -al "$dir/raw" "$data/raw"
-    cp "$dir/geko.toml" "$data/geko.toml"
+    # The frozen data of the golden: offline, as the build of the working tree.
+    golden_config "$data/geko.toml" "$format" true "${GEKO_GOLDEN_PORT:-18080}"
     run_geko "$base_bin" "$data/geko.toml" build >&2 || return 1
     echo "$data/bundles/current"
 }
@@ -622,7 +631,11 @@ spain() {
     bin=$(realpath "${CARGO_TARGET_DIR:-target}/release")
     base_target=$(base_binaries "$base")
     base_bin="$base_target/release"
-    spain_config "$dir/check-spain.toml" "$dir" "$port" "$offline"
+    # The base reads its own layout of the configuration (`config_format`), over the same data.
+    local base_format
+    base_format=$(config_format "$base")
+    spain_config "$dir/check-spain.toml" "$dir" "$port" "$offline" modules
+    spain_config "$dir/check-spain-base.toml" "$dir" "$port" "$offline" "$base_format"
     # On 8 cores or more, the servers run on the first 4, as the reference hardware (PROJECT.md
     # §1.1), and the client on the others.
     local pin_server="" pin_client=""
@@ -636,7 +649,7 @@ spain() {
     if [ "$(cat "$baseline/commit" 2>/dev/null)" != "$base" ] || [ "$(cat "$baseline/data-id" 2>/dev/null)" != "$data" ] \
         || [ ! -e "$dir/ab/base-data/bundles/current" ]; then
         echo "measuring the baseline of $base"
-        spain_baseline "$bin" "$base_bin" "$dir" "$base_port" "$offline" "$baseline" "$reports" || return 1
+        spain_baseline "$bin" "$base_bin" "$dir" "$base_port" "$offline" "$baseline" "$reports" "$base_format" || return 1
         echo "$base" > "$baseline/commit" && echo "$data" > "$baseline/data-id"
     fi
     # Instructions are the same on every run: those of the base are counted once, on its bundle.
@@ -652,7 +665,7 @@ spain() {
         check_data "$bin" "$dir" es "$baseline/data.json" 0 "$reports" || failed=1
     fi
     if wants results; then
-        spain_hits "$bin" "$dir/check-spain.toml" "$dir" "$port" "$reports" "$reports" || failed=1
+        spain_hits "$bin" "$dir/check-spain.toml" "$dir" "$port" "$reports" "$reports" modules || failed=1
         local set
         for set in spain-generated spain-holdout spain-focus spain-reverse keystrokes; do
             check_report "$bin" "$reports/$set.json" "$baseline/$set.json" "" 0 || failed=1
@@ -669,7 +682,8 @@ spain() {
     # Both servers at once, with the configuration of production.
     "$bin/geko-eval" keystrokes --cases "$golden/spain-generated.jsonl" --cases "$golden/spain-holdout.jsonl" \
         --out "$reports/keystrokes.jsonl" > /dev/null
-    local url="http://127.0.0.1:$port" base_url="http://127.0.0.1:$base_port" base_server base_opened
+    local url base_url base_server base_opened
+    url=$(geocoder_url "$port" modules) base_url=$(geocoder_url "$base_port" "$base_format")
     # shellcheck disable=SC2086
     serve "$base_bin" "$dir/ab/base-data/geko.toml" "$dir/ab/base-data/serve.log" "$base_port" $pin_server
     base_server=$server base_opened=$opened_ms
@@ -723,41 +737,26 @@ spain() {
 }
 
 
-# The configuration of the check, serving on `port`, and beside it the same without the time
+# The configuration of the check in the layout `format`, serving on `port`, and beside it the same without the time
 # budget (`-exact`): the hit rates are measured without it, because it cuts wherever the machine
 # is slowest at the moment, and a few keystrokes would change from one run to the next. The
 # budget is checked where it matters, under load, with the configuration of production.
 spain_config() {
-    local file=$1 dir=$2 port=$3 offline=$4 source
+    local file=$1 dir=$2 port=$3 offline=$4 format=$5 host
     mkdir -p "$dir"
-    cat > "$file" <<EOF
-[modules]
-geocoder = true
-tiles    = false
-
-[[scope]]
-country = "ES"
-
-[data]
-accept_licenses = true
-offline         = $offline
-keep_downloads  = true
-
-[serve]
-listen = "127.0.0.1:$port"
-EOF
-    for source in ${GEKO_SPAIN_DISABLE:-}; do
-        printf '\n[sources.%s]\nenabled = false\n' "$source" >> "$file"
-    done
-    sed 's/^listen = .*/&\nsearch_budget_ms       = 0\nautocomplete_budget_ms = 0/' "$file" > "${file%.toml}-exact.toml"
+    host=$(printf '[[scope]]\ncountry = "ES"\n\n[data]\naccept_licenses = true\noffline         = %s\nkeep_downloads  = true' "$offline")
+    geko_config "$file" "$format" "$host" "listen = \"127.0.0.1:$port\"" "" "${GEKO_SPAIN_DISABLE:-}"
+    geko_config "${file%.toml}-exact.toml" "$format" "$host" "listen = \"127.0.0.1:$port\"" \
+        "$(printf 'search_budget_ms       = 0\nautocomplete_budget_ms = 0')" "${GEKO_SPAIN_DISABLE:-}"
 }
 
 # The hit rates of the server of `config` (served without the time budget) on the reference
 # queries of Spain and every keystroke of them, written to `out`; the keystrokes are written to
-# `reports` the first time.
+# `reports` the first time. `format`: the layout of its configuration.
 spain_hits() {
-    local bin=$1 config=$2 dir=$3 port=$4 reports=$5 out=$6 golden=countries/es/golden set cases
-    local server opened_ms url="http://127.0.0.1:$4"
+    local bin=$1 config=$2 dir=$3 port=$4 reports=$5 out=$6 format=$7 golden=countries/es/golden set cases
+    local server opened_ms url
+    url=$(geocoder_url "$port" "$format")
     serve "$bin" "${config%.toml}-exact.toml" "$dir/check-serve.log" "$port"
     local cold
     cold=$(curl -s -o /dev/null -w '%{time_total}' -G "$url/v1/search" --data-urlencode "text=Calle Mayor 23, Madrid")
@@ -779,8 +778,8 @@ spain_hits() {
 # The baseline of the base commit: its build of the data of `dir`, its data report and hit
 # rates, and a copy of its bundle ($dir/ab/base-data) for the load measured beside the new one.
 spain_baseline() {
-    local bin=$1 base_bin=$2 dir=$3 port=$4 offline=$5 baseline=$6 reports=$7 data="$3/ab/base-data" current
-    run_geko "$base_bin" "$dir/check-spain.toml" build ${GEKO_SPAIN_FORCE:+--force}
+    local bin=$1 base_bin=$2 dir=$3 port=$4 offline=$5 baseline=$6 reports=$7 format=$8 data="$3/ab/base-data" current
+    run_geko "$base_bin" "$dir/check-spain-base.toml" build ${GEKO_SPAIN_FORCE:+--force}
     rm -rf "$baseline" && mkdir -p "$baseline"
     cp "$dir/build_report.json" "$baseline/build.json"
     "$bin/geko-eval" data --canonical "$dir/canonical/ES" --out "$baseline/data.json"
@@ -789,8 +788,8 @@ spain_baseline() {
     rm -rf "$data" && mkdir -p "$data/bundles"
     cp -al "$dir/bundles/$current" "$data/bundles/$current"
     ln -s "$current" "$data/bundles/current"
-    spain_config "$data/geko.toml" "$data" "$port" true
-    spain_hits "$base_bin" "$data/geko.toml" "$data" "$port" "$reports" "$baseline"
+    spain_config "$data/geko.toml" "$data" "$port" true "$format"
+    spain_hits "$base_bin" "$data/geko.toml" "$data" "$port" "$reports" "$baseline" "$format"
 }
 
 # The time of the build, base and new in turns twice, each run rebuilding what the other
@@ -799,7 +798,7 @@ spain_build_ab() {
     local bin=$1 base_bin=$2 dir=$3 reports=$4 side i=0
     for side in base new base new; do
         i=$((i + 1))
-        if [ "$side" = base ]; then run_geko "$base_bin" "$dir/check-spain.toml" build; else run_geko "$bin" "$dir/check-spain.toml" build; fi
+        if [ "$side" = base ]; then run_geko "$base_bin" "$dir/check-spain-base.toml" build; else run_geko "$bin" "$dir/check-spain.toml" build; fi
         cp "$dir/build_report.json" "$reports/build-ab-$i-$side.json"
     done
     python3 - "$reports" <<'EOF'

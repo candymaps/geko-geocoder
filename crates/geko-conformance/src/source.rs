@@ -24,7 +24,6 @@ pub fn check_metadata(p: &dyn SourceProvider, country: CountryCode) {
     assert!(!id.0.is_empty() && id.0.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-'), "id {:?}", id.0);
     let license = p.license();
     assert!(!license.name.is_empty() && !license.attribution.is_empty(), "every source declares its license");
-    assert!(!p.used_by().is_empty(), "a source is used by some module");
     if let Coverage::Countries(list) = p.coverage() {
         assert!(!list.is_empty(), "coverage lists its countries");
     }

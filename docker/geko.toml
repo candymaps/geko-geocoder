@@ -1,5 +1,8 @@
 # Sample configuration of the geko image. Replace it with your own, mounted at
 # /etc/geko/geko.toml: the countries (and regions) to serve, and the licences of their sources.
+# The options of the geocoder (its sources, time budgets, cache…) go in
+# /etc/geko/geko-geocoder.toml, beside it (modules/geko-geocoder/geko-geocoder.toml in the
+# repository lists them all); without it, every default.
 
 [modules]
 geocoder = true
