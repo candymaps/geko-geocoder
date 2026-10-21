@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs `make test` before a push (AGENTS.md, «Comprobaciones»): the deterministic checks that the
+# Runs `make test` before a push (AGENTS.md, «Environment»): the deterministic checks that the
 # CI ran on every push, now that it is off. They test the working tree, so it must be clean: what
 # is pushed is then what was tested. From Git for Windows they run inside WSL, where geko builds.
 # `git push --no-verify` skips them. Enabled with `git config core.hooksPath .githooks`.

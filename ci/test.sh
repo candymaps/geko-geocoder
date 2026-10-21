@@ -497,7 +497,7 @@ BENCH_FACTOR=1.03
 BENCH_PATHS="parse search autocomplete reverse"
 
 # Sets $valgrind: VALGRIND, the one on the PATH, or the one extracted without root where it is
-# not installed (AGENTS.md, «Entorno»). Without it the instruction counts are an error, unless
+# not installed (AGENTS.md, «Environment»). Without it the instruction counts are an error, unless
 # GEKO_BENCH=0 skips them: skipping them in silence hid that they did not run.
 find_valgrind() {
     local extracted="$HOME/.local/valgrind-deb/root/usr"

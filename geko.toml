@@ -1,43 +1,58 @@
+# Every section and option geko accepts, with its default value unless a comment says otherwise.
+# geko reads /etc/geko/geko.toml (or GEKO_CONFIG); `make install` copies this file there if there is none.
+
 [modules]
 geocoder = true
-tiles    = true
+tiles    = true                     # still a skeleton: it serves nothing yet
 
-[[scope]]
-country = "ES"
-regions = ["ES-PM"]
+[[scope]]                           # one per country; no default
+country = "ES"                      # ISO 3166-1
+regions = ["ES-PM"]                 # ISO 3166-2, from the regions of the country pack; empty: the whole country
 
 [data]
-refresh         = "if-changed"     # never | if-changed | always
-max_age_days    = 30               # days between two checks of every source (geko build --refresh: now)
-keep_downloads  = false            # true keeps the downloads after publishing (handy in development)
-offline         = false
-accept_licenses = false
+refresh            = "if-changed"   # never | if-changed | always
+max_age_days       = 30             # days between two checks of every source (geko build --refresh: now)
+keep_downloads     = false          # true keeps the downloads after publishing (handy in development)
+offline            = false          # never contact the sources; keeps the downloads
+accept_licenses    = false          # required to download: review the licenses listed by geko plan
+parallel_downloads = 4              # downloads at the same time
 
+# Every source accepts `enabled = false`, except OSM, which cannot be disabled.
 [sources.osm]
-mirror = "auto"                 # or the URL of a mirror with Geofabrik's layout
+mirror = "auto"                     # or the URL of a mirror with Geofabrik's layout
 
-[sources.cartociudad]           # Spain pack; enabled = false builds Spain with OSM only
-parallel_requests = 4
+[sources.overture]                  # Overture Maps Places, for every country
+enabled        = true
+base           = "https://overturemaps-us-west-2.s3.amazonaws.com"
+release        = "latest"           # or a release such as "2026-09-23.1"
+min_confidence = 0.8                # places Overture is less sure exist are left out (0 to 1)
+
+[sources.cartociudad]               # Spain pack; any key of countries/es/sources/cartociudad.toml can be overridden
+enabled            = true           # false builds Spain without CartoCiudad
+page_size          = 10000          # features per request
+parallel_requests  = 4              # requests at the same time, kept low out of courtesy to a public service
+max_unchanged_days = 365            # a download older than this is made again whatever the catalog says
 
 [packs]
-# registry = "ghcr.io/edgaza/geko/countries"   # where the country packs are downloaded from
+registry = "ghcr.io/edgaza/geko/countries"   # where the country packs are downloaded from
 
 [build]
 keep = 1                            # published versions kept (2 to be able to roll back)
 
 [serve]
-listen      = "0.0.0.0:8080"
-countries   = []                    # empty: every country of the bundle
-preload     = true                  # load the hot index files into RAM at startup
-reload_secs = 30                    # check for a new bundle version this often
+listen                 = "0.0.0.0:8080"     # default "127.0.0.1:8080"; in Docker, always 0.0.0.0:8080
+countries              = []         # empty: every country of the bundle
+preload                = true       # load the hot index files into RAM at startup
+reload_secs            = 30         # check for a new bundle version this often
 search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
 autocomplete_budget_ms = 5          # and of an autocomplete request
+slow_query_ms          = 50         # requests slower than this are logged with their query (0: none)
 same_entity_m          = 100        # results with the same name closer than this are merged (PROJECT.md 6.5.6)
 cors_origins           = []         # origins a browser page may call the API from ("*": any)
 api_keys               = []         # keys a request must carry (Authorization: Bearer, X-Api-Key or api_key=); empty: open
 rate_limit_per_s       = 0          # requests per second from one client address (0: none)
 rate_limit_burst       = 0          # burst above that rate (0: twice the rate)
 batch_max              = 100        # most requests in one /v1/batch
-cache_entries          = 50000      # search and autocomplete answers kept for repeated queries, about 2.5 KB each (0: none)
+cache_entries          = 50000      # default 0 (none); search and autocomplete answers kept for repeated queries, about 2.5 KB each
 bundles_url            = ""         # HTTP address of bundles published on another machine; each reload pulls only what changed
 attribution_contact    = ""         # where to ask for the code of the derivative database (ODbL 4.6), in /v1/attribution

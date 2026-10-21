@@ -50,6 +50,8 @@ country = "ES"            # ISO 3166-1; one [[scope]] per country (LU…)
 accept_licenses = true    # you accept the licenses of the sources: ODbL (OSM), CDLA (Overture), CC BY (CartoCiudad)
 ```
 
+Every section and option geko accepts is in [geko.toml](geko.toml), at the root of the repository, with its default value and what it does: use it as the reference to configure geko.
+
 Without a mounted `geko.toml`, the image uses its sample one: Luxembourg, with the licenses not accepted, so it stops right away asking you to accept them. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
 
 **2. Start it:**
@@ -66,7 +68,7 @@ The first time, it downloads the data for those countries, builds the indexes an
 - Test page, with a map: <http://localhost:8080/>
 - Search: <http://localhost:8080/v1/search?text=gran+via+1,+madrid>
 - Autocomplete: `/v1/autocomplete?text=gran+v`; reverse: `/v1/reverse?lat=40.4168&lon=-3.7038`
-- The full API: [openapi.yaml](openapi.yaml), which `geko serve` also serves at `/openapi.yaml` and, browsable with Swagger UI, at `/docs`. Every `geko.toml` option, with its default value: [geko.toml](geko.toml).
+- The full API: [openapi.yaml](openapi.yaml), which `geko serve` also serves at `/openapi.yaml` and, browsable with Swagger UI, at `/docs`.
 
 To update: `docker pull ghcr.io/edgaza/geko`, remove the container and start it again with the same command; the data stays in the volume.
 
