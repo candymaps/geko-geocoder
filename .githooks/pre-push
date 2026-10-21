@@ -1,0 +1,32 @@
+#!/bin/sh
+# Runs `make test` before a push (CLAUDE.md, «Comprobaciones»): the deterministic checks that the
+# CI ran on every push, now that it is off. They test the working tree, so it must be clean: what
+# is pushed is then what was tested. From Git for Windows they run inside WSL, where geko builds.
+# `git push --no-verify` skips them. Enabled with `git config core.hooksPath .githooks`.
+
+zero=0000000000000000000000000000000000000000
+new=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ "$local_sha" = "$zero" ] && continue
+    [ -n "$(git rev-list "$local_sha" --not --remotes)" ] && new=1
+done
+[ "$new" = 1 ] || exit 0
+
+if [ -n "$(git status --porcelain)" ]; then
+    echo "pre-push: uncommitted changes; make test would not test what is pushed. Commit or stash them, or git push --no-verify" >&2
+    exit 1
+fi
+
+echo "pre-push: make test (git push --no-verify skips it)" >&2
+root=$(git rev-parse --show-toplevel)
+if [ -n "${WSL_DISTRO_NAME:-}" ] || [ "$(uname -s)" = Linux ]; then
+    (cd "$root" && make test)
+else
+    # Without /dev/null, wsl.exe would read the refs that git writes to the hook.
+    dir=$(wsl.exe wslpath -a "$root" < /dev/null | tr -d '\r')
+    # Rust and its target directory as CLAUDE.md sets them (outside /mnt, to build fast).
+    wsl.exe -- bash -lc ". \"\$HOME/.cargo/env\" 2> /dev/null; export CARGO_TARGET_DIR=\"\${CARGO_TARGET_DIR:-\$HOME/.cache/geko-target}\"; cd '$dir' && make test" < /dev/null
+fi
+status=$?
+[ "$status" = 0 ] || echo "pre-push: make test failed; nothing was pushed" >&2
+exit $status

@@ -1,0 +1,195 @@
+# The checks of what a merge to main changed, and its publication. On every push to main (or by
+# hand): `changes` finds what changed since the commit before; `check` and `golden` run the
+# deterministic checks of ci/test.sh on it; and when they pass, `publish` publishes the country
+# packs that changed and, if what goes into it changed, the image, with the version of
+# Cargo.toml. Other branches are checked locally: .githooks/pre-push runs `make test`.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # A publication cut halfway would leave a release without its tag.
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # What changed since the commit before the push: the engine (what goes into the binary, or the
+  # checks), the country packs, and the countries whose golden must run: every one with a golden
+  # when the engine changed, those whose pack changed otherwise. Without the commit before (a new
+  # branch, a forced push, a run by hand), everything.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      engine: ${{ steps.diff.outputs.engine }}
+      packs: ${{ steps.diff.outputs.packs }}
+      countries: ${{ steps.diff.outputs.countries }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          before="${{ github.event.before }}"
+          all=$(for d in countries/*/golden; do basename "$(dirname "$d")"; done)
+          engine=1 packs=1 countries=$all
+          if git cat-file -e "$before^{commit}" 2> /dev/null; then
+            git diff --quiet "$before" HEAD -- crates providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker && engine=0
+            git diff --quiet "$before" HEAD -- countries && packs=0
+            if [ "$engine" = 0 ]; then
+              countries=$(for c in $all; do git diff --quiet "$before" HEAD -- "countries/$c" || echo "$c"; done)
+            fi
+          fi
+          echo "engine=$engine" >> "$GITHUB_OUTPUT"
+          echo "packs=$packs" >> "$GITHUB_OUTPUT"
+          echo "countries=$(printf '%s\n' $countries | jq -Rc '[inputs | select(length > 0)]' -n)" >> "$GITHUB_OUTPUT"
+          echo "engine $engine, packs $packs, golden of: ${countries:-none}"
+
+  # The code and the contracts. The code only when the engine changed; the contracts also when only
+  # a pack did, since each pack has its own tests.
+  check:
+    needs: changes
+    if: needs.changes.outputs.engine == '1' || needs.changes.outputs.packs == '1'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # The toolchain pinned in rust-toolchain.toml.
+      - run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - if: needs.changes.outputs.engine == '1'
+        run: ci/test.sh --variant code
+      - run: ci/test.sh --variant contracts
+
+  # The golden of each country that `changes` lists, on the frozen data of
+  # countries/<country>/golden/snapshot, with no tolerance: hits, data, sizes, robustness and
+  # instructions (counted with the commit before too, on the same runner). The snapshots are the
+  # private packages ghcr.io/edgaza/geko/countries/<country>/golden, read with the token of the
+  # workflow. Without --include-performance: the latencies would be those of another machine.
+  golden:
+    needs: changes
+    if: needs.changes.outputs.countries != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        country: ${{ fromJSON(needs.changes.outputs.countries) }}
+    env:
+      GEKO_GOLDEN_DIR: ${{ github.workspace }}/.geko-golden
+      GEKO_GOLDEN_PROFILE: ci
+      GEKO_BASE: ${{ github.event.before }}
+      GEKO_AB_DIR: ${{ github.workspace }}/.geko-ab
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oras-project/setup-oras@v1
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+      # A snapshot not published yet has nothing to compare with: publish it with
+      # ci/golden-snapshot.sh publish.
+      - run: |
+          file=$(sed -n 's/^file=//p' "countries/${{ matrix.country }}/golden/snapshot")
+          tag=${file#golden-}
+          ref="ghcr.io/edgaza/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
+          oras manifest fetch "$ref" > /dev/null || { echo "::error::$ref is not published"; exit 1; }
+      - run: rustup toolchain install
+      - run: sudo apt-get install -y valgrind
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/cache@v4
+        with:
+          path: .geko-golden/snapshots
+          key: geko-golden-snapshot-${{ matrix.country }}-${{ hashFiles(format('countries/{0}/golden/snapshot', matrix.country)) }}
+      - run: ci/test.sh --variant results,data,robustness,instructions --scope ${{ matrix.country }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-reports-${{ matrix.country }}
+          path: .geko-golden/reports
+
+  # Publishes in ghcr.io, with the version of Cargo.toml:
+  # - on every push, the country packs that changed (ghcr.io/edgaza/geko/countries/<country>,
+  #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
+  #   (not only documentation or packs), the image (ghcr.io/edgaza/geko, tag <version>-<commit>);
+  # - when that version has no git tag yet (it was raised in Cargo.toml), also the tag <version> on
+  #   every pack and on the image, latest on the image, and the git tag v<version>. Raising the
+  #   version is how a release is made.
+  # The image carries no country pack: geko downloads those of its scope (PROJECT.md §2.4). Needs
+  # the secret GEKO_PACK_SIGNING_KEY; GitHub's own token pushes. Only once every check that ran
+  # passed: a check skipped because nothing it covers changed does not hold it.
+  publish:
+    needs: [changes, check, golden]
+    if: >-
+      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'edgaza/geko'
+      && needs.changes.result == 'success'
+      && contains(fromJSON('["success", "skipped"]'), needs.check.result)
+      && contains(fromJSON('["success", "skipped"]'), needs.golden.result)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          commit=$(git rev-parse --short HEAD)
+          release=0
+          git rev-parse -q --verify "refs/tags/v$version" > /dev/null || release=1
+          tags="ghcr.io/edgaza/geko:$version-$commit"
+          [ "$release" = 0 ] || tags="$tags,ghcr.io/edgaza/geko:$version,ghcr.io/edgaza/geko:latest"
+          # A new image only when the push changed what goes into it, or makes a release. Without
+          # the commit before the push (a new branch, a forced push), always.
+          image=1
+          before="${{ github.event.before }}"
+          if [ "$release" = 0 ] && git cat-file -e "$before^{commit}" 2> /dev/null \
+            && git diff --quiet "$before" HEAD -- crates providers languages Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile docker; then
+            image=0
+          fi
+          {
+            echo "version=$version"
+            echo "commit=$commit"
+            echo "release=$release"
+            echo "tags=$tags"
+            echo "image=$image"
+          } >> "$GITHUB_OUTPUT"
+      - run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - uses: oras-project/setup-oras@v1
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: ci/packs.sh publish
+        env:
+          GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
+          GEKO_RELEASE: ${{ steps.version.outputs.release }}
+      - if: steps.version.outputs.image == '1'
+        uses: docker/setup-buildx-action@v3
+      - if: steps.version.outputs.image == '1'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - if: steps.version.outputs.image == '1'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.version.outputs.tags }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.version }}
+            REVISION=${{ steps.version.outputs.commit }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      # The tag goes last: if something could not be published, the next run makes the release again.
+      - if: steps.version.outputs.release == '1'
+        run: |
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"

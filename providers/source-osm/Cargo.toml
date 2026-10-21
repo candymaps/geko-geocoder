@@ -1,0 +1,25 @@
+[package]
+name = "source-osm"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+geko-core.workspace = true
+geko-geom.workspace = true
+arrow-array = "55"
+arrow-schema = "55"
+osmpbf = "0.3"
+# Not used directly: selects the zlib-rs backend for osmpbf's decompression (much faster than miniz_oxide).
+flate2 = { version = "1", default-features = false, features = ["zlib-rs"] }
+parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+rayon = "1"
+roaring = "0.10"
+rustc-hash = "2"
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
+geko-conformance.workspace = true

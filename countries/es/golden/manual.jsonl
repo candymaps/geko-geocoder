@@ -1,0 +1,38 @@
+// Hand-written reference queries for the Balearic Islands (PROJECT.md §13.1): landmarks,
+// names in both official languages and in Spanish, and colloquial forms. Coordinates are the
+// well-known location of each place; tolerances are generous for large places. A chain typed
+// with the town of one of its shops (`manual_chain`, autocomplete) is that shop, not the one in
+// Palma.
+{"category":"manual_landmark","query":"catedral de mallorca","lat":39.5675,"lon":2.6482,"tolerance_m":300}
+{"category":"manual_landmark","query":"la seu palma","lat":39.5675,"lon":2.6482,"tolerance_m":300}
+{"category":"manual_landmark","query":"castell de bellver","lat":39.5638,"lon":2.6197,"tolerance_m":400}
+{"category":"manual_landmark","query":"castillo de bellver","lat":39.5638,"lon":2.6197,"tolerance_m":400}
+{"category":"manual_landmark","query":"aeroport de palma","lat":39.5517,"lon":2.7388,"tolerance_m":2000}
+{"category":"manual_landmark","query":"aeropuerto de palma de mallorca","lat":39.5517,"lon":2.7388,"tolerance_m":2000}
+{"category":"manual_landmark","query":"plaça major palma","lat":39.5714,"lon":2.6518,"tolerance_m":250}
+{"category":"manual_landmark","query":"plaza mayor palma","lat":39.5714,"lon":2.6518,"tolerance_m":250}
+{"category":"manual_landmark","query":"passeig del born palma","lat":39.5694,"lon":2.6457,"tolerance_m":300}
+{"category":"manual_landmark","query":"paseo del borne palma","lat":39.5694,"lon":2.6457,"tolerance_m":300}
+{"category":"manual_place","query":"palma","lat":39.5696,"lon":2.6502,"tolerance_m":4000}
+{"category":"manual_place","query":"palma de mallorca","lat":39.5696,"lon":2.6502,"tolerance_m":4000}
+{"category":"manual_place","query":"soller","lat":39.7667,"lon":2.7150,"tolerance_m":3000}
+{"category":"manual_place","query":"port de pollença","lat":39.9058,"lon":3.0850,"tolerance_m":2500}
+{"category":"manual_place","query":"puerto de pollensa","lat":39.9058,"lon":3.0850,"tolerance_m":2500}
+{"category":"manual_place","query":"eivissa","lat":38.9089,"lon":1.4329,"tolerance_m":4000}
+{"category":"manual_place","query":"ibiza","lat":38.9089,"lon":1.4329,"tolerance_m":4000}
+{"category":"manual_place","query":"maó","lat":39.8885,"lon":4.2658,"tolerance_m":4000}
+{"category":"manual_place","query":"mahon","lat":39.8885,"lon":4.2658,"tolerance_m":4000}
+{"category":"manual_place","query":"ciutadella","lat":40.0012,"lon":3.8406,"tolerance_m":4000}
+{"category":"manual_place","query":"ciudadela de menorca","lat":40.0012,"lon":3.8406,"tolerance_m":4000}
+{"category":"manual_place","query":"alcudia","lat":39.8530,"lon":3.1212,"tolerance_m":4000}
+{"category":"manual_place","query":"magaluf","lat":39.5110,"lon":2.5355,"tolerance_m":2000}
+{"category":"manual_place","query":"cala millor","lat":39.5971,"lon":3.3836,"tolerance_m":2000}
+{"category":"manual_place","query":"valldemossa","lat":39.7104,"lon":2.6222,"tolerance_m":3000}
+{"category":"manual_place","query":"deia","lat":39.7480,"lon":2.6490,"tolerance_m":3000}
+{"category":"manual_place","query":"inca","lat":39.7210,"lon":2.9110,"tolerance_m":3000}
+{"category":"manual_place","query":"manacor","lat":39.5696,"lon":3.2096,"tolerance_m":3000}
+{"category":"manual_place","query":"sant antoni de portmany","lat":38.9806,"lon":1.3036,"tolerance_m":3000}
+{"category":"manual_place","query":"san antonio ibiza","lat":38.9806,"lon":1.3036,"tolerance_m":3000}
+{"category":"manual_chain","query":"deutsche bank alcudia","autocomplete":true,"lat":39.8405804,"lon":3.1372868,"tolerance_m":150}
+{"category":"manual_chain","query":"carrefour express sineu","autocomplete":true,"lat":39.6438047,"lon":3.0112709,"tolerance_m":150}
+{"category":"manual_chain","query":"hiper centro campos","autocomplete":true,"lat":39.4256085,"lon":3.0226002,"tolerance_m":150}

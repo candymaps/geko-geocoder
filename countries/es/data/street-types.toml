@@ -1,0 +1,313 @@
+# Street types of Spain in Spanish, Catalan, Galician and Basque, with their usual abbreviations,
+# mapped to a code common to every language. Built from the leading words of real street names in
+# OSM and CartoCiudad. Words are folded: lowercase, without diacritics.
+#
+# - `words`: every way of writing the type, longest match wins ("poligono industrial").
+# - `display`: one word per language, for the index-time variants of each name.
+# - `generic`: never a street name on its own. Sources write it alone when the name is missing:
+#   1,510 CartoCiudad portals of Baleares are on "CALLE" or "CAMINO". Others are names by
+#   themselves: "La Rambla", "Ronda", "La Plaza", "El Paseo", "Diseminado".
+# - `area`: names an area rather than a way (parks, gardens, estates, neighbourhoods…): a query
+#   starting with one is as likely a place as an address ("Parc Güell").
+
+# Streets of any type are also written as "calle".
+any_type = "CL"
+
+# Types that sources use for one another. CartoCiudad (ICGC data) writes "PASEO" for both
+# "Passeig" and "Passatge": 1,910 streets in the province of Barcelona alone.
+interchanged = [["PS", "PJ"]]
+
+[[types]]
+code = "CL"
+words = ["calle", "calles", "carrer", "c", "cl", "cll", "rua", "kalea", "kale", "k"]
+display = ["calle", "carrer", "rua", "kalea"]
+generic = true
+
+[[types]]
+code = "AV"
+words = ["avenida", "avinguda", "av", "avda", "avd", "avgda", "avnda", "etorbidea"]
+display = ["avenida", "avinguda", "etorbidea"]
+generic = true
+
+[[types]]
+code = "PZ"
+words = ["plaza", "placa", "pl", "pza", "plz", "praza", "plazuela", "placeta", "plazoleta", "enparantza"]
+display = ["plaza", "placa", "praza", "enparantza"]
+
+[[types]]
+code = "PS"
+words = ["paseo", "passeig", "pg", "ps", "pso", "passeio", "pasealekua"]
+display = ["paseo", "passeig", "pasealekua"]
+
+[[types]]
+code = "CM"
+words = ["camino", "cami", "cno", "cmno", "bidea"]
+display = ["camino", "cami", "bidea"]
+generic = true
+
+[[types]]
+code = "CR"
+words = ["carretera", "ctra", "crta", "cra", "estrada", "errepidea"]
+display = ["carretera", "estrada", "errepidea"]
+generic = true
+
+[[types]]
+code = "RB"
+words = ["rambla", "rbla"]
+display = ["rambla"]
+
+[[types]]
+code = "RD"
+words = ["ronda", "rda"]
+display = ["ronda"]
+
+[[types]]
+code = "TR"
+words = ["travesia", "travessia", "travessera", "trav", "trv", "tv"]
+display = ["travesia", "travessera"]
+generic = true
+
+[[types]]
+code = "PJ"
+words = ["pasaje", "passatge", "ptge", "psje", "pje", "pasatge"]
+display = ["pasaje", "passatge"]
+generic = true
+
+[[types]]
+code = "UR"
+words = ["urbanizacion", "urbanitzacio", "urb"]
+display = ["urbanizacion", "urbanitzacio"]
+generic = true
+area = true
+
+[[types]]
+code = "DS"
+words = ["diseminado", "diseminados", "disseminat", "disseminats"]
+display = ["diseminado", "disseminat"]
+area = true
+
+[[types]]
+code = "BO"
+words = ["barrio", "barri", "barriada", "bo", "auzoa"]
+display = ["barrio", "barri", "auzoa"]
+area = true
+
+[[types]]
+code = "CJ"
+words = ["callejon", "carrero", "cjon"]
+display = ["callejon", "carrero"]
+
+[[types]]
+code = "GL"
+words = ["glorieta", "rotonda"]
+display = ["glorieta", "rotonda"]
+
+[[types]]
+code = "PQ"
+words = ["parque", "parc"]
+display = ["parque", "parc"]
+area = true
+
+[[types]]
+code = "PO"
+words = ["poligono industrial", "poligon industrial", "poligono", "poligon", "pol"]
+display = ["poligono", "poligon"]
+generic = true
+area = true
+
+[[types]]
+code = "SD"
+words = ["senda", "sendero", "corriol"]
+display = ["senda", "corriol"]
+
+[[types]]
+code = "BJ"
+words = ["bajada", "baixada"]
+display = ["bajada", "baixada"]
+
+[[types]]
+code = "SU"
+words = ["subida", "pujada"]
+display = ["subida", "pujada"]
+
+[[types]]
+code = "ES"
+words = ["escalinata", "escalera", "escaleras", "escales"]
+display = ["escalera", "escales"]
+
+[[types]]
+code = "MU"
+words = ["muelle", "moll"]
+display = ["muelle", "moll"]
+
+[[types]]
+code = "LG"
+words = ["lugar", "lloc", "paraje", "paratge"]
+display = ["lugar", "paraje", "paratge"]
+area = true
+
+[[types]]
+code = "CS"
+words = ["cuesta", "costa"]
+display = ["cuesta", "costa"]
+
+[[types]]
+code = "PU"
+words = ["puente", "pont"]
+display = ["puente", "pont"]
+
+[[types]]
+code = "AL"
+words = ["alameda"]
+display = ["alameda"]
+
+[[types]]
+code = "RI"
+words = ["riera"]
+display = ["riera"]
+
+[[types]]
+code = "TO"
+words = ["torrente", "torrent"]
+display = ["torrente", "torrent"]
+
+[[types]]
+code = "VI"
+words = ["via"]
+display = ["via"]
+
+[[types]]
+code = "AU"
+words = ["autopista", "autovia"]
+display = ["autopista", "autovia"]
+
+[[types]]
+code = "AC"
+words = ["acceso", "acces"]
+display = ["acceso", "acces"]
+
+[[types]]
+code = "MS"
+words = ["masia", "masias", "masies"]
+display = ["masia"]
+area = true
+
+[[types]]
+code = "VE"
+words = ["vecindario", "veinat"]
+display = ["vecindario", "veinat"]
+area = true
+
+[[types]]
+code = "GR"
+words = ["grupo", "grup"]
+display = ["grupo", "grup"]
+area = true
+
+[[types]]
+code = "CO"
+words = ["colonia"]
+display = ["colonia"]
+area = true
+
+[[types]]
+code = "SE"
+words = ["sector"]
+display = ["sector"]
+area = true
+
+[[types]]
+code = "AR"
+words = ["arrabal", "raval"]
+display = ["arrabal", "raval"]
+area = true
+
+[[types]]
+code = "JR"
+words = ["jardin", "jardines", "jardi", "jardins"]
+display = ["jardin", "jardins"]
+area = true
+
+[[types]]
+code = "ED"
+words = ["edificio", "edifici"]
+display = ["edificio", "edifici"]
+area = true
+
+[[types]]
+code = "TU"
+words = ["tunel"]
+display = ["tunel"]
+
+[[types]]
+code = "CI"
+words = ["cinturon"]
+display = ["cinturon"]
+
+[[types]]
+code = "PR"
+words = ["prolongacion", "prolongacio"]
+display = ["prolongacion", "prolongacio"]
+
+[[types]]
+code = "DR"
+words = ["drecera"]
+display = ["drecera"]
+
+[[types]]
+code = "ZN"
+words = ["zona"]
+display = ["zona"]
+area = true
+
+[[types]]
+code = "EN"
+words = ["entrada"]
+display = ["entrada"]
+
+[[types]]
+code = "IL"
+words = ["illa"]
+display = ["illa"]
+area = true
+
+[[types]]
+code = "MR"
+words = ["muralla"]
+display = ["muralla"]
+
+[[types]]
+code = "PT"
+words = ["puerto"]
+display = ["puerto"]
+area = true
+
+[[types]]
+code = "CC"
+words = ["carril"]
+display = ["carril"]
+
+[[types]]
+code = "SA"
+words = ["salida", "sortida"]
+display = ["salida", "sortida"]
+
+[[types]]
+code = "EL"
+words = ["enlace", "enllac"]
+display = ["enlace", "enllac"]
+
+[[types]]
+code = "EX"
+words = ["eix"]
+display = ["eix"]
+
+[[types]]
+code = "VA"
+words = ["variante", "variant"]
+display = ["variante", "variant"]
+
+[[types]]
+code = "PI"
+words = ["pista"]
+display = ["pista"]

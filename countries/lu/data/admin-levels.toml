@@ -1,0 +1,10 @@
+# The OSM admin_level of each kind of administrative unit in Luxembourg
+# (https://wiki.openstreetmap.org/wiki/Tag:boundary=administrative#Country_specific_values).
+# Luxembourg has no regions or provinces people search an address by: the cantons (6) are left
+# out, and so are the districts that some old data still carry (3).
+
+country = [2]
+region = []
+province = []
+municipality = [8]  # commune / Gemeng / Gemeinde
+neighbourhood = [9, 10]  # localité, quartier

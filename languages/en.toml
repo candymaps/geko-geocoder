@@ -1,0 +1,39 @@
+# Street types in English, for queries in any country whose pack does not have them: a visitor
+# types "Femenies Street" or "Street Femenies" for "Carrer de Femenies". Read only in queries,
+# never in the names of the sources. Words are folded: lowercase, without diacritics.
+#
+# - `words`: how the type is written in English. Abbreviations that are words or names in other
+#   languages are left out ("st" is "Sant" in Catalan, "ave" a bird in Spanish).
+# - `after`: written after the name in English; a query may still put it first.
+# - `same_as`: the type in other languages. A pack type is this one if it has any of these
+#   words, the first such type of the pack.
+
+[[street_types]]
+words = ["street"]
+after = true
+same_as = ["calle", "carrer", "rua", "kalea", "rue", "strasse", "strooss", "via", "straat", "gata", "gade", "gatan", "ulica"]
+
+[[street_types]]
+words = ["avenue"]
+after = true
+same_as = ["avenida", "avinguda", "etorbidea", "avenue", "viale", "allee"]
+
+[[street_types]]
+words = ["road", "rd"]
+after = true
+same_as = ["carretera", "estrada", "errepidea", "route", "strada"]
+
+[[street_types]]
+words = ["square", "sq"]
+after = true
+same_as = ["plaza", "placa", "praza", "enparantza", "place", "platz", "plaz", "piazza", "praca", "plein"]
+
+[[street_types]]
+words = ["boulevard", "blvd"]
+after = true
+same_as = ["boulevard", "bulevar", "bulevard", "bd"]
+
+[[street_types]]
+words = ["promenade"]
+after = true
+same_as = ["paseo", "passeig", "pasealekua", "promenade", "passeio"]

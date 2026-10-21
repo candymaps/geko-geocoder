@@ -1,0 +1,48 @@
+{
+  "bundle": {
+    "bytes": 70644578,
+    "hot_bytes": 16581693,
+    "version": "v2026-10-21T142127"
+  },
+  "packs": {
+    "ES": 1
+  },
+  "stages": [
+    {
+      "elapsed_ms": 16,
+      "peak_mb": 18,
+      "reused": false,
+      "stage": "fetch and stage"
+    },
+    {
+      "elapsed_ms": 1,
+      "peak_mb": 18,
+      "reused": true,
+      "stage": "relocate ES"
+    },
+    {
+      "elapsed_ms": 3,
+      "peak_mb": 18,
+      "reused": true,
+      "stage": "fuse ES"
+    },
+    {
+      "elapsed_ms": 1,
+      "peak_mb": 18,
+      "reused": true,
+      "stage": "index ES"
+    },
+    {
+      "elapsed_ms": 0,
+      "peak_mb": 18,
+      "reused": true,
+      "stage": "reverse ES"
+    },
+    {
+      "elapsed_ms": 50,
+      "peak_mb": 20,
+      "reused": true,
+      "stage": "publish"
+    }
+  ]
+}

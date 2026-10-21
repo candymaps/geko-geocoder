@@ -1,0 +1,17 @@
+# Configuration of `make dev`: a small scope to try the code of the working tree in a container.
+# Replace it with `make dev DEV_CONFIG=<file>`.
+
+[modules]
+geocoder = true
+tiles    = false
+
+[[scope]]
+country = "ES"
+regions = ["ES-PM"]     # the Balearic Islands, as the golden; country = "LU" is faster still
+
+[data]
+accept_licenses = true  # you accept the licences of the sources: ODbL (OSM), CDLA (Overture), CC BY (CartoCiudad)
+keep_downloads  = true  # the code changes often: a staging to repeat does not download its data again
+
+[serve]
+listen = "0.0.0.0:8080"

@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "addresses": 166133,
+    "conflicts": 0,
+    "places": 2321,
+    "pois": 16857,
+    "postcodes": 4152,
+    "streets": 9999
+  },
+  "records": {
+    "addresses.osm": 169788,
+    "admins.osm": 313,
+    "places.osm": 2162,
+    "pois.osm": 24132,
+    "streets.osm": 31340
+  },
+  "inferred": {
+    "address_postcodes": 18,
+    "poi_addresses": 9623,
+    "poi_postcodes": 16555
+  },
+  "duplicates": {
+    "duplicate_addresses": 0,
+    "duplicate_streets": 1,
+    "homonymous_streets": 1195
+  },
+  "problems": {
+    "addresses_in_an_unknown_municipality": 0,
+    "addresses_with_an_unknown_postcode": 0,
+    "addresses_without_municipality": 0,
+    "addresses_without_street": 0,
+    "pois_in_an_unknown_municipality": 0,
+    "pois_with_an_unknown_postcode": 0,
+    "pois_without_municipality": 27,
+    "repeated_public_ids": 0,
+    "streets_in_an_unknown_municipality": 0,
+    "streets_without_municipality": 3
+  }
+}

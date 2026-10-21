@@ -1,0 +1,9 @@
+# The OSM admin_level of each kind of administrative unit in Spain
+# (https://wiki.openstreetmap.org/wiki/Tag:boundary=administrative#Country_specific_values).
+# 7 (comarca) and 5 are left out: not units people search an address by.
+
+country = [2]
+region = [4]        # comunidad autónoma
+province = [6]
+municipality = [8]
+neighbourhood = [9, 10]  # entidad local menor, barrio

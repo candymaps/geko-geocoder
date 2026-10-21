@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>geko</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; font: 15px system-ui, sans-serif; }
+  #map { position: absolute; inset: 0; }
+  #panel { position: absolute; z-index: 1000; top: 12px; left: 12px; width: min(420px, calc(100% - 24px));
+           background: #fff; border-radius: 8px; box-shadow: 0 2px 10px #0004; }
+  #text { box-sizing: border-box; width: 100%; padding: 12px; border: 0; border-radius: 8px; font: inherit; }
+  #results { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow: auto; }
+  #results li { padding: 8px 12px; border-top: 1px solid #eee; cursor: pointer; }
+  #results li:hover { background: #f3f3f3; }
+  #results small { color: #666; }
+  #status { padding: 4px 12px 8px; color: #666; font-size: 12px; }
+  .option { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-top: 1px solid #eee;
+            color: #444; font-size: 13px; cursor: pointer; user-select: none; }
+  #docs { position: absolute; z-index: 1000; top: 12px; right: 12px; padding: 10px 14px; background: #fff;
+          border-radius: 8px; box-shadow: 0 2px 10px #0004; color: #222; text-decoration: none; font-weight: 600; }
+  #docs:hover { background: #f3f3f3; }
+  /* On a narrow screen the panel takes the whole top. */
+  @media (max-width: 520px) { #docs { top: auto; bottom: 32px; } }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<a id="docs" href="/docs" title="API reference (OpenAPI)">API docs</a>
+<div id="panel">
+  <input id="text" placeholder="Search an address, a street, a place…" autocomplete="off" autofocus>
+  <label class="option"><input type="checkbox" id="focus" checked> Focus on the pin (drag it on the map)</label>
+  <label class="option"><input type="checkbox" id="bbox"> Only within the visible map</label>
+  <ul id="results"></ul>
+  <div id="status">Type to autocomplete, Enter to search. Click the map to reverse geocode; drag the pin to move the focus.</div>
+</div>
+<script>
+const map = L.map('map', { zoomControl: false }).setView([40.4, -3.7], 6);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+const layer = L.layerGroup().addTo(map);
+fetch('/v1/attribution').then(r => r.json()).then(a => {
+  const credits = a.sources.map(s => s.attribution).join(' · ');
+  map.attributionControl.addAttribution(`Results: ${credits} · <a href="/v1/attribution">licenses</a>`);
+}).catch(() => {});
+const text = document.getElementById('text');
+const list = document.getElementById('results');
+const status = document.getElementById('status');
+const focus = document.getElementById('focus');
+const bbox = document.getElementById('bbox');
+let latest = 0;
+try {
+  focus.checked = localStorage.getItem('geko.focus') !== 'off';
+  bbox.checked = localStorage.getItem('geko.bbox') === 'on';
+} catch {}
+// The focus of searches: a pin that is dragged around the map. It starts where it was left, or
+// at the centre of the map.
+let start = map.getCenter();
+try {
+  const saved = JSON.parse(localStorage.getItem('geko.pin'));
+  if (saved && Number.isFinite(saved.lat) && Number.isFinite(saved.lng)) start = L.latLng(saved.lat, saved.lng);
+} catch {}
+const pin = L.marker(start, { draggable: true, autoPan: true, zIndexOffset: 1000, title: 'Focus of the search: drag it' })
+  .bindTooltip('Focus', { direction: 'top', offset: [-15, -28] });
+function showPin() {
+  if (focus.checked) pin.addTo(map); else pin.remove();
+}
+function refresh() {
+  if (text.value.trim()) ask('autocomplete', { text: text.value });
+}
+showPin();
+pin.on('dragend', () => {
+  const p = pin.getLatLng();
+  try { localStorage.setItem('geko.pin', JSON.stringify({ lat: p.lat, lng: p.lng })); } catch {}
+  refresh();
+});
+bbox.addEventListener('change', () => {
+  try { localStorage.setItem('geko.bbox', bbox.checked ? 'on' : 'off'); } catch {}
+  refresh();
+});
+// With the box on, moving the map changes what can be found.
+map.on('moveend', () => { if (bbox.checked) refresh(); });
+focus.addEventListener('change', () => {
+  try { localStorage.setItem('geko.focus', focus.checked ? 'on' : 'off'); } catch {}
+  showPin();
+  refresh();
+});
+
+function show(features, ms) {
+  list.replaceChildren();
+  layer.clearLayers();
+  for (const f of features) {
+    const [lon, lat] = f.geometry.coordinates;
+    const p = f.properties;
+    const li = document.createElement('li');
+    li.append(p.label || p.name);
+    const meta = document.createElement('small');
+    meta.textContent = ` ${p.layer} · ${p.confidence}`;
+    li.append(meta);
+    li.onclick = () => map.setView([lat, lon], 17);
+    list.append(li);
+    L.circleMarker([lat, lon], { radius: 6 }).bindTooltip(p.label || p.name).addTo(layer);
+  }
+  status.textContent = `${features.length} results · ${ms} ms on the server`;
+}
+
+async function ask(route, params) {
+  const id = ++latest;
+  const c = pin.getLatLng();
+  // A reverse query has its own point: the focus only biases searches.
+  const searching = route !== 'reverse';
+  const box = map.getBounds();
+  const q = new URLSearchParams({
+    ...params,
+    ...(searching && focus.checked ? { 'focus.point.lat': c.lat, 'focus.point.lon': c.lng } : {}),
+    ...(searching && bbox.checked ? {
+      'boundary.rect.min_lat': box.getSouth(), 'boundary.rect.min_lon': box.getWest(),
+      'boundary.rect.max_lat': box.getNorth(), 'boundary.rect.max_lon': box.getEast(),
+    } : {}),
+    size: 8,
+  });
+  const r = await fetch(`/v1/${route}?${q}`);
+  if (id !== latest) return null;
+  if (!r.ok) { status.textContent = (await r.json()).error || r.statusText; return null; }
+  const body = await r.json();
+  show(body.features, (body.geocoding.timing_us / 1000).toFixed(1));
+  return body.features;
+}
+
+text.addEventListener('input', () => { if (text.value.trim()) ask('autocomplete', { text: text.value }); });
+text.addEventListener('keydown', async e => {
+  if (e.key !== 'Enter' || !text.value.trim()) return;
+  const features = await ask('search', { text: text.value });
+  if (features && features.length) {
+    const [lon, lat] = features[0].geometry.coordinates;
+    map.setView([lat, lon], 16);
+  }
+});
+map.on('click', e => ask('reverse', { 'point.lat': e.latlng.lat, 'point.lon': e.latlng.lng }));
+</script>
+</body>
+</html>

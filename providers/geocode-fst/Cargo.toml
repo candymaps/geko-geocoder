@@ -1,0 +1,24 @@
+[package]
+name = "geocode-fst"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+geko-core.workspace = true
+geko-geom.workspace = true
+arrow-array = "55"
+bytemuck = "1"
+fst = "0.4"
+levenshtein_automata = "0.2"
+memmap2 = "0.9"
+parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+roaring = "0.10"
+serde.workspace = true
+serde_json.workspace = true
+rayon = "1"
+
+[dev-dependencies]
+country-pack-es.workspace = true
+geko-conformance.workspace = true
+tempfile = "3"

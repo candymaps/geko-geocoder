@@ -1,0 +1,420 @@
+{
+  "name": "manual",
+  "url": "http://127.0.0.1:18080",
+  "categories": {
+    "manual_chain": {
+      "cases": 3,
+      "top1": 1.0,
+      "top5": 1.0,
+      "mrr": 1.0,
+      "p50_ms": 4.548052,
+      "p95_ms": 4.900200000000001,
+      "p99_ms": 4.900200000000001,
+      "errors": 0,
+      "duplicates": 0
+    },
+    "manual_landmark": {
+      "cases": 10,
+      "top1": 0.9,
+      "top5": 0.9,
+      "mrr": 0.9,
+      "p50_ms": 14.398631,
+      "p95_ms": 55.469570000000004,
+      "p99_ms": 55.469570000000004,
+      "errors": 0,
+      "duplicates": 0
+    },
+    "manual_place": {
+      "cases": 20,
+      "top1": 0.95,
+      "top5": 1.0,
+      "mrr": 0.975,
+      "p50_ms": 2.198089,
+      "p95_ms": 4.752847999999999,
+      "p99_ms": 6.807271,
+      "errors": 0,
+      "duplicates": 0
+    }
+  },
+  "total": {
+    "cases": 33,
+    "top1": 0.9393939393939394,
+    "top5": 0.9696969696969697,
+    "mrr": 0.9545454545454546,
+    "p50_ms": 2.393405,
+    "p95_ms": 15.958656000000001,
+    "p99_ms": 55.469570000000004,
+    "errors": 0,
+    "duplicates": 0
+  },
+  "calibration": {
+    "cases": 33,
+    "ece": 0.1948787878787879,
+    "brier": 0.1241679090909091
+  },
+  "outcomes": [
+    {
+      "category": "manual_landmark",
+      "query": "catedral de mallorca",
+      "rank": 0,
+      "latency_ms": 55.469570000000004,
+      "first_label": "La Seu, Palma",
+      "first_distance_m": 16.52183441172582,
+      "first_confidence": 0.956,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "la seu palma",
+      "rank": 0,
+      "latency_ms": 32.500775000000004,
+      "first_label": "La Seu, Palma",
+      "first_distance_m": 16.52183441172582,
+      "first_confidence": 0.948,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "castell de bellver",
+      "rank": 0,
+      "latency_ms": 14.604167,
+      "first_label": "Castell de Bellver, Palma",
+      "first_distance_m": 42.14775984544883,
+      "first_confidence": 0.951,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "castillo de bellver",
+      "rank": 0,
+      "latency_ms": 0.627329,
+      "first_label": "Castell de Bellver, Palma",
+      "first_distance_m": 42.14775984544883,
+      "first_confidence": 0.995,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "aeroport de palma",
+      "rank": 0,
+      "latency_ms": 15.958656000000001,
+      "first_label": "Aeroport de Palma - Son Sant Joan, Palma",
+      "first_distance_m": 619.5648119813465,
+      "first_confidence": 0.601,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "aeropuerto de palma de mallorca",
+      "rank": 0,
+      "latency_ms": 0.7414000000000001,
+      "first_label": "Aeroport de Palma - Son Sant Joan, Palma",
+      "first_distance_m": 619.5648119813465,
+      "first_confidence": 0.992,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "plaça major palma",
+      "rank": 0,
+      "latency_ms": 14.398631,
+      "first_label": "Plaça Major, Palma",
+      "first_distance_m": 18.125280899419888,
+      "first_confidence": 0.632,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "plaza mayor palma",
+      "rank": 0,
+      "latency_ms": 1.074998,
+      "first_label": "Plaça Major, Palma",
+      "first_distance_m": 18.125280899419888,
+      "first_confidence": 0.632,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "passeig del born palma",
+      "rank": 0,
+      "latency_ms": 9.67727,
+      "first_label": "Passeig del Born, Palma",
+      "first_distance_m": 56.54690891627244,
+      "first_confidence": 0.918,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_landmark",
+      "query": "paseo del borne palma",
+      "rank": null,
+      "latency_ms": 4.158214,
+      "first_label": "Pla des Born, Esporles",
+      "first_distance_m": 9976.403680389785,
+      "first_confidence": 0.374,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "palma",
+      "rank": 0,
+      "latency_ms": 2.198089,
+      "first_label": "Palma, Illes Balears",
+      "first_distance_m": 10.955721672882628,
+      "first_confidence": 0.866,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "palma de mallorca",
+      "rank": 0,
+      "latency_ms": 2.248151,
+      "first_label": "Palma, Illes Balears",
+      "first_distance_m": 10.955721672882628,
+      "first_confidence": 0.954,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "soller",
+      "rank": 0,
+      "latency_ms": 6.807271,
+      "first_label": "Sóller, Illes Balears",
+      "first_distance_m": 43.951652855206646,
+      "first_confidence": 0.838,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "port de pollença",
+      "rank": 0,
+      "latency_ms": 4.229046,
+      "first_label": "Port de Pollença, Pollença",
+      "first_distance_m": 309.3121655464475,
+      "first_confidence": 0.943,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "puerto de pollensa",
+      "rank": 0,
+      "latency_ms": 2.133946,
+      "first_label": "Port de Pollença, Pollença",
+      "first_distance_m": 309.3121655464475,
+      "first_confidence": 0.995,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "eivissa",
+      "rank": 0,
+      "latency_ms": 4.752847999999999,
+      "first_label": "Eivissa, Illes Balears",
+      "first_distance_m": 248.37562818036545,
+      "first_confidence": 0.885,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "ibiza",
+      "rank": 0,
+      "latency_ms": 3.8337309999999998,
+      "first_label": "Eivissa, Illes Balears",
+      "first_distance_m": 248.37562818036545,
+      "first_confidence": 0.885,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "maó",
+      "rank": 0,
+      "latency_ms": 1.8172679999999999,
+      "first_label": "Maó, Illes Balears",
+      "first_distance_m": 115.09266808200869,
+      "first_confidence": 0.897,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "mahon",
+      "rank": 0,
+      "latency_ms": 2.393405,
+      "first_label": "Maó, Illes Balears",
+      "first_distance_m": 115.09266808200869,
+      "first_confidence": 0.897,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "ciutadella",
+      "rank": 0,
+      "latency_ms": 2.983313,
+      "first_label": "Ciutadella, Illes Balears",
+      "first_distance_m": 464.96219060566693,
+      "first_confidence": 0.877,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "ciudadela de menorca",
+      "rank": 0,
+      "latency_ms": 0.5096029999999999,
+      "first_label": "Ciutadella, Illes Balears",
+      "first_distance_m": 464.96219060566693,
+      "first_confidence": 0.827,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "alcudia",
+      "rank": 0,
+      "latency_ms": 1.034418,
+      "first_label": "Alcúdia, Illes Balears",
+      "first_distance_m": 27.683415351092293,
+      "first_confidence": 0.843,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "magaluf",
+      "rank": 0,
+      "latency_ms": 2.122398,
+      "first_label": "Magaluf, Calvià",
+      "first_distance_m": 159.495401646684,
+      "first_confidence": 0.738,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "cala millor",
+      "rank": 0,
+      "latency_ms": 2.722269,
+      "first_label": "Cala Millor, Son Servera",
+      "first_distance_m": 845.2485287129143,
+      "first_confidence": 0.771,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "valldemossa",
+      "rank": 0,
+      "latency_ms": 1.018893,
+      "first_label": "Valldemossa, Illes Balears",
+      "first_distance_m": 86.2896454711979,
+      "first_confidence": 0.815,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "deia",
+      "rank": 0,
+      "latency_ms": 1.825957,
+      "first_label": "Deià, Illes Balears",
+      "first_distance_m": 63.34043141760416,
+      "first_confidence": 0.875,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "inca",
+      "rank": 0,
+      "latency_ms": 1.2139710000000001,
+      "first_label": "Inca, Illes Balears",
+      "first_distance_m": 20.49706738831321,
+      "first_confidence": 0.85,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "manacor",
+      "rank": 0,
+      "latency_ms": 0.445635,
+      "first_label": "Manacor, Illes Balears",
+      "first_distance_m": 89.90977612916558,
+      "first_confidence": 0.849,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "sant antoni de portmany",
+      "rank": 0,
+      "latency_ms": 2.360501,
+      "first_label": "Sant Antoni de Portmany, Illes Balears",
+      "first_distance_m": 355.588620209059,
+      "first_confidence": 0.769,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_place",
+      "query": "san antonio ibiza",
+      "rank": 1,
+      "latency_ms": 2.184313,
+      "first_label": "Carrer de Sant Antoni, Eivissa",
+      "first_distance_m": 13881.217214414426,
+      "first_confidence": 0.77,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_chain",
+      "query": "deutsche bank alcudia",
+      "rank": 0,
+      "latency_ms": 4.900200000000001,
+      "first_label": "Deutsche Bank, Alcúdia",
+      "first_distance_m": 0.0,
+      "first_confidence": 0.09,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_chain",
+      "query": "carrefour express sineu",
+      "rank": 0,
+      "latency_ms": 3.05708,
+      "first_label": "Carrefour Express, Sineu",
+      "first_distance_m": 0.0,
+      "first_confidence": 0.09,
+      "duplicates": false,
+      "error": null
+    },
+    {
+      "category": "manual_chain",
+      "query": "hiper centro campos",
+      "rank": 0,
+      "latency_ms": 4.548052,
+      "first_label": "Hiper Centro, Campos",
+      "first_distance_m": 0.0,
+      "first_confidence": 0.09,
+      "duplicates": false,
+      "error": null
+    }
+  ]
+}

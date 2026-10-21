@@ -1,0 +1,43 @@
+[modules]
+geocoder = true
+tiles    = true
+
+[[scope]]
+country = "ES"
+regions = ["ES-PM"]
+
+[data]
+refresh         = "if-changed"     # never | if-changed | always
+max_age_days    = 30               # days between two checks of every source (geko build --refresh: now)
+keep_downloads  = false            # true keeps the downloads after publishing (handy in development)
+offline         = false
+accept_licenses = false
+
+[sources.osm]
+mirror = "auto"                 # or the URL of a mirror with Geofabrik's layout
+
+[sources.cartociudad]           # Spain pack; enabled = false builds Spain with OSM only
+parallel_requests = 4
+
+[packs]
+# registry = "ghcr.io/edgaza/geko/countries"   # where the country packs are downloaded from
+
+[build]
+keep = 1                            # published versions kept (2 to be able to roll back)
+
+[serve]
+listen      = "0.0.0.0:8080"
+countries   = []                    # empty: every country of the bundle
+preload     = true                  # load the hot index files into RAM at startup
+reload_secs = 30                    # check for a new bundle version this often
+search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
+autocomplete_budget_ms = 5          # and of an autocomplete request
+same_entity_m          = 100        # results with the same name closer than this are merged (PROJECT.md 6.5.6)
+cors_origins           = []         # origins a browser page may call the API from ("*": any)
+api_keys               = []         # keys a request must carry (Authorization: Bearer, X-Api-Key or api_key=); empty: open
+rate_limit_per_s       = 0          # requests per second from one client address (0: none)
+rate_limit_burst       = 0          # burst above that rate (0: twice the rate)
+batch_max              = 100        # most requests in one /v1/batch
+cache_entries          = 50000      # search and autocomplete answers kept for repeated queries, about 2.5 KB each (0: none)
+bundles_url            = ""         # HTTP address of bundles published on another machine; each reload pulls only what changed
+attribution_contact    = ""         # where to ask for the code of the derivative database (ODbL 4.6), in /v1/attribution

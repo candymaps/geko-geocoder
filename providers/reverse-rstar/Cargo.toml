@@ -1,0 +1,21 @@
+[package]
+name = "reverse-rstar"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+geko-core.workspace = true
+geko-geom.workspace = true
+arrow-array = "55"
+bytemuck = { version = "1", features = ["derive", "extern_crate_alloc"] }
+parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+memmap2 = "0.9"
+rstar = "0.12"
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+country-pack-es.workspace = true
+geko-conformance.workspace = true
+tempfile = "3"

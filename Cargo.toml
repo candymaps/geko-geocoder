@@ -1,0 +1,54 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "providers/*", "countries/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+geko-core = { path = "crates/geko-core" }
+geko-server = { path = "crates/geko-server" }
+geko-build = { path = "crates/geko-build" }
+geko-fetch = { path = "crates/geko-fetch" }
+geko-geom = { path = "crates/geko-geom" }
+source-osm = { path = "providers/source-osm" }
+source-overture = { path = "providers/source-overture" }
+country-pack-es = { path = "countries/es" }
+country-pack-lu = { path = "countries/lu" }
+text-rules = { path = "providers/text-rules" }
+geko-country-pack = { path = "crates/geko-country-pack" }
+geocode-fst = { path = "providers/geocode-fst" }
+geko-eval = { path = "crates/geko-eval" }
+geko-conformance = { path = "crates/geko-conformance" }
+reverse-rstar = { path = "providers/reverse-rstar" }
+source-ogc-features = { path = "providers/source-ogc-features" }
+geko-module-geocoder = { path = "crates/geko-module-geocoder" }
+geko-module-tiles = { path = "crates/geko-module-tiles" }
+
+anyhow = "1"
+axum = "0.8"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal"] }
+toml = "0.8"
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["catch-panic"] }
+tracing = "0.1"
+arc-swap = "1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+# Unwind, not abort: a bug in one request must never take the whole server down.
+panic = "unwind"
+
+# For checks of hit rates, not of latency: optimised like release, but much faster to compile.
+[profile.ci]
+inherits = "release"
+lto = "thin"
+codegen-units = 16

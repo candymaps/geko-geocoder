@@ -1,0 +1,752 @@
+{"category":"address_full","query":"Carrer Goya 8, Ferreries","autocomplete":false,"lat":39.9858987,"lon":4.011271499999999,"tolerance_m":50.0,"gid":"geko:address:es-07023-cl-goya:8"}
+{"category":"address_full","query":"Carrer de l'Est 20, Campos","autocomplete":false,"lat":39.437089199999996,"lon":3.0178371,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-est:20"}
+{"category":"address_full","query":"Vénda de Benirràs 127, Sant Joan de Labritja","autocomplete":false,"lat":39.052794999999996,"lon":1.4689811,"tolerance_m":50.0,"gid":"geko:address:es-07050-lg-venda-benirras:127"}
+{"category":"address_full","query":"Carrer de Ses Novies 8, Alaior","autocomplete":false,"lat":39.9348653,"lon":4.1396945999999994,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-novies:8"}
+{"category":"address_full","query":"Plaça d'Espanya 26, Maó","autocomplete":false,"lat":39.8887678,"lon":4.265068299999999,"tolerance_m":50.0,"gid":"geko:address:es-07032-pz-espanya:26"}
+{"category":"address_full","query":"Carrer de Vázquez de Mella 15, Campos","autocomplete":false,"lat":39.4284813,"lon":3.0229342,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-vazquez-mella:15i"}
+{"category":"address_full","query":"Carrer des Cap 10, Sant Josep de sa Talaia","autocomplete":false,"lat":38.904586599999995,"lon":1.2228611999999999,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-cap:10"}
+{"category":"address_full","query":"carrer d'es Fum 46, Manacor","autocomplete":false,"lat":39.566839,"lon":3.2077336,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-es-fum:46"}
+{"category":"address_full","query":"Carrer de la Verge de l'Esperança 70, Inca","autocomplete":false,"lat":39.7159032,"lon":2.9140683999999997,"tolerance_m":50.0,"gid":"geko:address:es-07027-cl-verge-esperanca:70"}
+{"category":"address_full","query":"Carrer dels Oms 45, Palma","autocomplete":false,"lat":39.574958599999995,"lon":2.6493279,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-oms:45a"}
+{"category":"address_full","query":"Carrer de l'Anfós 34, Palma","autocomplete":false,"lat":39.539823,"lon":2.709594,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-anfos:34"}
+{"category":"address_full","query":"Carrer de Josep Calafat 7, Santa Maria del Camí","autocomplete":false,"lat":39.6472049,"lon":2.7792453,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-josep-calafat:7"}
+{"category":"address_full","query":"camí de Muntanya 42, Palma","autocomplete":false,"lat":39.5752622,"lon":2.7192699,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-muntanya:42"}
+{"category":"address_full","query":"Carrer del Nord 49, Llucmajor","autocomplete":false,"lat":39.493446899999995,"lon":2.8887142,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-nord:49"}
+{"category":"address_full","query":"Carrer Llarg 46, Santa Maria del Camí","autocomplete":false,"lat":39.6490471,"lon":2.7763397,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-llarg:46"}
+{"category":"address_full","query":"camí de Muntanya 397, Palma","autocomplete":false,"lat":39.5276449,"lon":2.7554203,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-muntanya-2:397"}
+{"category":"address_full","query":"Carrer Miquel Pellisa 29, Palma","autocomplete":false,"lat":39.520916799999995,"lon":2.7462142999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-pellisa:29"}
+{"category":"address_full","query":"Carrer Font d'en Baster 23, Palma","autocomplete":false,"lat":39.609818499999996,"lon":2.6403442,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-font-baster:23"}
+{"category":"address_full","query":"Carrer de Joan Mesquida 63, Santa Maria del Camí","autocomplete":false,"lat":39.6445228,"lon":2.7742077999999997,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-joan-mesquida:63"}
+{"category":"address_full","query":"Camí Roig 14, Palma","autocomplete":false,"lat":39.6101995,"lon":2.6740711,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-roig:14"}
+{"category":"address_full","query":"passeig de n'Ernest Mestre 37, Felanitx","autocomplete":false,"lat":39.469035,"lon":3.144405,"tolerance_m":50.0,"gid":"geko:address:es-07022-ps-n-ernest-mestre:37"}
+{"category":"address_full","query":"Carrer de Son Pontivic 15, Palma","autocomplete":false,"lat":39.5702625,"lon":2.6623828,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-pontivic:15"}
+{"category":"address_full","query":"carrer Pons 10, Palma","autocomplete":false,"lat":39.5953483,"lon":2.6164685999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pons:10"}
+{"category":"address_full","query":"Carrer de l'Esteperol 33, Sant Josep de sa Talaia","autocomplete":false,"lat":38.9087049,"lon":1.2237935,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-esteperol:33"}
+{"category":"address_full","query":"carrer de Miquel Massutí 16, Palma","autocomplete":false,"lat":39.5373388,"lon":2.7128235999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-massuti:16"}
+{"category":"address_full","query":"Carrer de Son Cànaves 66, Palma","autocomplete":false,"lat":39.6098378,"lon":2.6375159999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-canaves:66"}
+{"category":"address_full","query":"Carrer de Mallorca 34, Ciutadella","autocomplete":false,"lat":39.9975634,"lon":3.8361235999999996,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-mallorca:34"}
+{"category":"address_full","query":"Carrer de Son Cladera 10, Alaró","autocomplete":false,"lat":39.703855499999996,"lon":2.7896658,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-son-cladera:10"}
+{"category":"address_full","query":"Carrer de Cala Rata 14, Maó","autocomplete":false,"lat":39.8930359,"lon":4.277093,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-cala-rata:14"}
+{"category":"address_full","query":"Carrer de l'infant Pagà 23, Palma","autocomplete":false,"lat":39.589079399999996,"lon":2.6466148,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-infant-paga:23a"}
+{"category":"address_full","query":"carrer del Centre 37, Manacor","autocomplete":false,"lat":39.5664655,"lon":3.2098902999999996,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-centre:37"}
+{"category":"address_full","query":"Carrer de Sant Martí 3, Palma","autocomplete":false,"lat":39.572314299999995,"lon":2.6453580999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-marti:3"}
+{"category":"address_full","query":"Carrer d'Antoni Maura 68, Campos","autocomplete":false,"lat":39.4321061,"lon":3.0246187,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-antoni-maura:68"}
+{"category":"address_full","query":"Carrer de Miquel Calafell 61, Palma","autocomplete":false,"lat":39.6205703,"lon":2.6594599,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-calafell:61"}
+{"category":"address_full","query":"Placeta de Francesc Netto 13, Ciutadella","autocomplete":false,"lat":40.0014197,"lon":3.8395975,"tolerance_m":50.0,"gid":"geko:address:es-07015-pz-francesc-netto:13"}
+{"category":"address_full","query":"Carrer de Carles III 18, Eivissa","autocomplete":false,"lat":38.9117318,"lon":1.4328884,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-carles-iii:18"}
+{"category":"address_full","query":"Carrer d'Eivissa 75, Ciutadella","autocomplete":false,"lat":39.997872699999995,"lon":3.8332960999999997,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-eivissa:75"}
+{"category":"address_full","query":"Avinguda de Picasso 12, Palma","autocomplete":false,"lat":39.5725499,"lon":2.6248574,"tolerance_m":50.0,"gid":"geko:address:es-07040-av-picasso:12"}
+{"category":"address_full","query":"Carrer de Ca'n Morro 7, Palma","autocomplete":false,"lat":39.5521302,"lon":2.6199002,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ca-n-morro:7"}
+{"category":"address_full","query":"Carrer de la Tramuntana 33, es Mercadal","autocomplete":false,"lat":39.990594,"lon":4.092541,"tolerance_m":50.0,"gid":"geko:address:es-07037-cl-tramuntana:33"}
+{"category":"address_full","query":"Carrer d'Heredero 11, Palma","autocomplete":false,"lat":39.5747011,"lon":2.6328894999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-heredero:11"}
+{"category":"address_full","query":"Carrer de Bulgària 2, Santa Eulària des Riu","autocomplete":false,"lat":38.9866853,"lon":1.5286313999999999,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-bulgaria:2"}
+{"category":"address_full","query":"Carrer de Bellpuig 15, Artà","autocomplete":false,"lat":39.6928781,"lon":3.3515802,"tolerance_m":50.0,"gid":"geko:address:es-07006-cl-bellpuig:15"}
+{"category":"address_full","query":"avinguda d'en Joan Amer 60, Manacor","autocomplete":false,"lat":39.539375,"lon":3.3395175999999998,"tolerance_m":50.0,"gid":"geko:address:es-07033-av-joan-amer:60"}
+{"category":"address_full","query":"carrer Calvià 3, Calvià","autocomplete":false,"lat":39.5268787,"lon":2.5402644999999997,"tolerance_m":50.0,"gid":"geko:address:es-07011-cl-calvia:3"}
+{"category":"address_full","query":"Carrer de les Germanies 7, Palma","autocomplete":false,"lat":39.5698084,"lon":2.6303829,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-germanies:7"}
+{"category":"address_full","query":"Carrer del Dos de Maig 17, Palma","autocomplete":false,"lat":39.562174899999995,"lon":2.6226362,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-maig:17a"}
+{"category":"address_full","query":"Carrer dels Foners 7, ses Salines","autocomplete":false,"lat":39.3413782,"lon":3.0474512999999996,"tolerance_m":50.0,"gid":"geko:address:es-07059-cl-foners:7"}
+{"category":"address_full","query":"Carrer de Corona Austral 8, Ciutadella","autocomplete":false,"lat":40.0542057,"lon":3.8859888,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-corona-austral:8"}
+{"category":"address_full","query":"carrer des Forats 15, Felanitx","autocomplete":false,"lat":39.4705137,"lon":3.1466049,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-forats:15"}
+{"category":"address_full","query":"Plaça Major 23, Campanet","autocomplete":false,"lat":39.7749729,"lon":2.9652380999999997,"tolerance_m":50.0,"gid":"geko:address:es-07012-pz-major:23"}
+{"category":"address_full","query":"carrer Jaume Balmes 5, Porreres","autocomplete":false,"lat":39.511846299999995,"lon":3.0266405,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-jaume-balmes:5"}
+{"category":"address_full","query":"Carrer des Blat 7, Sant Antoni de Portmany","autocomplete":false,"lat":38.9745564,"lon":1.341199,"tolerance_m":50.0,"gid":"geko:address:es-07046-cl-blat:7"}
+{"category":"address_full","query":"Camí des Caragol 80, Ciutadella","autocomplete":false,"lat":40.006314499999995,"lon":3.8469761,"tolerance_m":50.0,"gid":"geko:address:es-07015-cm-caragol:80"}
+{"category":"address_full","query":"carrer de la Ciutat de San Pedro 61, Felanitx","autocomplete":false,"lat":39.475542999999995,"lon":3.1535289,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-ciutat-san-pedro:61"}
+{"category":"address_full","query":"Carrer del Torrentó 8, Palma","autocomplete":false,"lat":39.5717281,"lon":2.6294386,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-torrento:8"}
+{"category":"address_full","query":"Carrer de Sant Jordi 16, Palma","autocomplete":false,"lat":39.5554078,"lon":2.7763014,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-jordi:16"}
+{"category":"address_full","query":"Carrer de Sant Jaume 50, Maó","autocomplete":false,"lat":39.8722794,"lon":4.2067974999999995,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-jaume:50"}
+{"category":"address_full","query":"Carrer de s'Amfós Blau 86, Sant Lluís","autocomplete":false,"lat":39.8171215,"lon":4.2455925,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-amfos-blau:86"}
+{"category":"address_full","query":"Carrer de Jaume II 21, Porreres","autocomplete":false,"lat":39.5152412,"lon":3.0182479,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-jaume-ii:21"}
+{"category":"address_full","query":"Carrer Comte Lannion 132, Sant Lluís","autocomplete":false,"lat":39.8480846,"lon":4.258948999999999,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-comte-lannion:132"}
+{"category":"address_full","query":"carrer d'en Colom 32, Manacor","autocomplete":false,"lat":39.5649995,"lon":3.2116436,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-colom:32"}
+{"category":"address_full","query":"Carrer Furió 10, Palma","autocomplete":false,"lat":39.5692057,"lon":2.6328271,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-furio:10a"}
+{"category":"address_full","query":"Carrer de Moranta 1, Palma","autocomplete":false,"lat":39.5690483,"lon":2.6713145,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-moranta:1a"}
+{"category":"address_full","query":"carrer de l'Ullastre 11, Palma","autocomplete":false,"lat":39.6291112,"lon":2.6456861,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ullastre:11"}
+{"category":"address_full","query":"Carrer Bonaire 232, Alaior","autocomplete":false,"lat":39.905842299999996,"lon":4.0729057,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-bonaire:232"}
+{"category":"address_full","query":"Carrer Bernat de Santa Eugènia 27, Santa Maria del Camí","autocomplete":false,"lat":39.6519866,"lon":2.7747056,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-bernat-santa-eugenia:27"}
+{"category":"address_full","query":"Carrer de Pare Nin 8, Ciutadella","autocomplete":false,"lat":39.9979082,"lon":3.8443576,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-pare-nin:8"}
+{"category":"address_full","query":"Carrer Son Gual O (N.O.) 9, Palma","autocomplete":false,"lat":39.5643161,"lon":2.8277965,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-gual-o-n-o:9"}
+{"category":"address_full","query":"Carrer de l'Est 16, Campos","autocomplete":false,"lat":39.4369892,"lon":3.0176418,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-est:16"}
+{"category":"address_full","query":"carrer de l'Hospital 10, Porreres","autocomplete":false,"lat":39.5173663,"lon":3.0226371,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-hospital:10"}
+{"category":"address_full","query":"Carrer de Leganés 30, Sant Josep de sa Talaia","autocomplete":false,"lat":38.962357999999995,"lon":1.2795448,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-leganes:30"}
+{"category":"address_full","query":"carrer de Prim 38, Campos","autocomplete":false,"lat":39.4300585,"lon":3.0149527999999997,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-prim:38"}
+{"category":"address_full","query":"Avinguda Cales Piques 205, Ciutadella","autocomplete":false,"lat":40.005054,"lon":3.8089247999999998,"tolerance_m":50.0,"gid":"geko:address:es-07015-av-cales-piques:205"}
+{"category":"address_full","query":"Carrer Francesc Vallduví 12, Palma","autocomplete":false,"lat":39.5998823,"lon":2.6278468999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-francesc-vallduvi:12"}
+{"category":"address_full","query":"Es Secar de son Sardina 12, Palma","autocomplete":false,"lat":39.6131404,"lon":2.6563038,"tolerance_m":50.0,"gid":"geko:address:es-07040-es-secar-son-sardina:12a"}
+{"category":"address_full","query":"carrer de Dameto 92, Felanitx","autocomplete":false,"lat":39.4712473,"lon":3.1559603,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-dameto:92"}
+{"category":"address_full","query":"Carrer Isidoro Antillón 73, Palma","autocomplete":false,"lat":39.5771149,"lon":2.6643608999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-isidoro-antillon:73"}
+{"category":"address_full","query":"Carrer de Salvador Dalí 12, Sant Antoni de Portmany","autocomplete":false,"lat":38.969674499999996,"lon":1.3113215,"tolerance_m":50.0,"gid":"geko:address:es-07046-cl-salvador-dali:12"}
+{"category":"address_full","query":"Carrer de Sant Llorenç 42, Maó","autocomplete":false,"lat":39.8847029,"lon":4.2656956,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-llorenc-2:42"}
+{"category":"address_full","query":"Carrer de Can Verí 6, Palma","autocomplete":false,"lat":39.5702243,"lon":2.648272,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-can-veri:6"}
+{"category":"address_full","query":"Via Ronda de ses Costes 31, es Mercadal","autocomplete":false,"lat":39.986869999999996,"lon":4.096223,"tolerance_m":50.0,"gid":"geko:address:es-07037-vi-ronda-costes:31"}
+{"category":"address_full","query":"Carrer de Sant Miquel 40, Llucmajor","autocomplete":false,"lat":39.492576899999996,"lon":2.8918945999999996,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-sant-miquel:40"}
+{"category":"address_full","query":"Carrer Major 19, Llucmajor","autocomplete":false,"lat":39.4900257,"lon":2.886796,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-major:19"}
+{"category":"address_full","query":"Son Cabrisses 33, Ciutadella","autocomplete":false,"lat":39.9599459,"lon":3.8397235,"tolerance_m":50.0,"gid":"geko:address:es-07015-son-cabrisses:33b"}
+{"category":"address_full","query":"Carrer de Bellavista 8, es Castell","autocomplete":false,"lat":39.8811083,"lon":4.292463,"tolerance_m":50.0,"gid":"geko:address:es-07064-cl-bellavista:8a"}
+{"category":"address_full","query":"Carrer de Sant Sebastià 35, Maó","autocomplete":false,"lat":39.8886277,"lon":4.2693955,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-sebastia:35"}
+{"category":"address_full","query":"Carrer d'Andrea Doria 68, Palma","autocomplete":false,"lat":39.572176299999995,"lon":2.6210823,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-andrea-doria:68"}
+{"category":"address_full","query":"Carrer des Riu Pla 21, Maó","autocomplete":false,"lat":39.8938832,"lon":4.2732494999999995,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-riu-pla:21"}
+{"category":"address_full","query":"Carrer de Pío Baroja 26, Santa Eulària des Riu","autocomplete":false,"lat":38.932468799999995,"lon":1.4562589,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-pio-baroja:26"}
+{"category":"address_full","query":"Carrer des Riu Pla 25, Maó","autocomplete":false,"lat":39.8935281,"lon":4.2732257,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-riu-pla:25"}
+{"category":"address_full","query":"Carrer de Pere de Portugal 9, Eivissa","autocomplete":false,"lat":38.9101578,"lon":1.4320658,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-pere-portugal:9"}
+{"category":"address_full","query":"Carrer del Mestre Perosi 35, Palma","autocomplete":false,"lat":39.5875451,"lon":2.6856074999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mestre-perosi:35"}
+{"category":"address_full","query":"carrer de la Niña 30, Manacor","autocomplete":false,"lat":39.543269099999996,"lon":3.340035,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-nina:30"}
+{"category":"address_full","query":"Camí de sa Sínia 40, Sant Lluís","autocomplete":false,"lat":39.849789799999996,"lon":4.2608575,"tolerance_m":50.0,"gid":"geko:address:es-07052-cm-sinia:40"}
+{"category":"address_full","query":"Carrer de sa Cadernera 25, Sant Lluís","autocomplete":false,"lat":39.8192653,"lon":4.2535979,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-cadernera:25"}
+{"category":"address_full","query":"passeig de n'Ernest Mestre 43, Felanitx","autocomplete":false,"lat":39.4694167,"lon":3.1444848999999997,"tolerance_m":50.0,"gid":"geko:address:es-07022-ps-n-ernest-mestre:43"}
+{"category":"address_full","query":"Carrer des Munt Aneto 14, Santa Eulària des Riu","autocomplete":false,"lat":38.9572825,"lon":1.5132322999999999,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-munt-aneto:14"}
+{"category":"address_full","query":"Avinguda de la Verge del Toro 84, Alaior","autocomplete":false,"lat":39.935155099999996,"lon":4.1436929,"tolerance_m":50.0,"gid":"geko:address:es-07002-av-verge-toro:84"}
+{"category":"address_full","query":"Carrer del Llac de Constança 5, Palma","autocomplete":false,"lat":39.589835799999996,"lon":2.6134434,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-llac-constanca:5a"}
+{"category":"address_no_municipality","query":"passeig de Ramon Llull 26","autocomplete":false,"lat":39.4727876,"lon":3.1446074,"tolerance_m":50.0,"gid":"geko:address:es-07022-ps-ramon-llull:26"}
+{"category":"address_no_municipality","query":"Carrer de Sòcrates 8","autocomplete":false,"lat":39.571886899999996,"lon":2.6774947,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-socrates:8"}
+{"category":"address_no_municipality","query":"Carrer d'en Sala 62","autocomplete":false,"lat":39.5155496,"lon":3.0280066,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-sala:62-2"}
+{"category":"address_no_municipality","query":"Carrer de Beethoven 14","autocomplete":false,"lat":39.5920614,"lon":2.6831896,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-beethoven:14"}
+{"category":"address_no_municipality","query":"Son Reus III 38","autocomplete":false,"lat":39.6511509,"lon":2.6927032,"tolerance_m":50.0,"gid":"geko:address:es-07040-son-reus-iii:38a"}
+{"category":"address_no_municipality","query":"Carrer del Pes de la Farina 6","autocomplete":false,"lat":39.5701944,"lon":2.6534415,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pes-farina:6"}
+{"category":"address_no_municipality","query":"Carrer de la Lluna 37","autocomplete":false,"lat":39.5816703,"lon":2.6635318,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-lluna:37"}
+{"category":"address_no_municipality","query":"carrer de Nostra Senyora de Bonany 7","autocomplete":false,"lat":39.5814746,"lon":2.6377085,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-nostra-senyora-bonany:7"}
+{"category":"address_no_municipality","query":"Carrer de sa Tafona 12","autocomplete":false,"lat":39.6061584,"lon":2.6349581,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-tafona:12"}
+{"category":"address_no_municipality","query":"Carrer del Bisbe Pascual 17","autocomplete":false,"lat":39.5763751,"lon":2.6667593,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-bisbe-pascual:17"}
+{"category":"address_no_municipality","query":"carrer del Ponent 1","autocomplete":false,"lat":39.907008399999995,"lon":3.0817375,"tolerance_m":50.0,"gid":"geko:address:es-07042-cl-ponent:1"}
+{"category":"address_no_municipality","query":"Carrer d'Àngel Guimerà 82","autocomplete":false,"lat":39.5875425,"lon":2.6570704,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-angel-guimera:82"}
+{"category":"address_no_municipality","query":"carrer de Joan Alcover 6","autocomplete":false,"lat":39.5710148,"lon":2.9827331,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-joan-alcover:6"}
+{"category":"address_no_municipality","query":"Carrer del Bisbe Torres 7","autocomplete":false,"lat":38.9804661,"lon":1.3045371,"tolerance_m":50.0,"gid":"geko:address:es-07046-cl-bisbe-torres:7-2"}
+{"category":"address_no_municipality","query":"Carrer de Josep Pla 6","autocomplete":false,"lat":39.5922513,"lon":2.6562761999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-josep-pla:6"}
+{"category":"address_no_municipality","query":"Avinguda Sant Josep de sa Talaia 51","autocomplete":false,"lat":38.9043603,"lon":1.4113301,"tolerance_m":50.0,"gid":"geko:address:es-07026-av-sant-josep-talaia:51"}
+{"category":"address_no_municipality","query":"Carrer de Sant Rafel 162","autocomplete":false,"lat":39.5792892,"lon":2.6684349999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-rafel:162"}
+{"category":"address_no_municipality","query":"Carrer de Bernat Pomar 12","autocomplete":false,"lat":39.588786,"lon":2.6107370999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-bernat-pomar:12"}
+{"category":"address_no_municipality","query":"Carrer Sant Pere Alcàntara 30","autocomplete":false,"lat":39.9997785,"lon":3.8381323999999997,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-sant-pere-alcantara:30"}
+{"category":"address_no_municipality","query":"Carrer de l'Alosa 11","autocomplete":false,"lat":39.6003253,"lon":2.614182,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-alosa:11"}
+{"category":"address_no_municipality","query":"Camí de la Vileta 104","autocomplete":false,"lat":39.5924616,"lon":2.6215525,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-vileta:104"}
+{"category":"address_no_municipality","query":"Carrer de Joan Alcover 29","autocomplete":false,"lat":39.5686933,"lon":2.6604227,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-joan-alcover:29a"}
+{"category":"address_no_municipality","query":"Carrer de sa Cova Blanca 1","autocomplete":false,"lat":39.360944599999996,"lon":3.2235259,"tolerance_m":50.0,"gid":"geko:address:es-07057-cl-cova-blanca:1"}
+{"category":"address_no_municipality","query":"Carrer de Sa Balandreta 23","autocomplete":false,"lat":38.7280581,"lon":1.4198779,"tolerance_m":50.0,"gid":"geko:address:es-07024-cl-balandreta:23"}
+{"category":"address_no_municipality","query":"Camí de s'Aljub 9","autocomplete":false,"lat":39.851831,"lon":4.2827719,"tolerance_m":50.0,"gid":"geko:address:es-07064-cm-aljub:9"}
+{"category":"address_no_municipality","query":"Cala en Bosch 53","autocomplete":false,"lat":39.927017899999996,"lon":3.8327071,"tolerance_m":50.0,"gid":"geko:address:es-07015-ur-cala-bosch:53"}
+{"category":"address_no_municipality","query":"Carrer de Sant Jordi 17","autocomplete":false,"lat":39.8783622,"lon":4.2902803,"tolerance_m":50.0,"gid":"geko:address:es-07064-cl-sant-jordi:17"}
+{"category":"address_no_municipality","query":"Carrer del General Weyler 96","autocomplete":false,"lat":39.7163702,"lon":2.9036318999999997,"tolerance_m":50.0,"gid":"geko:address:es-07027-cl-general-weyler:96"}
+{"category":"address_no_municipality","query":"avinguda de sa Fonera 20","autocomplete":false,"lat":39.5465284,"lon":3.3399020999999998,"tolerance_m":50.0,"gid":"geko:address:es-07033-av-fonera:20-2"}
+{"category":"address_no_municipality","query":"Carrer de Binicaubell 17","autocomplete":false,"lat":39.595382,"lon":2.5814491999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-binicaubell:17"}
+{"category":"address_no_municipality","query":"Avinguda de Joan Miró 42","autocomplete":false,"lat":39.5625243,"lon":2.6253995,"tolerance_m":50.0,"gid":"geko:address:es-07040-av-joan-miro:42a"}
+{"category":"address_no_municipality","query":"Carrer de Murillo 52","autocomplete":false,"lat":39.5742263,"lon":2.6357133999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-murillo:52a"}
+{"category":"address_no_municipality","query":"Carrer Isidoro Antillón 112","autocomplete":false,"lat":39.5789329,"lon":2.6674222999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-isidoro-antillon:112"}
+{"category":"address_no_municipality","query":"Vénda de Cas Ripolls 4","autocomplete":false,"lat":39.0806009,"lon":1.5094760999999999,"tolerance_m":50.0,"gid":"geko:address:es-07050-venda-cas-ripolls:4"}
+{"category":"address_no_municipality","query":"Carrer del Puig de la Mola 6","autocomplete":false,"lat":39.585813099999996,"lon":2.7307454,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-puig-mola:6"}
+{"category":"address_no_municipality","query":"Carrer de Maria Aurèlia Campany 6","autocomplete":false,"lat":39.5912565,"lon":2.6571295,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-maria-aurelia-campany:6"}
+{"category":"address_no_municipality","query":"Carrer de Son Muntaner 58","autocomplete":false,"lat":39.5892311,"lon":2.6207610999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-muntaner:58"}
+{"category":"address_no_municipality","query":"Carrer de Sant Antoni Maria Claret 105","autocomplete":false,"lat":40.005739,"lon":3.8436249,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-sant-antoni-maria-claret:105"}
+{"category":"address_no_municipality","query":"Carrer de Sant Pancraç 9","autocomplete":false,"lat":39.936181999999995,"lon":4.1398731,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-sant-pancrac:9"}
+{"category":"address_no_municipality","query":"Carrer Ferrer de Pallarès 47","autocomplete":false,"lat":39.574891099999995,"lon":2.6686625999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ferrer-pallares:47"}
+{"category":"address_no_municipality","query":"Carrer des Rossinyol 31","autocomplete":false,"lat":40.0230454,"lon":4.1899209,"tolerance_m":50.0,"gid":"geko:address:es-07037-cl-rossinyol:31"}
+{"category":"address_no_municipality","query":"Carrer dels Caputxins 4","autocomplete":false,"lat":39.5746392,"lon":2.6534491,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-caputxins:4"}
+{"category":"address_no_municipality","query":"Carrer de s'Hort d'en Torrella 28","autocomplete":false,"lat":39.574763,"lon":2.6625589,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-hort-torrella:28"}
+{"category":"address_no_municipality","query":"Carrer de Bernat Amer 14","autocomplete":false,"lat":39.5760511,"lon":2.6417352,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-bernat-amer:14"}
+{"category":"address_no_municipality","query":"Carrer de Miquel Calafell 63","autocomplete":false,"lat":39.6205445,"lon":2.65958,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-calafell:63"}
+{"category":"address_no_municipality","query":"Carrer des Industrials 14","autocomplete":false,"lat":40.0064,"lon":3.8544294999999997,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-industrials:14"}
+{"category":"address_no_municipality","query":"carrer de Tramuntana 49","autocomplete":false,"lat":39.5444704,"lon":3.3343309,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-tramuntana:49a"}
+{"category":"address_no_municipality","query":"Carrer de sa Tanca d'es Pedregar 40","autocomplete":false,"lat":39.3378916,"lon":3.0501499,"tolerance_m":50.0,"gid":"geko:address:es-07059-cl-tanca-es-pedregar:40"}
+{"category":"address_no_municipality","query":"Carrer Verge del Toro 16","autocomplete":false,"lat":39.9873353,"lon":4.0932013,"tolerance_m":50.0,"gid":"geko:address:es-07037-cl-verge-toro:16"}
+{"category":"address_no_municipality","query":"Carrer de les Illes Balears 16","autocomplete":false,"lat":39.5716271,"lon":2.6196039,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-illes-balears:16"}
+{"category":"address_no_municipality","query":"carrer de Lepant 22","autocomplete":false,"lat":39.5667142,"lon":3.2043874,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-lepant:22"}
+{"category":"address_no_municipality","query":"carrer de Sor Elionor Ortiz 10","autocomplete":false,"lat":39.5917564,"lon":2.6234191,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sor-elionor-ortiz:10"}
+{"category":"address_no_municipality","query":"Carrer de ses Sivines 14","autocomplete":false,"lat":39.933189999999996,"lon":4.145911,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-sivines:14"}
+{"category":"address_no_municipality","query":"Carrer de Ciutadella de Menorca 1","autocomplete":false,"lat":39.556597,"lon":2.6819538,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ciutadella-menorca:1d"}
+{"category":"address_no_municipality","query":"Passeig Vora Mar 109","autocomplete":false,"lat":39.9112861,"lon":3.0900988,"tolerance_m":50.0,"gid":"geko:address:es-07042-ps-vora-mar-2:109"}
+{"category":"address_no_municipality","query":"carrer d'en Colom 55","autocomplete":false,"lat":39.5647759,"lon":3.2118330999999998,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-colom:55"}
+{"category":"address_no_municipality","query":"Carrer de Manacor 71","autocomplete":false,"lat":39.571583499999996,"lon":2.6644899,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-manacor:71"}
+{"category":"address_no_municipality","query":"Carrer de Huelva 38","autocomplete":false,"lat":38.9679675,"lon":1.2896596,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-huelva:38"}
+{"category":"address_no_municipality","query":"Carrer de Sant Lluís Gonçaga 56","autocomplete":false,"lat":39.8841009,"lon":4.2670311,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-lluis-goncaga:56"}
+{"category":"address_no_municipality","query":"carrer del Bosc 49","autocomplete":false,"lat":39.539744999999996,"lon":2.4407441999999997,"tolerance_m":50.0,"gid":"geko:address:es-07011-cl-bosc:49"}
+{"category":"address_no_municipality","query":"avinguda dels Pins de sa Torre 123","autocomplete":false,"lat":39.562308,"lon":3.2064866,"tolerance_m":50.0,"gid":"geko:address:es-07033-av-pins-torre:123"}
+{"category":"address_no_municipality","query":"Carrer d'en Rigo 67","autocomplete":false,"lat":39.4939756,"lon":2.8873542,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-rigo:67"}
+{"category":"address_no_municipality","query":"Carrer de Domingo Savio 91","autocomplete":false,"lat":40.0040723,"lon":3.8449727,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-domingo-savio:91"}
+{"category":"address_no_municipality","query":"Avinguda de Menorca 72","autocomplete":false,"lat":39.8859955,"lon":4.2580981,"tolerance_m":50.0,"gid":"geko:address:es-07032-av-menorca:72"}
+{"category":"address_no_municipality","query":"Carrer Son Llull 62","autocomplete":false,"lat":39.5887423,"lon":2.6213499,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-llull:62"}
+{"category":"address_no_municipality","query":"Carrer de Ca Don Marc 25","autocomplete":false,"lat":39.6072193,"lon":2.6362508,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ca-don-marc:25"}
+{"category":"address_no_municipality","query":"Carrer del Paraguai 12","autocomplete":false,"lat":39.573247099999996,"lon":2.625712,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-paraguai:12"}
+{"category":"address_no_municipality","query":"Carrer Nicolau de Pacs 29","autocomplete":false,"lat":39.5751456,"lon":2.660168,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-nicolau-pacs:29"}
+{"category":"address_no_municipality","query":"Vénda de Xarracó 34","autocomplete":false,"lat":39.093579,"lon":1.481793,"tolerance_m":50.0,"gid":"geko:address:es-07050-venda-xarraco:34"}
+{"category":"address_no_municipality","query":"Carrer d'Alaior 53","autocomplete":false,"lat":40.0021558,"lon":3.8411673,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-alaior:53"}
+{"category":"address_no_municipality","query":"Vénda de sa Talaiassa 1162","autocomplete":false,"lat":38.669430299999995,"lon":1.5291282,"tolerance_m":50.0,"gid":"geko:address:es-07024-venda-talaiassa:1162"}
+{"category":"address_no_municipality","query":"plaça de Ramon Llull 14","autocomplete":false,"lat":39.5667262,"lon":3.2125483999999997,"tolerance_m":50.0,"gid":"geko:address:es-07033-pz-ramon-llull:14"}
+{"category":"address_no_municipality","query":"Carrer de Joan Alou 12","autocomplete":false,"lat":39.4323823,"lon":3.0212668999999996,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-joan-alou:12"}
+{"category":"address_no_municipality","query":"Carrer de Zaforteza 56","autocomplete":false,"lat":39.5898849,"lon":2.6202612999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-zaforteza:56"}
+{"category":"address_no_municipality","query":"Carrer del Pujol 39","autocomplete":false,"lat":39.7083908,"lon":2.7869946,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-pujol:39"}
+{"category":"address_no_municipality","query":"Carrer de les Illes Balears 90","autocomplete":false,"lat":39.571456399999995,"lon":2.6163143,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-illes-balears:90"}
+{"category":"address_no_municipality","query":"carretera de Manacor 335","autocomplete":false,"lat":39.5714301,"lon":2.7160812,"tolerance_m":50.0,"gid":"geko:address:es-07040-cr-manacor:335a"}
+{"category":"address_no_municipality","query":"Carrer del Canonge Sebastià Gili 35","autocomplete":false,"lat":39.5891843,"lon":2.6201456,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-canonge-sebastia-gili:35"}
+{"category":"address_no_municipality","query":"Carrer de Marbella 15","autocomplete":false,"lat":39.5277703,"lon":2.7340082,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-marbella:15"}
+{"category":"address_no_municipality","query":"Avinguda Central 29","autocomplete":false,"lat":39.8801166,"lon":4.1352749,"tolerance_m":50.0,"gid":"geko:address:es-07002-av-central:29"}
+{"category":"address_no_municipality","query":"Carrer de Ca'n Valella 40","autocomplete":false,"lat":39.719827699999996,"lon":2.9129704999999997,"tolerance_m":50.0,"gid":"geko:address:es-07027-cl-ca-n-valella:40"}
+{"category":"address_no_municipality","query":"carrer de sa Roca d'en Boira 18","autocomplete":false,"lat":39.4713218,"lon":3.1478319999999997,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-roca-boira:18"}
+{"category":"address_no_municipality","query":"carrer de Miquel Massutí 6","autocomplete":false,"lat":39.5382286,"lon":2.7136299,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-massuti:6"}
+{"category":"address_no_municipality","query":"Carrer del Papagai 11","autocomplete":false,"lat":38.9187519,"lon":1.4705864,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-papagai:11"}
+{"category":"address_no_municipality","query":"Carrer de las Navas de Tolosa 27","autocomplete":false,"lat":39.550380499999996,"lon":2.6945696,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-navas-tolosa:27"}
+{"category":"address_no_municipality","query":"Carrer de Joan Mir 16","autocomplete":false,"lat":39.7048953,"lon":2.7931543,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-joan-mir:16"}
+{"category":"address_no_municipality","query":"Moll de Llevant 274","autocomplete":false,"lat":39.8894715,"lon":4.2760736,"tolerance_m":50.0,"gid":"geko:address:es-07032-mu-llevant:274"}
+{"category":"address_no_municipality","query":"carrer del Camp Franc 9","autocomplete":false,"lat":39.5378839,"lon":2.7348695,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-camp-franc:9"}
+{"category":"address_no_municipality","query":"carrer de Bellpuig 21","autocomplete":false,"lat":39.470037,"lon":3.1526524,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-bellpuig:21"}
+{"category":"address_no_municipality","query":"Carrer de Miquel Porcel 54","autocomplete":false,"lat":39.573858,"lon":2.6309400999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-porcel:54"}
+{"category":"address_no_municipality","query":"Camí de n'Eymar 24","autocomplete":false,"lat":39.884644699999996,"lon":4.2485284,"tolerance_m":50.0,"gid":"geko:address:es-07032-cm-n-eymar:24"}
+{"category":"address_no_municipality","query":"Carrer d'Aragó 46","autocomplete":false,"lat":39.5772123,"lon":2.6609135,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-arago:46"}
+{"category":"address_no_municipality","query":"Avinguda de la Mar 28","autocomplete":false,"lat":39.9440356,"lon":4.0497201,"tolerance_m":50.0,"gid":"geko:address:es-07902-av-mar:28"}
+{"category":"address_no_municipality","query":"Carrer Bonico 45","autocomplete":false,"lat":39.338184,"lon":3.0578469999999998,"tolerance_m":50.0,"gid":"geko:address:es-07059-cl-bonico:45"}
+{"category":"address_no_municipality","query":"Placeta del Pou Florit 83","autocomplete":false,"lat":39.5137278,"lon":3.0260094,"tolerance_m":50.0,"gid":"geko:address:es-07043-pz-pou-florit:83"}
+{"category":"address_no_municipality","query":"Carrer de Maria Antonia Salvà 30","autocomplete":false,"lat":39.597535099999995,"lon":2.6167799,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-maria-antonia-salva:30"}
+{"category":"address_no_municipality","query":"Carrer del Verderol 17","autocomplete":false,"lat":39.5946287,"lon":2.6096521999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-verderol:17"}
+{"category":"address_no_municipality","query":"Avinguda Josep Anselm Clavé 77","autocomplete":false,"lat":39.8831507,"lon":4.25984,"tolerance_m":50.0,"gid":"geko:address:es-07032-av-josep-anselm-clave-2:77"}
+{"category":"address_no_municipality","query":"Carrer de Miramar 12","autocomplete":false,"lat":39.5668688,"lon":2.6498866,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miramar:12"}
+{"category":"address_no_municipality","query":"Carrer Joaquim Maria Bover 11","autocomplete":false,"lat":39.5770027,"lon":2.6583228,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-joaquim-maria-bover:11"}
+{"category":"address_postcode","query":"Carrer de Bartomeu Xamena 12, 07610","autocomplete":false,"lat":39.5245757,"lon":2.7390759,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-bartomeu-xamena:12"}
+{"category":"address_postcode","query":"Carrer de Salomó 9, 07007","autocomplete":false,"lat":39.552157199999996,"lon":2.7012408999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-salomo:9"}
+{"category":"address_postcode","query":"Carrer de Sant Francesc 66, 07620","autocomplete":false,"lat":39.4900391,"lon":2.8972498,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-sant-francesc:66"}
+{"category":"address_postcode","query":"Carrer del Riu Guadalquivir 6, 07800","autocomplete":false,"lat":38.9029107,"lon":1.404367,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-riu-guadalquivir:6"}
+{"category":"address_postcode","query":"carrer d'en Rigo 5, 07630","autocomplete":false,"lat":39.4299663,"lon":3.0166538,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-rigo:5"}
+{"category":"address_postcode","query":"carrer del Pont 1, 07260","autocomplete":false,"lat":39.5175322,"lon":3.0240666999999997,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-pont:1"}
+{"category":"address_postcode","query":"Carrer ses Gerreries 25, 07760","autocomplete":false,"lat":40.0053711,"lon":3.8423111,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-gerreries:25"}
+{"category":"address_postcode","query":"Carrer del Gremi de Porgadors 16, 07009","autocomplete":false,"lat":39.5969185,"lon":2.6698842,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-gremi-porgadors:16"}
+{"category":"address_postcode","query":"Avinguda Central 81, 07730","autocomplete":false,"lat":39.8745508,"lon":4.1354096,"tolerance_m":50.0,"gid":"geko:address:es-07002-av-central:81"}
+{"category":"address_postcode","query":"carrer de sa Cimentera 19, 07630","autocomplete":false,"lat":39.4338305,"lon":3.0163360999999997,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-cimentera:19"}
+{"category":"address_postcode","query":"carrer dels Proïssos 44, 07200","autocomplete":false,"lat":39.4724901,"lon":3.1491862999999998,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-proissos:44"}
+{"category":"address_postcode","query":"Carrer de la Concòrdia 6, 07004","autocomplete":false,"lat":39.5835852,"lon":2.6611727999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-concordia:6"}
+{"category":"address_postcode","query":"carrer del Puig Major 33, 07198","autocomplete":false,"lat":39.5881322,"lon":2.7296492,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-puig-major:33"}
+{"category":"address_postcode","query":"Carrer dels Pins 11, 07610","autocomplete":false,"lat":39.536651,"lon":2.713394,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pins:11"}
+{"category":"address_postcode","query":"Carrer de Ricard Ankerman 32, 07006","autocomplete":false,"lat":39.5679535,"lon":2.659685,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ricard-ankerman:32"}
+{"category":"address_postcode","query":"Carrer d'en Sala 32, 07620","autocomplete":false,"lat":39.488667299999996,"lon":2.8962016,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-sala:32"}
+{"category":"address_postcode","query":"Carrer de Cartago 1, 07600","autocomplete":false,"lat":39.510337899999996,"lon":2.7494644,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cartago:1a"}
+{"category":"address_postcode","query":"Carrer de Berenguer Renart 5, 07860","autocomplete":false,"lat":38.7044435,"lon":1.4285584999999998,"tolerance_m":50.0,"gid":"geko:address:es-07024-cl-berenguer-renart:5"}
+{"category":"address_postcode","query":"Carrer de Monterrey 40, 07013","autocomplete":false,"lat":39.573598,"lon":2.6346865999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-monterrey:40"}
+{"category":"address_postcode","query":"Carrer Central 75, 07730","autocomplete":false,"lat":39.904122199999996,"lon":4.0741369999999995,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-central:75"}
+{"category":"address_postcode","query":"Carrer de Na Vermella 1, 07730","autocomplete":false,"lat":39.8762852,"lon":4.1366074,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-vermella:1"}
+{"category":"address_postcode","query":"Passeig Marítim 7, 07713","autocomplete":false,"lat":39.833193,"lon":4.3005398999999995,"tolerance_m":50.0,"gid":"geko:address:es-07052-ps-maritim-4:7"}
+{"category":"address_postcode","query":"Camí de Ses Vinyes de Torret 12, 07711","autocomplete":false,"lat":39.839874099999996,"lon":4.2534809,"tolerance_m":50.0,"gid":"geko:address:es-07052-cm-vinyes-torret:12"}
+{"category":"address_postcode","query":"Carrer d'Antoni Riquer 13, 07820","autocomplete":false,"lat":38.9813024,"lon":1.3021411,"tolerance_m":50.0,"gid":"geko:address:es-07046-cl-antoni-riquer:13"}
+{"category":"address_postcode","query":"Carrer de la Salut 70, 07015","autocomplete":false,"lat":39.5607718,"lon":2.6229684,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-salut:70"}
+{"category":"address_postcode","query":"Carrer de l'Arquitecte Guillem Forteza 62, 07320","autocomplete":false,"lat":39.6460168,"lon":2.7739455,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-arquitecte-guillem-forteza:62"}
+{"category":"address_postcode","query":"Plaça de Jaume II de Mallorca 17, 07760","autocomplete":false,"lat":39.9992179,"lon":3.842244,"tolerance_m":50.0,"gid":"geko:address:es-07015-pz-jaume-ii-mallorca:17"}
+{"category":"address_postcode","query":"Carrer de les Corralasses 9, 07012","autocomplete":false,"lat":39.5701349,"lon":2.6427593,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-corralasses:9"}
+{"category":"address_postcode","query":"Carrer de s'Illa 6, 07713","autocomplete":false,"lat":39.8156843,"lon":4.2784572,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-illa:6"}
+{"category":"address_postcode","query":"Carrer Major 6, 07713","autocomplete":false,"lat":39.8118743,"lon":4.279941099999999,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-major:6"}
+{"category":"address_postcode","query":"Carrer des Cap Martinet 56, 07819","autocomplete":false,"lat":38.9282411,"lon":1.4526706,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-cap-martinet:56"}
+{"category":"address_postcode","query":"Carrer de La Previsió 3, 07001","autocomplete":false,"lat":39.5697269,"lon":2.6510013999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-previsio:3"}
+{"category":"address_postcode","query":"carrer Jaume Olives 5, 07600","autocomplete":false,"lat":39.5275192,"lon":2.7540521,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-jaume-olives:5"}
+{"category":"address_postcode","query":"Carrer d'Albenya 13, 07013","autocomplete":false,"lat":39.5879297,"lon":2.5903362,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-albenya:13"}
+{"category":"address_postcode","query":"Carrer de Sant Isidre Llaurador 33, 07005","autocomplete":false,"lat":39.5827841,"lon":2.667506,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-isidre-llaurador:33"}
+{"category":"address_postcode","query":"Carrer de Sant Gabriel 22, 07008","autocomplete":false,"lat":39.5921695,"lon":2.6888935999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-gabriel:22a"}
+{"category":"address_postcode","query":"Carrer Romero de Torres 2, 07005","autocomplete":false,"lat":39.5855004,"lon":2.6715161999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-romero-torres:2b"}
+{"category":"address_postcode","query":"Carrer Major 51, 07748","autocomplete":false,"lat":40.056188899999995,"lon":4.131424099999999,"tolerance_m":50.0,"gid":"geko:address:es-07037-cl-major-2:51"}
+{"category":"address_postcode","query":"carrer del Glosador Toni de Son Garbeta 8, 07500","autocomplete":false,"lat":39.5711957,"lon":3.2200468,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-glosador-toni-son-garbeta:8"}
+{"category":"address_postcode","query":"Avinguda de Sant Agustí 157, 07829","autocomplete":false,"lat":38.9655014,"lon":1.2800217,"tolerance_m":50.0,"gid":"geko:address:es-07048-av-sant-agusti:157"}
+{"category":"address_postcode","query":"carrer de sa Galla 95, 07260","autocomplete":false,"lat":39.5141292,"lon":3.0251593,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-galla:95"}
+{"category":"address_postcode","query":"Carrer de Cosconar 3, 07013","autocomplete":false,"lat":39.5936628,"lon":2.5934895,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cosconar:3"}
+{"category":"address_postcode","query":"Carrer del Seminari 3, 07001","autocomplete":false,"lat":39.567077,"lon":2.6533675999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-seminari:3a"}
+{"category":"address_postcode","query":"Carrer des Corb 3, 07711","autocomplete":false,"lat":39.8178623,"lon":4.2523716,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-corb:3"}
+{"category":"address_postcode","query":"Carrer de Betlem 18, 07300","autocomplete":false,"lat":39.7195366,"lon":2.9147087,"tolerance_m":50.0,"gid":"geko:address:es-07027-cl-betlem:18"}
+{"category":"address_postcode","query":"carrer de Jorge Sepúlveda 9, 07010","autocomplete":false,"lat":39.5897577,"lon":2.6448074999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-jorge-sepulveda:9"}
+{"category":"address_postcode","query":"Carrer de ses Baladres 24, 07740","autocomplete":false,"lat":40.017330799999996,"lon":4.1873187,"tolerance_m":50.0,"gid":"geko:address:es-07037-cl-baladres:24"}
+{"category":"address_postcode","query":"carrer Emili Darder, batle 60, 07013","autocomplete":false,"lat":39.5766383,"lon":2.6359529999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-emili-darder-batle:60"}
+{"category":"address_postcode","query":"Avinguda Camí de Maó 95, 07760","autocomplete":false,"lat":40.003399699999996,"lon":3.8442688,"tolerance_m":50.0,"gid":"geko:address:es-07015-av-cami-mao:95"}
+{"category":"address_postcode","query":"Carrer de Cotoner 56, 07013","autocomplete":false,"lat":39.5709419,"lon":2.63685,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cotoner:56"}
+{"category":"address_postcode","query":"carrer de Baltasar Moyà 1, 07600","autocomplete":false,"lat":39.528689,"lon":2.7567668,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-baltasar-moya:1"}
+{"category":"address_postcode","query":"carrer del Revell 49, 07639","autocomplete":false,"lat":39.3808751,"lon":2.9391578999999997,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-revell:49"}
+{"category":"address_postcode","query":"Carrer Sant Antoni 13, 07230","autocomplete":false,"lat":39.5662187,"lon":2.9819337999999997,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-sant-antoni:13"}
+{"category":"address_postcode","query":"Avinguda de sa Pau 140, 07710","autocomplete":false,"lat":39.8484634,"lon":4.2599352999999995,"tolerance_m":50.0,"gid":"geko:address:es-07052-av-pau:140-2"}
+{"category":"address_postcode","query":"Carrer del Polvorí 33, 07015","autocomplete":false,"lat":39.559414499999995,"lon":2.6199181,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-polvori:33"}
+{"category":"address_postcode","query":"Carrer de Maris Stella 46, 07010","autocomplete":false,"lat":39.609839,"lon":2.6384537,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-maris-stella:46"}
+{"category":"address_postcode","query":"Carrer del Pare Francesc Molina 9, 07003","autocomplete":false,"lat":39.582879299999995,"lon":2.651224,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pare-francesc-molina:9"}
+{"category":"address_postcode","query":"Carrer d'en Rigo 67, 07620","autocomplete":false,"lat":39.4939756,"lon":2.8873542,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-rigo:67"}
+{"category":"address_postcode","query":"Carrer de Margalida Mas 10, 07004","autocomplete":false,"lat":39.5897912,"lon":2.6599665,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-margalida-mas:10"}
+{"category":"address_postcode","query":"Carrer de Xarc 17, 07800","autocomplete":false,"lat":38.9179859,"lon":1.4467902,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-xarc:17"}
+{"category":"address_postcode","query":"Carrer de Sant Cristòfol 39, 07760","autocomplete":false,"lat":40.0032922,"lon":3.8379743,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-sant-cristofol:39"}
+{"category":"address_postcode","query":"Avinguda de Francesc de Borja Moll 50, 07640","autocomplete":false,"lat":39.340427,"lon":3.0483244999999997,"tolerance_m":50.0,"gid":"geko:address:es-07059-av-francesc-borja-moll:50"}
+{"category":"address_postcode","query":"Carrer dels Moros 41, 07730","autocomplete":false,"lat":39.8686315,"lon":4.1617998,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-moros:41"}
+{"category":"address_postcode","query":"carrer d’Isabel Montaner 64, 07680","autocomplete":false,"lat":39.542679,"lon":3.3366702999999998,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-isabel-montaner:64"}
+{"category":"address_postcode","query":"Carrer de Lluís Martí 73, 07005","autocomplete":false,"lat":39.572525399999996,"lon":2.6643493,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-lluis-marti:73b"}
+{"category":"address_postcode","query":"Carrer de Josep Rover Motta 6, 07006","autocomplete":false,"lat":39.5662801,"lon":2.6582942999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-josep-rover-motta:6e"}
+{"category":"address_postcode","query":"Carrer de San Francisco de Sales 51, 07004","autocomplete":false,"lat":39.592425299999995,"lon":2.6573602999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-san-francisco-sales:51"}
+{"category":"address_postcode","query":"carrer de Zavellà 85, 07200","autocomplete":false,"lat":39.4721179,"lon":3.1550645,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-zavella:85"}
+{"category":"address_postcode","query":"costa de Saragossa 52, 07013","autocomplete":false,"lat":39.5903452,"lon":2.6165113,"tolerance_m":50.0,"gid":"geko:address:es-07040-cs-saragossa:52c"}
+{"category":"address_postcode","query":"Carrer de Binicaubell 107, 07013","autocomplete":false,"lat":39.592816899999995,"lon":2.581693,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-binicaubell:107"}
+{"category":"address_postcode","query":"Carrer Trasimé 23, 07600","autocomplete":false,"lat":39.5089696,"lon":2.7513842,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-trasime:23"}
+{"category":"address_postcode","query":"avinguda del Parc 22, 07500","autocomplete":false,"lat":39.5707172,"lon":3.2185028,"tolerance_m":50.0,"gid":"geko:address:es-07033-av-parc:22"}
+{"category":"address_postcode","query":"Seccio: 1 Poligon: 5 8448, 07817","autocomplete":false,"lat":38.8705542,"lon":1.3383726,"tolerance_m":50.0,"gid":"geko:address:es-07048-seccio-1-poligon-5:8448"}
+{"category":"address_postcode","query":"Carrer de Joan Bauzà 6, 07005","autocomplete":false,"lat":39.573106599999996,"lon":2.6620657,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-joan-bauza:6"}
+{"category":"address_postcode","query":"Carrer de d'Illa Cabrera 33, 07860","autocomplete":false,"lat":38.700822599999995,"lon":1.4226439,"tolerance_m":50.0,"gid":"geko:address:es-07024-cl-illa-cabrera:33"}
+{"category":"address_postcode","query":"Carrer del Doctor Barberi 36, 07011","autocomplete":false,"lat":39.595604099999996,"lon":2.6136041,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-doctor-barberi:36"}
+{"category":"address_postcode","query":"Carrer de s'Hostal 11, 07720","autocomplete":false,"lat":39.8824629,"lon":4.2783139,"tolerance_m":50.0,"gid":"geko:address:es-07064-cl-hostal:11"}
+{"category":"address_postcode","query":"Carrer del Lladoner 37, 07630","autocomplete":false,"lat":39.4261548,"lon":3.017245,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-lladoner:37"}
+{"category":"address_postcode","query":"Carrer de Marquès d'Albranca 33, 07760","autocomplete":false,"lat":39.9998907,"lon":3.8417524,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-marques-albranca:33"}
+{"category":"address_postcode","query":"Carrer de Castella 32, 07800","autocomplete":false,"lat":38.9094556,"lon":1.4269157,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-castella:32"}
+{"category":"address_postcode","query":"Carrer de Cima 14, 07011","autocomplete":false,"lat":39.5749674,"lon":2.6400006,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cima:14"}
+{"category":"address_postcode","query":"Avinguda de s'Arenal 12, 07740","autocomplete":false,"lat":40.0207352,"lon":4.1805723,"tolerance_m":50.0,"gid":"geko:address:es-07037-av-arenal:12"}
+{"category":"address_postcode","query":"Carrer de Miquel Calafell 14, 07120","autocomplete":false,"lat":39.6210793,"lon":2.6566652,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-miquel-calafell:14"}
+{"category":"address_postcode","query":"Carretera d'Esporles 44, 07010","autocomplete":false,"lat":39.6190065,"lon":2.6273600999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cr-esporles:44"}
+{"category":"address_postcode","query":"Carrer de les Cases de Son Ametler 23, 07008","autocomplete":false,"lat":39.5915514,"lon":2.6850491,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cases-son-ametler:23a"}
+{"category":"address_postcode","query":"Carrer 7 de Vista Alegre 19, 07839","autocomplete":false,"lat":38.880652,"lon":1.2952572999999998,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-7-vista-alegre:19"}
+{"category":"address_postcode","query":"Camí de ses Rodees 21, 07714","autocomplete":false,"lat":39.886688,"lon":4.252946,"tolerance_m":50.0,"gid":"geko:address:es-07032-cm-rodees:21"}
+{"category":"address_postcode","query":"Carrer Major 33, 07230","autocomplete":false,"lat":39.5686555,"lon":2.9832071,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-major:33"}
+{"category":"address_postcode","query":"carrer del Baix Riera 21, 07500","autocomplete":false,"lat":39.567977,"lon":3.2064942,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-baix-riera:21"}
+{"category":"address_postcode","query":"carrer Olivera 28, 07160","autocomplete":false,"lat":39.5386556,"lon":2.4423075,"tolerance_m":50.0,"gid":"geko:address:es-07011-cl-olivera:28"}
+{"category":"address_postcode","query":"Cala en Bosch 26, 07769","autocomplete":false,"lat":39.9260552,"lon":3.830824,"tolerance_m":50.0,"gid":"geko:address:es-07015-ur-cala-bosch:26"}
+{"category":"address_postcode","query":"Carrer de Reina Laura 5, 07007","autocomplete":false,"lat":39.5754187,"lon":2.6671928,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-reina-laura:5"}
+{"category":"address_postcode","query":"Camí de Passatemps 59, 07120","autocomplete":false,"lat":39.618083399999996,"lon":2.6551096999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-passatemps:59"}
+{"category":"address_postcode","query":"Carrer del Rei Jaume II 17, 07620","autocomplete":false,"lat":39.4934096,"lon":2.8923495999999997,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-rei-jaume-ii:17"}
+{"category":"address_postcode","query":"camí de Cas Capellers 6, 07141","autocomplete":false,"lat":39.644185199999995,"lon":2.7047375,"tolerance_m":50.0,"gid":"geko:address:es-07036-cm-cas-capellers:6a"}
+{"category":"address_postcode","query":"Carrer Sales 10, 07200","autocomplete":false,"lat":39.4698347,"lon":3.1531461,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-sales:10"}
+{"category":"address_postcode","query":"Carrer de ses Vuit Quarteres 27, 07730","autocomplete":false,"lat":39.915135,"lon":4.1724204,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-vuit-quarteres:27"}
+{"category":"address_postcode","query":"Camí des Consell 10, 07711","autocomplete":false,"lat":39.8463111,"lon":4.2606621,"tolerance_m":50.0,"gid":"geko:address:es-07052-cm-consell:10"}
+{"category":"address_postcode","query":"Carrer de Pérez Galdós 27, 07006","autocomplete":false,"lat":39.5662401,"lon":2.6611875,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-perez-galdos:27"}
+{"category":"address_postcode","query":"Carrer de Pere Escanellas 13, 07830","autocomplete":false,"lat":38.9216822,"lon":1.294521,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-pere-escanellas:13"}
+{"category":"address_spanish_type","query":"calle creu gegues 18 Montuïri","autocomplete":false,"lat":39.5696623,"lon":2.9825106,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-creu-gegues:18"}
+{"category":"address_spanish_type","query":"calle fra antoni llinas 14 Palma","autocomplete":false,"lat":39.5914004,"lon":2.6457781,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-fra-antoni-llinas:14"}
+{"category":"address_spanish_type","query":"calle orient 20 Ciutadella","autocomplete":false,"lat":40.004753699999995,"lon":3.8472326,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-orient:20"}
+{"category":"address_spanish_type","query":"calle cala llombards 16 Palma","autocomplete":false,"lat":39.6003299,"lon":2.6801211,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cala-llombards:16"}
+{"category":"address_spanish_type","query":"calle cantallops 11 Palma","autocomplete":false,"lat":39.5565056,"lon":2.7780453,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cantallops:11"}
+{"category":"address_spanish_type","query":"calle can manyoles 94 Alaró","autocomplete":false,"lat":39.706834199999996,"lon":2.7941631,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-can-manyoles:94"}
+{"category":"address_spanish_type","query":"camino milana 15 Palma","autocomplete":false,"lat":39.5700527,"lon":2.7206685,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-milana-2:15"}
+{"category":"address_spanish_type","query":"calle manacor 45 Palma","autocomplete":false,"lat":39.571615,"lon":2.6609871,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-manacor:45"}
+{"category":"address_spanish_type","query":"calle juan gris 9 Palma","autocomplete":false,"lat":39.5850514,"lon":2.6320589,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-juan-gris:9"}
+{"category":"address_spanish_type","query":"paseo cap den font 61 Sant Lluís","autocomplete":false,"lat":39.8273414,"lon":4.208644,"tolerance_m":50.0,"gid":"geko:address:es-07052-ps-cap-den-font:61"}
+{"category":"address_spanish_type","query":"calle escoles 12 Selva","autocomplete":false,"lat":39.771345,"lon":2.9047453,"tolerance_m":50.0,"gid":"geko:address:es-07058-cl-escoles-2:12"}
+{"category":"address_spanish_type","query":"calle setze juliol 37 Palma","autocomplete":false,"lat":39.600464699999996,"lon":2.6624103,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-setze-juliol:37"}
+{"category":"address_spanish_type","query":"calle princep 12 Porreres","autocomplete":false,"lat":39.5126445,"lon":3.0201803,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-princep:12"}
+{"category":"address_spanish_type","query":"calle robert graves 57 Palma","autocomplete":false,"lat":39.5596469,"lon":2.6231833,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-robert-graves:57a"}
+{"category":"address_spanish_type","query":"calle ermita 6 Palma","autocomplete":false,"lat":39.5726081,"lon":2.6466947,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ermita:6"}
+{"category":"address_spanish_type","query":"avenida es cubells 37 Sant Josep de sa Talaia","autocomplete":false,"lat":38.9194477,"lon":1.2939634,"tolerance_m":50.0,"gid":"geko:address:es-07048-av-es-cubells:37"}
+{"category":"address_spanish_type","query":"calle antoni pons 17 Palma","autocomplete":false,"lat":39.5776308,"lon":2.6375908,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-antoni-pons:17"}
+{"category":"address_spanish_type","query":"avenida cales piques 252 Ciutadella","autocomplete":false,"lat":40.0049606,"lon":3.8115311,"tolerance_m":50.0,"gid":"geko:address:es-07015-av-cales-piques:252"}
+{"category":"address_spanish_type","query":"calle palau reial 17 Palma","autocomplete":false,"lat":39.5688275,"lon":2.6486796999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-palau-reial:17"}
+{"category":"address_spanish_type","query":"calle laponia 3 Maó","autocomplete":false,"lat":39.8802161,"lon":4.2570445999999995,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-laponia:3"}
+{"category":"address_spanish_type","query":"calle son espanyolet 52 Palma","autocomplete":false,"lat":39.575933899999995,"lon":2.6285759,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-espanyolet:52"}
+{"category":"address_spanish_type","query":"avenida sant ferran 28 Palma","autocomplete":false,"lat":39.5788711,"lon":2.6354035,"tolerance_m":50.0,"gid":"geko:address:es-07040-av-sant-ferran:28b"}
+{"category":"address_spanish_type","query":"calle punta pagell 1 Manacor","autocomplete":false,"lat":39.541844399999995,"lon":3.3393807,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-punta-pagell:1"}
+{"category":"address_spanish_type","query":"avenida cister 31 Palma","autocomplete":false,"lat":39.6083018,"lon":2.6367349,"tolerance_m":50.0,"gid":"geko:address:es-07040-av-cister:31"}
+{"category":"address_spanish_type","query":"camino castell 176 Maó","autocomplete":false,"lat":39.8853334,"lon":4.2692711,"tolerance_m":50.0,"gid":"geko:address:es-07032-cm-castell:176"}
+{"category":"address_spanish_type","query":"calle roger lluria 18 Palma","autocomplete":false,"lat":39.5692583,"lon":2.6302977,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-roger-lluria:18"}
+{"category":"address_spanish_type","query":"calle geranis 22 Santa Eulària des Riu","autocomplete":false,"lat":38.9752887,"lon":1.5235482999999999,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-geranis:22"}
+{"category":"address_spanish_type","query":"calle can calafat 1 Palma","autocomplete":false,"lat":39.5369223,"lon":2.7324799,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-can-calafat:1"}
+{"category":"address_spanish_type","query":"calle sant jacint 39 Sant Lluís","autocomplete":false,"lat":39.8487905,"lon":4.2577304,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-sant-jacint:39"}
+{"category":"address_spanish_type","query":"calle port 91 es Castell","autocomplete":false,"lat":39.879623599999995,"lon":4.2946709,"tolerance_m":50.0,"gid":"geko:address:es-07064-cl-port:91"}
+{"category":"address_spanish_type","query":"calle farigola 6 Marratxí","autocomplete":false,"lat":39.6350287,"lon":2.7019207,"tolerance_m":50.0,"gid":"geko:address:es-07036-cl-farigola:6"}
+{"category":"address_spanish_type","query":"plaza esplanada 18 Maó","autocomplete":false,"lat":39.8870632,"lon":4.260282699999999,"tolerance_m":50.0,"gid":"geko:address:es-07032-pz-esplanada:18"}
+{"category":"address_spanish_type","query":"calle rector vives 1 Palma","autocomplete":false,"lat":39.5658351,"lon":2.6013508,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-rector-vives:1"}
+{"category":"address_spanish_type","query":"calle annibal 22 Palma","autocomplete":false,"lat":39.5716508,"lon":2.6378768,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-annibal:22"}
+{"category":"address_spanish_type","query":"calle cabrera 19 Ciutadella","autocomplete":false,"lat":39.999947899999995,"lon":3.8435943,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-cabrera:19"}
+{"category":"address_spanish_type","query":"plaza toro 9 Ciutadella","autocomplete":false,"lat":39.9959193,"lon":3.8358166,"tolerance_m":50.0,"gid":"geko:address:es-07015-pz-toro:9"}
+{"category":"address_spanish_type","query":"calle general felix mas 26 Palma","autocomplete":false,"lat":39.5826406,"lon":2.6285007,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-general-felix-mas:26"}
+{"category":"address_spanish_type","query":"calle moli garleta 5 Palma","autocomplete":false,"lat":39.5702429,"lon":2.6357863999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-moli-garleta:5"}
+{"category":"address_spanish_type","query":"calle comte empuries 2 Palma","autocomplete":false,"lat":39.577528099999995,"lon":2.6536942999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-comte-empuries:2"}
+{"category":"address_spanish_type","query":"calle ferrer pallares 12 Palma","autocomplete":false,"lat":39.572565999999995,"lon":2.6698578,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ferrer-pallares:12"}
+{"category":"address_spanish_type","query":"calle oblada 29 Palma","autocomplete":false,"lat":39.5372365,"lon":2.7090319,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-oblada:29"}
+{"category":"address_spanish_type","query":"calle sant bartomeu 33 Montuïri","autocomplete":false,"lat":39.5659224,"lon":2.9796462999999997,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-sant-bartomeu:33"}
+{"category":"address_spanish_type","query":"calle cadernera 9 Sant Josep de sa Talaia","autocomplete":false,"lat":38.9034739,"lon":1.3938129,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-cadernera:9"}
+{"category":"address_spanish_type","query":"calle constitucio 11 Campos","autocomplete":false,"lat":39.4304443,"lon":3.0123568,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-constitucio:11"}
+{"category":"address_spanish_type","query":"calle cerda 40 Porreres","autocomplete":false,"lat":39.514485,"lon":3.0221445,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-cerda:40"}
+{"category":"address_spanish_type","query":"camino aljub 18 es Castell","autocomplete":false,"lat":39.8516073,"lon":4.2833065,"tolerance_m":50.0,"gid":"geko:address:es-07064-cm-aljub:18"}
+{"category":"address_spanish_type","query":"plaza mercadal 4 Palma","autocomplete":false,"lat":39.5705294,"lon":2.6541237,"tolerance_m":50.0,"gid":"geko:address:es-07040-pz-mercadal:4"}
+{"category":"address_spanish_type","query":"calle felip ii 18 Eivissa","autocomplete":false,"lat":38.9114526,"lon":1.4320099,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-felip-ii:18"}
+{"category":"address_spanish_type","query":"calle ca n berga 6 Palma","autocomplete":false,"lat":39.5712894,"lon":2.6500584,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ca-n-berga:6a"}
+{"category":"address_spanish_type","query":"calle baix 15 Montuïri","autocomplete":false,"lat":39.5674856,"lon":2.9829461,"tolerance_m":50.0,"gid":"geko:address:es-07038-cl-baix:15"}
+{"category":"address_spanish_type","query":"calle metge sbert 20 Palma","autocomplete":false,"lat":39.6217969,"lon":2.6573713,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-metge-sbert:20a"}
+{"category":"address_spanish_type","query":"calle sagasta 29 Palma","autocomplete":false,"lat":39.5827741,"lon":2.6361287,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sagasta:29"}
+{"category":"address_spanish_type","query":"calle sant isidre llaurador 56 Palma","autocomplete":false,"lat":39.5836036,"lon":2.6688756,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-isidre-llaurador:56a"}
+{"category":"address_spanish_type","query":"calle sant pere alcantara 25 Ciutadella","autocomplete":false,"lat":39.9997438,"lon":3.8382167999999997,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-sant-pere-alcantara:25"}
+{"category":"address_spanish_type","query":"pasaje can curt 8 Palma","autocomplete":false,"lat":39.5719692,"lon":2.6619412,"tolerance_m":50.0,"gid":"geko:address:es-07040-pj-can-curt:8b"}
+{"category":"address_spanish_type","query":"calle arxiduc lluis salvador 12 Eivissa","autocomplete":false,"lat":38.906399199999996,"lon":1.4277779,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-arxiduc-lluis-salvador:12"}
+{"category":"address_spanish_type","query":"calle sant francesc 84 sa Pobla","autocomplete":false,"lat":39.7742182,"lon":3.018786,"tolerance_m":50.0,"gid":"geko:address:es-07044-cl-sant-francesc:84"}
+{"category":"address_spanish_type","query":"calle francesc alberti 18 Palma","autocomplete":false,"lat":39.5907396,"lon":2.6256158999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-francesc-alberti:18"}
+{"category":"address_spanish_type","query":"calle major 93 Porreres","autocomplete":false,"lat":39.5140465,"lon":3.018836,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-major:93"}
+{"category":"address_spanish_type","query":"calle xarraca 9 Eivissa","autocomplete":false,"lat":38.9067967,"lon":1.4170753,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-xarraca:9"}
+{"category":"address_spanish_type","query":"calle robert graves 27 Palma","autocomplete":false,"lat":39.561668499999996,"lon":2.6243445999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-robert-graves:27"}
+{"category":"address_spanish_type","query":"calle niceto alcala zamora 5 Palma","autocomplete":false,"lat":39.5787769,"lon":2.6388577,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-niceto-alcala-zamora:5"}
+{"category":"address_spanish_type","query":"calle gabriel carbonell 108 Palma","autocomplete":false,"lat":39.575747199999995,"lon":2.6752146,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-gabriel-carbonell:108"}
+{"category":"address_spanish_type","query":"calle rupit 1 Sant Lluís","autocomplete":false,"lat":39.8168917,"lon":4.2537136,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-rupit:1"}
+{"category":"address_spanish_type","query":"calle gabriel vaquer 82 Felanitx","autocomplete":false,"lat":39.4637903,"lon":3.1462630999999996,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-gabriel-vaquer:82"}
+{"category":"address_spanish_type","query":"muelle fonduco 30 es Castell","autocomplete":false,"lat":39.885542799999996,"lon":4.2795561,"tolerance_m":50.0,"gid":"geko:address:es-07064-mu-fonduco:30"}
+{"category":"address_spanish_type","query":"calle fortunio bonanova 9 Palma","autocomplete":false,"lat":39.564735299999995,"lon":2.5999059,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-fortunio-bonanova:9"}
+{"category":"address_spanish_type","query":"calle torre redona 2 Palma","autocomplete":false,"lat":39.5371579,"lon":2.7163391999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-torre-redona:2"}
+{"category":"address_spanish_type","query":"calle portinatx 27 Eivissa","autocomplete":false,"lat":38.9080551,"lon":1.4160871,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-portinatx:27"}
+{"category":"address_spanish_type","query":"camino farola 25 Ciutadella","autocomplete":false,"lat":40.000639,"lon":3.8293968,"tolerance_m":50.0,"gid":"geko:address:es-07015-cm-farola:25t"}
+{"category":"address_spanish_type","query":"calle ramon berenguer iii 4 Palma","autocomplete":false,"lat":39.5792006,"lon":2.6519908,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ramon-berenguer-iii:4"}
+{"category":"address_spanish_type","query":"calle llaut 30 Sant Lluís","autocomplete":false,"lat":39.8216213,"lon":4.235026599999999,"tolerance_m":50.0,"gid":"geko:address:es-07052-cl-llaut:30"}
+{"category":"address_spanish_type","query":"calle comtessa 37 Manacor","autocomplete":false,"lat":39.5646081,"lon":3.2089228999999997,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-comtessa:37"}
+{"category":"address_spanish_type","query":"calle cotoner 52 Palma","autocomplete":false,"lat":39.5710137,"lon":2.6368883,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-cotoner:52"}
+{"category":"address_spanish_type","query":"calle horaci 28 Palma","autocomplete":false,"lat":39.5351445,"lon":2.7147642,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-horaci:28"}
+{"category":"address_spanish_type","query":"calle carnisseria 4 Ciutadella","autocomplete":false,"lat":40.0025747,"lon":3.8392891999999996,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-carnisseria:4"}
+{"category":"address_spanish_type","query":"calle joaquim togores 4 Palma","autocomplete":false,"lat":39.5863174,"lon":2.6515355,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-joaquim-togores:4"}
+{"category":"address_spanish_type","query":"calle music rafel zornoza 13 Eivissa","autocomplete":false,"lat":38.902220799999995,"lon":1.4082096,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-music-rafel-zornoza:13"}
+{"category":"address_spanish_type","query":"calle pirineus 46 Calvià","autocomplete":false,"lat":39.5378618,"lon":2.4553035,"tolerance_m":50.0,"gid":"geko:address:es-07011-cl-pirineus:46"}
+{"category":"address_spanish_type","query":"calle sindicat 3 Palma","autocomplete":false,"lat":39.5708777,"lon":2.6521521999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sindicat:3"}
+{"category":"address_spanish_type","query":"calle mestre perosi 23 Palma","autocomplete":false,"lat":39.587061399999996,"lon":2.6837008,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mestre-perosi:23"}
+{"category":"address_spanish_type","query":"calle can borras 14 Palma","autocomplete":false,"lat":39.614714299999996,"lon":2.673534,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-can-borras:14"}
+{"category":"address_spanish_type","query":"calle xeringa 7 Eivissa","autocomplete":false,"lat":38.9091612,"lon":1.4364721999999999,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-xeringa:7"}
+{"category":"address_spanish_type","query":"calle pins 34 Palma","autocomplete":false,"lat":39.5352647,"lon":2.7119478,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pins:34"}
+{"category":"address_spanish_type","query":"calle cerda 47 Porreres","autocomplete":false,"lat":39.513748,"lon":3.0234193,"tolerance_m":50.0,"gid":"geko:address:es-07043-cl-cerda:47"}
+{"category":"address_spanish_type","query":"calle llucmajor 7 Palma","autocomplete":false,"lat":39.561598499999995,"lon":2.6710076,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-llucmajor:7"}
+{"category":"address_spanish_type","query":"calle llorenc frau 68 Palma","autocomplete":false,"lat":39.5742105,"lon":2.7179408,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-llorenc-frau:68a"}
+{"category":"address_spanish_type","query":"calle mare deu victoria 32 Palma","autocomplete":false,"lat":39.5814096,"lon":2.6715334,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mare-deu-victoria:32"}
+{"category":"address_spanish_type","query":"calle sor patrocini 6 Palma","autocomplete":false,"lat":39.5759894,"lon":2.7150876,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sor-patrocini:6"}
+{"category":"address_spanish_type","query":"camino coscolls 7 Santa Maria del Camí","autocomplete":false,"lat":39.6421183,"lon":2.7716475999999997,"tolerance_m":50.0,"gid":"geko:address:es-07056-cm-coscolls:7"}
+{"category":"address_spanish_type","query":"calle gerreria 18 Palma","autocomplete":false,"lat":39.5697341,"lon":2.6555144999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-gerreria:18"}
+{"category":"address_spanish_type","query":"calle batista 4 Palma","autocomplete":false,"lat":39.5629883,"lon":2.5986963999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-batista:4a"}
+{"category":"address_spanish_type","query":"plaza jaume ii 9 Santa Maria del Camí","autocomplete":false,"lat":39.650116,"lon":2.7697312999999997,"tolerance_m":50.0,"gid":"geko:address:es-07056-pz-jaume-ii:9"}
+{"category":"address_spanish_type","query":"calle joan gomis 6 Manacor","autocomplete":false,"lat":39.5435985,"lon":3.3415977,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-joan-gomis:6"}
+{"category":"address_spanish_type","query":"calle bisbe roig 46 Llucmajor","autocomplete":false,"lat":39.4883808,"lon":2.8850474,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-bisbe-roig:46"}
+{"category":"address_spanish_type","query":"calle joaquin torres llado 8 Palma","autocomplete":false,"lat":39.6104789,"lon":2.6729005999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-joaquin-torres-llado:8"}
+{"category":"address_spanish_type","query":"calle sant miquel 25 Llucmajor","autocomplete":false,"lat":39.4924689,"lon":2.8914486999999998,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-sant-miquel:25"}
+{"category":"address_spanish_type","query":"calle jeroni castano 7 Palma","autocomplete":false,"lat":39.6176923,"lon":2.6275485,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-jeroni-castano:7"}
+{"category":"address_spanish_type","query":"calle rectoria 6 Alcúdia","autocomplete":false,"lat":39.851828999999995,"lon":3.1212255,"tolerance_m":50.0,"gid":"geko:address:es-07003-cl-rectoria:6"}
+{"category":"address_spanish_type","query":"calle son nadal 5 Palma","autocomplete":false,"lat":39.5741012,"lon":2.6705532,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-nadal:5"}
+{"category":"address_typo","query":"carrer de Miquel Procel 42, Manacor","autocomplete":false,"lat":39.570221,"lon":3.2124297,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-miquel-porcel:42"}
+{"category":"address_typo","query":"Carrer de Jaume Bamles 35, Palma","autocomplete":false,"lat":39.579971,"lon":2.6589237999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-jaume-balmes:35"}
+{"category":"address_typo","query":"Carrer de Mazaagn 3, Palma","autocomplete":false,"lat":39.5773496,"lon":2.6329029999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mazagan:3"}
+{"category":"address_typo","query":"Carrer des Pou de na Maicana 15, Sant Antoni de Portmany","autocomplete":false,"lat":38.9429541,"lon":1.4165885999999999,"tolerance_m":50.0,"gid":"geko:address:es-07046-cl-pou-maciana:15"}
+{"category":"address_typo","query":"Carrer Marian Augiló 4, Palma","autocomplete":false,"lat":39.5765543,"lon":2.6612663999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-marian-aguilo:4"}
+{"category":"address_typo","query":"carrer Lluís Carreers 7, Muro","autocomplete":false,"lat":39.737114299999995,"lon":3.0563829,"tolerance_m":50.0,"gid":"geko:address:es-07039-cl-lluis-carreres:7"}
+{"category":"address_typo","query":"Carrer de sa Conillrea 1, Santa Eulària des Riu","autocomplete":false,"lat":39.0204101,"lon":1.5826243,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-conillera:1"}
+{"category":"address_typo","query":"crarer de Santa Fe 4, Palma","autocomplete":false,"lat":39.566201,"lon":2.6551698999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-santa-fe:4"}
+{"category":"address_typo","query":"Carrer de Ricardo Curtoys Gotarrdeona 4, Santa Eulària des Riu","autocomplete":false,"lat":38.9828556,"lon":1.5325658,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-ricardo-curtoys-gotarredona:4"}
+{"category":"address_typo","query":"carerr d'en Mas 2, Manacor","autocomplete":false,"lat":39.568615099999995,"lon":3.2135906,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-mas:2"}
+{"category":"address_typo","query":"Carrer de Perlela 6, Eivissa","autocomplete":false,"lat":38.9182833,"lon":1.4617704999999999,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-perella:6"}
+{"category":"address_typo","query":"Crarer de Carbó 16, Campos","autocomplete":false,"lat":39.4276524,"lon":3.0238351999999997,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-carbo:16"}
+{"category":"address_typo","query":"Plaça d'en Wyeler 4, Palma","autocomplete":false,"lat":39.5716608,"lon":2.6502692999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-pz-weyler:4"}
+{"category":"address_typo","query":"Avingdua de Cala Molí 72, Sant Josep de sa Talaia","autocomplete":false,"lat":38.9265578,"lon":1.2312041,"tolerance_m":50.0,"gid":"geko:address:es-07048-av-cala-moli:72"}
+{"category":"address_typo","query":"Carrer del Scoors 25, Palma","autocomplete":false,"lat":39.5696823,"lon":2.6558438,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-socors:25"}
+{"category":"address_typo","query":"Carrer de Robert Garves 22, Palma","autocomplete":false,"lat":39.5620432,"lon":2.6245371,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-robert-graves:22"}
+{"category":"address_typo","query":"Crarer Ruiz i Pablo 63, Alaior","autocomplete":false,"lat":39.9311517,"lon":4.1395681,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-ruiz-pablo:63"}
+{"category":"address_typo","query":"Carrer de Sant Vicenç Frerer 93, Palma","autocomplete":false,"lat":39.578840299999996,"lon":2.6679584999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-vicenc-ferrer:93"}
+{"category":"address_typo","query":"Avinugda de la Cala Blanca 159, Ciutadella","autocomplete":false,"lat":39.9706403,"lon":3.8315335999999998,"tolerance_m":50.0,"gid":"geko:address:es-07015-av-cala-blanca:159"}
+{"category":"address_typo","query":"Carrer d'Anotni Maria Alcover 29, Alaró","autocomplete":false,"lat":39.7033809,"lon":2.7957522999999997,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-antoni-maria-alcover:29"}
+{"category":"address_typo","query":"Carrer Sitajr 29, Felanitx","autocomplete":false,"lat":39.469270699999996,"lon":3.1493653999999998,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-sitjar:29"}
+{"category":"address_typo","query":"carrer dE'rwin Hubert 6, Palma","autocomplete":false,"lat":39.5619461,"lon":2.6751237,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-erwin-hubert:6"}
+{"category":"address_typo","query":"Carrer Son Rulaln E 82, Palma","autocomplete":false,"lat":39.5961265,"lon":2.6823581,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-son-rullan:82"}
+{"category":"address_typo","query":"Carrer de Sant Dmoenec 2, Alaior","autocomplete":false,"lat":39.8688313,"lon":4.1385749,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-sant-domenec:2"}
+{"category":"address_typo","query":"Camí vell de Bunyloa 133, Palma","autocomplete":false,"lat":39.611602,"lon":2.6807342999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-vell-bunyola:133"}
+{"category":"address_typo","query":"Carrer Joan Rsoselló de Son Forteza 3, Alaró","autocomplete":false,"lat":39.7038671,"lon":2.7931112,"tolerance_m":50.0,"gid":"geko:address:es-07001-cl-joan-rossello-son-forteza:3"}
+{"category":"address_typo","query":"Carrer del Trorent 15, Sant Josep de sa Talaia","autocomplete":false,"lat":38.8924417,"lon":1.3859298,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-torrent:15"}
+{"category":"address_typo","query":"Carerr del Clot 3, Palma","autocomplete":false,"lat":39.6205923,"lon":2.6229171,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-clot:3"}
+{"category":"address_typo","query":"Carrer de s'Alqeuria Blanca 21, Palma","autocomplete":false,"lat":39.6081518,"lon":2.6347942,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-alqueria-blanca:21"}
+{"category":"address_typo","query":"Crarer de s'Era 42, es Migjorn Gran","autocomplete":false,"lat":39.9441218,"lon":4.0488574999999996,"tolerance_m":50.0,"gid":"geko:address:es-07902-cl-era:42"}
+{"category":"address_typo","query":"Carrer de Benrat Jofre 3, Palma","autocomplete":false,"lat":39.5305526,"lon":2.7565795,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-bernat-jofre:3"}
+{"category":"address_typo","query":"carrer d'Alexadnre Laborde 12, Palma","autocomplete":false,"lat":39.6000672,"lon":2.6285539,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-alexandre-laborde:12"}
+{"category":"address_typo","query":"Crarer de sa Penya 4, Eivissa","autocomplete":false,"lat":38.9080989,"lon":1.435722,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-penya:4"}
+{"category":"address_typo","query":"Carrer de Gabriel Carbnoell 59, Palma","autocomplete":false,"lat":39.574912499999996,"lon":2.6717864,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-gabriel-carbonell:59"}
+{"category":"address_typo","query":"Vénda de Beniràrs 187, Sant Joan de Labritja","autocomplete":false,"lat":39.0709352,"lon":1.459967,"tolerance_m":50.0,"gid":"geko:address:es-07050-lg-venda-benirras:187"}
+{"category":"address_typo","query":"Carerr de Mateu Enric Lladó 7, Palma","autocomplete":false,"lat":39.5704135,"lon":2.6564001999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mateu-enric-llado:7"}
+{"category":"address_typo","query":"Carrer de Sant Llroenç 46, Maó","autocomplete":false,"lat":39.8847349,"lon":4.2657567,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-llorenc-2:46"}
+{"category":"address_typo","query":"Carrer des Casetll Rupit 4, Ciutadella","autocomplete":false,"lat":40.000845999999996,"lon":3.8391949,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-castell-rupit:4"}
+{"category":"address_typo","query":"Carrer de ses Rouqes 25, Ciutadella","autocomplete":false,"lat":40.004274599999995,"lon":3.8375809,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-roques-2:25"}
+{"category":"address_typo","query":"Carerr del Palau Reial 1, Palma","autocomplete":false,"lat":39.5692697,"lon":2.6498049,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-palau-reial:1"}
+{"category":"address_typo","query":"Carrer ses Rqoues 1, Sant Joan de Labritja","autocomplete":false,"lat":39.0777127,"lon":1.5111134,"tolerance_m":50.0,"gid":"geko:address:es-07050-cl-roques:1"}
+{"category":"address_typo","query":"Carrer de Crisòtfol Colom 2, Felanitx","autocomplete":false,"lat":39.4217474,"lon":3.2617068,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-cristofol-colom:2"}
+{"category":"address_typo","query":"Carrer de Snatanyí 8, Campos","autocomplete":false,"lat":39.4294388,"lon":3.020152,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-santanyi:8a"}
+{"category":"address_typo","query":"Carrer de Can Calfaat 63, Palma","autocomplete":false,"lat":39.5418921,"lon":2.738858,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-can-calafat:63"}
+{"category":"address_typo","query":"Carrer del Pic Mluhacén 6, Palma","autocomplete":false,"lat":39.5778864,"lon":2.6726007,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pic-mulhacen:6"}
+{"category":"address_typo","query":"Carrer d'Àngel Guimreà 34, Palma","autocomplete":false,"lat":39.5830477,"lon":2.6543636,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-angel-guimera:34"}
+{"category":"address_typo","query":"carrer de Capmos 41, Llucmajor","autocomplete":false,"lat":39.490005499999995,"lon":2.8957151,"tolerance_m":50.0,"gid":"geko:address:es-07031-cl-campos:41a"}
+{"category":"address_typo","query":"Carrer d'nAtoni Ribas 3, Palma","autocomplete":false,"lat":39.569439599999995,"lon":2.6579989,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-antoni-ribas:3"}
+{"category":"address_typo","query":"Carrer del Pare Franecsc Molina 13, Palma","autocomplete":false,"lat":39.5828517,"lon":2.6509305,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pare-francesc-molina:13"}
+{"category":"address_typo","query":"crarer de sa Unió 27, Campos","autocomplete":false,"lat":39.4318066,"lon":3.0195677,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-unio:27"}
+{"category":"address_typo","query":"Carrer de Sant Ignsai 52, Palma","autocomplete":false,"lat":39.573913399999995,"lon":2.6740937,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-ignasi:52"}
+{"category":"address_typo","query":"Carrer de Sant Lloernç 58, Maó","autocomplete":false,"lat":39.871562,"lon":4.2066243,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-sant-llorenc:58"}
+{"category":"address_typo","query":"Carrer es Carrreó 22, Alaior","autocomplete":false,"lat":39.9339194,"lon":4.138987,"tolerance_m":50.0,"gid":"geko:address:es-07002-cl-es-carrero:22"}
+{"category":"address_typo","query":"Carrer de Gaílcia 15, Eivissa","autocomplete":false,"lat":38.905813099999996,"lon":1.4229342999999999,"tolerance_m":50.0,"gid":"geko:address:es-07026-cl-galicia:15"}
+{"category":"address_typo","query":"Passieg de la Mar 14, Sant Lluís","autocomplete":false,"lat":39.824665499999995,"lon":4.2241849,"tolerance_m":50.0,"gid":"geko:address:es-07052-ps-mar:14"}
+{"category":"address_typo","query":"Carerr de la Pampa 41, Maó","autocomplete":false,"lat":39.8793332,"lon":4.2549034,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-pampa:41"}
+{"category":"address_typo","query":"Carerr del Timó 5, Palma","autocomplete":false,"lat":39.560035299999996,"lon":2.6734431,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-timo:5"}
+{"category":"address_typo","query":"crarer H 22, Palma","autocomplete":false,"lat":39.5094114,"lon":2.7580459999999998,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-h-2:22"}
+{"category":"address_typo","query":"Carrer de Sant Mqiuel 68, Palma","autocomplete":false,"lat":39.576747399999995,"lon":2.6524635,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-miquel:68a"}
+{"category":"address_typo","query":"Carrer de Nostra Senyroa de Lluc 61, Selva","autocomplete":false,"lat":39.771628199999995,"lon":2.9010626999999998,"tolerance_m":50.0,"gid":"geko:address:es-07058-cl-nostra-senyora-lluc:61"}
+{"category":"address_typo","query":"Carrer dels Fnoers 44, Palma","autocomplete":false,"lat":39.5683949,"lon":2.661914,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-foners:44"}
+{"category":"address_typo","query":"Camí de Biinfadet 32, Sant Lluís","autocomplete":false,"lat":39.8523895,"lon":4.2554104,"tolerance_m":50.0,"gid":"geko:address:es-07052-cm-binifadet:32"}
+{"category":"address_typo","query":"Carrer del Pare Frnacesc Molina 33, Palma","autocomplete":false,"lat":39.5826251,"lon":2.6484956,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pare-francesc-molina:33"}
+{"category":"address_typo","query":"Carrer de Maria Llusïa Serra 1, Maó","autocomplete":false,"lat":39.8870691,"lon":4.257873399999999,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-maria-lluisa-serra:1"}
+{"category":"address_typo","query":"Carrer de ses Mognes 9, Sant Josep de sa Talaia","autocomplete":false,"lat":38.892039,"lon":1.3942075,"tolerance_m":50.0,"gid":"geko:address:es-07048-cl-monges:9"}
+{"category":"address_typo","query":"Carrer Sitajr 8, Felanitx","autocomplete":false,"lat":39.4696238,"lon":3.1489157999999997,"tolerance_m":50.0,"gid":"geko:address:es-07022-cl-sitjar:8"}
+{"category":"address_typo","query":"Carrer de la Vnetada 34, Palma","autocomplete":false,"lat":39.560427399999995,"lon":2.6732365,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-ventada:34"}
+{"category":"address_typo","query":"Avinguda d'Aclúdia 45, Inca","autocomplete":false,"lat":39.7229208,"lon":2.9144606,"tolerance_m":50.0,"gid":"geko:address:es-07027-av-alcudia:45"}
+{"category":"address_typo","query":"carretrea de Palma 100, Vilafranca de Bonany","autocomplete":false,"lat":39.5696455,"lon":3.0903131,"tolerance_m":50.0,"gid":"geko:address:es-07065-cr-palma:100"}
+{"category":"address_typo","query":"Vénda de Cas Rpiolls 1, Sant Joan de Labritja","autocomplete":false,"lat":39.077565799999995,"lon":1.509915,"tolerance_m":50.0,"gid":"geko:address:es-07050-venda-cas-ripolls:1"}
+{"category":"address_typo","query":"Crarer de Sant Magí 105, Palma","autocomplete":false,"lat":39.570283499999995,"lon":2.6343642,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-magi:105"}
+{"category":"address_typo","query":"Carrer de l'Arquitetce Guillem Forteza 43, Santa Maria del Camí","autocomplete":false,"lat":39.645942,"lon":2.7739693,"tolerance_m":50.0,"gid":"geko:address:es-07056-cl-arquitecte-guillem-forteza:43a"}
+{"category":"address_typo","query":"Carrer de la Concpeció 64, Maó","autocomplete":false,"lat":39.887771199999996,"lon":4.2704487,"tolerance_m":50.0,"gid":"geko:address:es-07032-cl-concepcio:64a"}
+{"category":"address_typo","query":"carrer d'Eakati Ahn 13, Palma","autocomplete":false,"lat":39.539066299999995,"lon":2.7116712,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-eaktai-ahn:13"}
+{"category":"address_typo","query":"Carrer des Cap de Bajloí 13, Ciutadella","autocomplete":false,"lat":40.005705,"lon":3.8390621,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-cap-bajoli:13"}
+{"category":"address_typo","query":"Camí de Gènvoa 106, Palma","autocomplete":false,"lat":39.5743571,"lon":2.6138106999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-genova:106"}
+{"category":"address_typo","query":"Pasastge de Siete Picos 4, Palma","autocomplete":false,"lat":39.578176899999995,"lon":2.6731407,"tolerance_m":50.0,"gid":"geko:address:es-07040-pj-siete-picos:4"}
+{"category":"address_typo","query":"Carrer de Pablo Igleisas 35, Palma","autocomplete":false,"lat":39.5819718,"lon":2.6544651999999997,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-pablo-iglesias:35a"}
+{"category":"address_typo","query":"Carrer de la Mare de Déu de Montsrerat 25, Palma","autocomplete":false,"lat":39.5827688,"lon":2.6737495,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-mare-deu-montserrat:25"}
+{"category":"address_typo","query":"Carrer de la Trboada 9, Palma","autocomplete":false,"lat":39.5810861,"lon":2.6350727,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-trobada:9"}
+{"category":"address_typo","query":"carrer de s'Ecsorpora 32, Manacor","autocomplete":false,"lat":39.563368499999996,"lon":3.3699241,"tolerance_m":50.0,"gid":"geko:address:es-07033-cl-escorpora:32"}
+{"category":"address_typo","query":"Carerr de Sant Damas 13, Palma","autocomplete":false,"lat":39.5728988,"lon":2.6717871,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-sant-damas:13"}
+{"category":"address_typo","query":"Carrer d'Oirent 7, Ciutadella","autocomplete":false,"lat":40.00447,"lon":3.8472017999999997,"tolerance_m":50.0,"gid":"geko:address:es-07015-cl-orient:7"}
+{"category":"address_typo","query":"passeig dA'ntoni Maura 88, Manacor","autocomplete":false,"lat":39.5720671,"lon":3.2167775,"tolerance_m":50.0,"gid":"geko:address:es-07033-ps-antoni-maura:88"}
+{"category":"address_typo","query":"Carrer de Surdea 35, Campos","autocomplete":false,"lat":39.4293897,"lon":3.0249156999999998,"tolerance_m":50.0,"gid":"geko:address:es-07013-cl-sureda:35"}
+{"category":"address_typo","query":"camí de Son Prnues 27, Palma","autocomplete":false,"lat":39.587437,"lon":2.721864,"tolerance_m":50.0,"gid":"geko:address:es-07040-cm-son-prunes:27"}
+{"category":"address_typo","query":"Carrer dels Glaidols 27, Santa Eulària des Riu","autocomplete":false,"lat":38.9623645,"lon":1.5199272,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-gladiols:27"}
+{"category":"address_typo","query":"Ronda Atnoni Ramis 119, Llucmajor","autocomplete":false,"lat":39.4955861,"lon":2.8925313,"tolerance_m":50.0,"gid":"geko:address:es-07031-rd-antoni-ramis:119"}
+{"category":"address_typo","query":"Carrer dels Lliirs 11, Santa Eulària des Riu","autocomplete":false,"lat":38.9744902,"lon":1.5266047,"tolerance_m":50.0,"gid":"geko:address:es-07054-cl-lliris:11"}
+{"category":"address_typo","query":"Carrer de la Reina Contsança 11, Palma","autocomplete":false,"lat":39.5695827,"lon":2.6588938,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-reina-constanca:11"}
+{"category":"address_typo","query":"Seccio: 1 Ploigon: 5 11005, Sant Josep de sa Talaia","autocomplete":false,"lat":38.8912979,"lon":1.3530761,"tolerance_m":50.0,"gid":"geko:address:es-07048-seccio-1-poligon-5:11005"}
+{"category":"address_typo","query":"Carrer d'Adnreu Torrens 31, Palma","autocomplete":false,"lat":39.580401099999996,"lon":2.6421208,"tolerance_m":50.0,"gid":"geko:address:es-07040-cl-andreu-torrens:31"}
+{"category":"street","query":"Carrer Formentera, Artà","autocomplete":false,"lat":39.691328999999996,"lon":3.3482155,"tolerance_m":500.0,"gid":"geko:street:es-07006-cl-formentera"}
+{"category":"street","query":"Carrer Sa Parra, Felanitx","autocomplete":false,"lat":39.3818005,"lon":3.2379246,"tolerance_m":500.0,"gid":"geko:street:es-07022-cl-parra"}
+{"category":"street","query":"Plaça des Pins, Ciutadella","autocomplete":false,"lat":39.9992692,"lon":3.8357645999999996,"tolerance_m":500.0,"gid":"geko:street:es-07015-pz-pins"}
+{"category":"street","query":"carrer de les Escoles, Algaida","autocomplete":false,"lat":39.5630349,"lon":2.8970767,"tolerance_m":500.0,"gid":"geko:street:es-07004-cl-escoles"}
+{"category":"street","query":"camí de sa Vacal, Búger","autocomplete":false,"lat":39.7574652,"lon":2.9874232,"tolerance_m":500.0,"gid":"geko:street:es-07009-cm-vacal"}
+{"category":"street","query":"avinguda de les Almadraves, Alcúdia","autocomplete":false,"lat":39.8606038,"lon":3.1131721,"tolerance_m":500.0,"gid":"geko:street:es-07003-av-almadraves"}
+{"category":"street","query":"Travessa de Llorenç Villalonga, Alcúdia","autocomplete":false,"lat":39.8434021,"lon":3.1319207,"tolerance_m":500.0,"gid":"geko:street:es-07003-travessa-llorenc-villalonga"}
+{"category":"street","query":"Carrer Major, Capdepera","autocomplete":false,"lat":39.7034112,"lon":3.4321745999999997,"tolerance_m":500.0,"gid":"geko:street:es-07014-cl-major"}
+{"category":"street","query":"carrer del Bisbe, Algaida","autocomplete":false,"lat":39.5590239,"lon":2.8944037,"tolerance_m":500.0,"gid":"geko:street:es-07004-cl-bisbe"}
+{"category":"street","query":"Carrer de les Sitges, Sant Josep de sa Talaia","autocomplete":false,"lat":38.9642564,"lon":1.3027347,"tolerance_m":500.0,"gid":"geko:street:es-07048-cl-sitges"}
+{"category":"street","query":"comellar de s'Aigua, Esporles","autocomplete":false,"lat":39.6468656,"lon":2.5756075999999997,"tolerance_m":500.0,"gid":"geko:street:es-07020-comellar-aigua"}
+{"category":"street","query":"Carrer del Polvorí, Palma","autocomplete":false,"lat":39.558884899999995,"lon":2.6208239,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-polvori"}
+{"category":"street","query":"camí de sa Llapassa, Llucmajor","autocomplete":false,"lat":39.4182603,"lon":2.7702598,"tolerance_m":500.0,"gid":"geko:street:es-07031-cm-llapassa"}
+{"category":"street","query":"carrer Baladres, Manacor","autocomplete":false,"lat":39.5251125,"lon":3.3236756,"tolerance_m":500.0,"gid":"geko:street:es-07033-cl-baladres"}
+{"category":"street","query":"Passeig Marítim, Sant Lluís","autocomplete":false,"lat":39.8225644,"lon":4.2306256,"tolerance_m":500.0,"gid":"geko:street:es-07052-ps-maritim"}
+{"category":"street","query":"Es Pinaret, Artà","autocomplete":false,"lat":39.735492,"lon":3.2859849999999997,"tolerance_m":500.0,"gid":"geko:street:es-07006-es-pinaret"}
+{"category":"street","query":"Carrer des Mabres, Sant Lluís","autocomplete":false,"lat":39.8162397,"lon":4.2801665,"tolerance_m":500.0,"gid":"geko:street:es-07052-cl-mabres"}
+{"category":"street","query":"urbanització de Can Far, Bunyola","autocomplete":false,"lat":39.7006205,"lon":2.7032106,"tolerance_m":500.0,"gid":"geko:street:es-07010-ur-can-far"}
+{"category":"street","query":"Camí de Son Puig, sa Pobla","autocomplete":false,"lat":39.790850299999995,"lon":3.0437320999999997,"tolerance_m":500.0,"gid":"geko:street:es-07044-cm-son-puig"}
+{"category":"street","query":"Carrer des Duc de Crillon, es Castell","autocomplete":false,"lat":39.8792578,"lon":4.2916295,"tolerance_m":500.0,"gid":"geko:street:es-07064-cl-duc-crillon"}
+{"category":"street","query":"comellar de Can Pipa, Selva","autocomplete":false,"lat":39.7790998,"lon":2.9036272,"tolerance_m":500.0,"gid":"geko:street:es-07058-comellar-can-pipa"}
+{"category":"street","query":"camí de Can Domingo, Marratxí","autocomplete":false,"lat":39.6113751,"lon":2.7538465,"tolerance_m":500.0,"gid":"geko:street:es-07036-cm-can-domingo"}
+{"category":"street","query":"camí de Can Pedaçot, Sóller","autocomplete":false,"lat":39.7657568,"lon":2.7119464,"tolerance_m":500.0,"gid":"geko:street:es-07061-cm-can-pedacot"}
+{"category":"street","query":"camí des Domingos Vells, Manacor","autocomplete":false,"lat":39.4675734,"lon":3.2516189,"tolerance_m":500.0,"gid":"geko:street:es-07033-cm-domingos-vells"}
+{"category":"street","query":"camí de s'Auma nou, Artà","autocomplete":false,"lat":39.654844,"lon":3.3076678,"tolerance_m":500.0,"gid":"geko:street:es-07006-cm-auma-nou"}
+{"category":"street","query":"carrer de Maria Mut, Palma","autocomplete":false,"lat":39.5306115,"lon":2.7528278999999998,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-maria-mut"}
+{"category":"street","query":"carrer d'Els Valldemossa, Valldemossa","autocomplete":false,"lat":39.7129431,"lon":2.6217288,"tolerance_m":500.0,"gid":"geko:street:es-07063-cl-valldemossa"}
+{"category":"street","query":"passatge de sa Rota, Manacor","autocomplete":false,"lat":39.545127799999996,"lon":3.3380915,"tolerance_m":500.0,"gid":"geko:street:es-07033-pj-rota"}
+{"category":"street","query":"Plaça Esplanada, Maó","autocomplete":false,"lat":39.8876231,"lon":4.2594327,"tolerance_m":500.0,"gid":"geko:street:es-07032-pz-esplanada"}
+{"category":"street","query":"carrer de Llevant, Pollença","autocomplete":false,"lat":39.9095505,"lon":3.0821240999999997,"tolerance_m":500.0,"gid":"geko:street:es-07042-cl-llevant"}
+{"category":"street","query":"Carrer del Riu Duero, Eivissa","autocomplete":false,"lat":38.9071302,"lon":1.4073863,"tolerance_m":500.0,"gid":"geko:street:es-07026-cl-riu-duero"}
+{"category":"street","query":"carrer de la Verge de Lluc, Lloseta","autocomplete":false,"lat":39.7163968,"lon":2.8679457999999998,"tolerance_m":500.0,"gid":"geko:street:es-07029-cl-verge-lluc"}
+{"category":"street","query":"Carrer Gardènia, Marratxí","autocomplete":false,"lat":39.6137071,"lon":2.6920265999999997,"tolerance_m":500.0,"gid":"geko:street:es-07036-cl-gardenia"}
+{"category":"street","query":"camí de s'Hort d'en More, ses Salines","autocomplete":false,"lat":39.3298521,"lon":3.0325292999999998,"tolerance_m":500.0,"gid":"geko:street:es-07059-cm-hort-more"}
+{"category":"street","query":"Carrer Verderol, Banyalbufar","autocomplete":false,"lat":39.691554,"lon":2.5548856,"tolerance_m":500.0,"gid":"geko:street:es-07007-cl-verderol"}
+{"category":"street","query":"passeig Manuel de Falla, Manacor","autocomplete":false,"lat":39.526958,"lon":3.3184622,"tolerance_m":500.0,"gid":"geko:street:es-07033-ps-manuel-falla"}
+{"category":"street","query":"Carrer de Miquel Capllonch, Llucmajor","autocomplete":false,"lat":39.3645245,"lon":2.8681427999999998,"tolerance_m":500.0,"gid":"geko:street:es-07031-cl-miquel-capllonch"}
+{"category":"street","query":"Carrer de sa Canal, Sant Josep de sa Talaia","autocomplete":false,"lat":38.840517399999996,"lon":1.3820301,"tolerance_m":500.0,"gid":"geko:street:es-07048-cl-canal"}
+{"category":"street","query":"carrer Gavina, Manacor","autocomplete":false,"lat":39.557337,"lon":3.3692805999999997,"tolerance_m":500.0,"gid":"geko:street:es-07033-cl-gavina"}
+{"category":"street","query":"carrer de la Mar, Andratx","autocomplete":false,"lat":39.5446325,"lon":2.3894338999999998,"tolerance_m":500.0,"gid":"geko:street:es-07005-cl-mar"}
+{"category":"street","query":"camí de Son Frare, Artà","autocomplete":false,"lat":39.6857287,"lon":3.3595354,"tolerance_m":500.0,"gid":"geko:street:es-07006-cm-son-frare"}
+{"category":"street","query":"Carrer de Félix Escobar, Palma","autocomplete":false,"lat":39.5799379,"lon":2.6340079,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-felix-escobar"}
+{"category":"street","query":"carrer del Salvador, Sóller","autocomplete":false,"lat":39.7707348,"lon":2.7338545,"tolerance_m":500.0,"gid":"geko:street:es-07061-cl-salvador"}
+{"category":"street","query":"Carrer Lau, Palma","autocomplete":false,"lat":39.617372499999995,"lon":2.6551237,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-lau"}
+{"category":"street","query":"camí de Solleric, Llucmajor","autocomplete":false,"lat":39.3933068,"lon":2.8661657999999997,"tolerance_m":500.0,"gid":"geko:street:es-07031-cm-solleric"}
+{"category":"street","query":"camí des Coll des Jou, Bunyola","autocomplete":false,"lat":39.742284999999995,"lon":2.7453939999999997,"tolerance_m":500.0,"gid":"geko:street:es-07010-cm-coll-jou"}
+{"category":"street","query":"Rotonda del cavall, Alcúdia","autocomplete":false,"lat":39.8461947,"lon":3.1246669,"tolerance_m":500.0,"gid":"geko:street:es-07003-gl-cavall"}
+{"category":"street","query":"carrer sa Font de Baix, Esporles","autocomplete":false,"lat":39.666470499999996,"lon":2.5761214,"tolerance_m":500.0,"gid":"geko:street:es-07020-cl-font-baix"}
+{"category":"street","query":"Camí de Can Vola-Vola, Palma","autocomplete":false,"lat":39.5441502,"lon":2.7998610999999998,"tolerance_m":500.0,"gid":"geko:street:es-07040-cm-can-vola-vola"}
+{"category":"street","query":"Carrer dels Fundadors de la Vila, Lloret de Vistalegre","autocomplete":false,"lat":39.616034299999995,"lon":2.9764264,"tolerance_m":500.0,"gid":"geko:street:es-07028-cl-fundadors-vila"}
+{"category":"street","query":"carrer de l'Escamarlà, Manacor","autocomplete":false,"lat":39.5440262,"lon":3.3284501,"tolerance_m":500.0,"gid":"geko:street:es-07033-cl-escamarla"}
+{"category":"street","query":"carrer Guipúscoa, Andratx","autocomplete":false,"lat":39.576156999999995,"lon":2.4178071,"tolerance_m":500.0,"gid":"geko:street:es-07005-cl-guipuscoa"}
+{"category":"street","query":"Carrer de la Tonyina, Sant Josep de sa Talaia","autocomplete":false,"lat":38.9095422,"lon":1.4032774,"tolerance_m":500.0,"gid":"geko:street:es-07048-cl-tonyina"}
+{"category":"street","query":"antic traçat de la carretera, Santa Eugènia","autocomplete":false,"lat":39.6351653,"lon":2.8429558999999998,"tolerance_m":500.0,"gid":"geko:street:es-07053-antic-tracat-carretera"}
+{"category":"street","query":"camí de ses Basses, Escorca","autocomplete":false,"lat":39.884336,"lon":2.900556,"tolerance_m":500.0,"gid":"geko:street:es-07019-cm-basses"}
+{"category":"street","query":"Carrer Zama, Palma","autocomplete":false,"lat":39.505327099999995,"lon":2.754702,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-zama"}
+{"category":"street","query":"carrer del Raor, Pollença","autocomplete":false,"lat":39.904188,"lon":3.0692534,"tolerance_m":500.0,"gid":"geko:street:es-07042-cl-raor"}
+{"category":"street","query":"carrer del Molí d'en Llevadora, Felanitx","autocomplete":false,"lat":39.46507,"lon":3.148647,"tolerance_m":500.0,"gid":"geko:street:es-07022-cl-moli-llevadora"}
+{"category":"street","query":"comellar de ses Figueroles, Selva","autocomplete":false,"lat":39.8118601,"lon":2.9117026999999998,"tolerance_m":500.0,"gid":"geko:street:es-07058-comellar-figueroles"}
+{"category":"street","query":"Carrer de Sorozábal, Ciutadella","autocomplete":false,"lat":39.991153,"lon":3.8322722,"tolerance_m":500.0,"gid":"geko:street:es-07015-cl-sorozabal"}
+{"category":"street","query":"Camí des Sarg Dorat, Sant Lluís","autocomplete":false,"lat":39.8180058,"lon":4.2454581,"tolerance_m":500.0,"gid":"geko:street:es-07052-cm-sarg-dorat"}
+{"category":"street","query":"caminal de Manuel Haro, Palma","autocomplete":false,"lat":39.5833187,"lon":2.6391419,"tolerance_m":500.0,"gid":"geko:street:es-07040-caminal-manuel-haro"}
+{"category":"street","query":"carrer d'en Antoni Maria Alcover, Santanyí","autocomplete":false,"lat":39.3988039,"lon":3.2034854999999998,"tolerance_m":500.0,"gid":"geko:street:es-07057-cl-antoni-maria-alcover"}
+{"category":"street","query":"carrer de s'Estanyera, Andratx","autocomplete":false,"lat":39.582306599999995,"lon":2.4324263,"tolerance_m":500.0,"gid":"geko:street:es-07005-cl-estanyera"}
+{"category":"street","query":"Carrer de Nerbion, Ciutadella","autocomplete":false,"lat":40.0020544,"lon":3.8027604999999998,"tolerance_m":500.0,"gid":"geko:street:es-07015-cl-nerbion"}
+{"category":"street","query":"carrer de s'Hort, Sant Llorenç des Cardassar","autocomplete":false,"lat":39.613689099999995,"lon":3.2841905,"tolerance_m":500.0,"gid":"geko:street:es-07051-cl-hort"}
+{"category":"street","query":"camí de Can Reviu, Palma","autocomplete":false,"lat":39.5583264,"lon":2.7707916,"tolerance_m":500.0,"gid":"geko:street:es-07040-cm-can-reviu"}
+{"category":"street","query":"camí des Pujol, Petra","autocomplete":false,"lat":39.6345928,"lon":3.1009587,"tolerance_m":500.0,"gid":"geko:street:es-07041-cm-pujol"}
+{"category":"street","query":"Carrer de sa Vilanova, Son Servera","autocomplete":false,"lat":39.625143699999995,"lon":3.3569780999999996,"tolerance_m":500.0,"gid":"geko:street:es-07062-cl-vilanova"}
+{"category":"street","query":"Camí de tramuntana, Palma","autocomplete":false,"lat":39.567661099999995,"lon":2.6173682,"tolerance_m":500.0,"gid":"geko:street:es-07040-cm-tramuntana"}
+{"category":"street","query":"Carrer de la Verge del Carme, es Mercadal","autocomplete":false,"lat":40.0549372,"lon":4.1293713,"tolerance_m":500.0,"gid":"geko:street:es-07037-cl-verge-carme"}
+{"category":"street","query":"Carrer des Puig d'en Vinyets, Santa Eulària des Riu","autocomplete":false,"lat":38.9214826,"lon":1.4670503,"tolerance_m":500.0,"gid":"geko:street:es-07054-cl-puig-vinyets"}
+{"category":"street","query":"Carrer del Morràs, Felanitx","autocomplete":false,"lat":39.3813367,"lon":3.244652,"tolerance_m":500.0,"gid":"geko:street:es-07022-cl-morras"}
+{"category":"street","query":"Avinguda Magnòlia, Son Servera","autocomplete":false,"lat":39.6112038,"lon":3.3841414,"tolerance_m":500.0,"gid":"geko:street:es-07062-av-magnolia"}
+{"category":"street","query":"Carretera de la Savina a Far de la Mola, Formentera","autocomplete":false,"lat":38.7237502,"lon":1.4213624,"tolerance_m":500.0,"gid":"geko:street:es-07024-cr-savina-far-mola"}
+{"category":"street","query":"Carrer des Volantí, Alcúdia","autocomplete":false,"lat":39.8629256,"lon":3.1173205999999998,"tolerance_m":500.0,"gid":"geko:street:es-07003-cl-volanti"}
+{"category":"street","query":"Carrer de la Plaça Major, Sant Josep de sa Talaia","autocomplete":false,"lat":38.8914896,"lon":1.3953733,"tolerance_m":500.0,"gid":"geko:street:es-07048-cl-placa-major"}
+{"category":"street","query":"Carrer del Gregal, Pollença","autocomplete":false,"lat":39.9110663,"lon":3.0872948,"tolerance_m":500.0,"gid":"geko:street:es-07042-cl-gregal"}
+{"category":"street","query":"Vénda des Boletar de Baix, Sant Joan de Labritja","autocomplete":false,"lat":39.0288456,"lon":1.4738197,"tolerance_m":500.0,"gid":"geko:street:es-07050-venda-boletar-baix"}
+{"category":"street","query":"Carrer d'Antoni Pons, Palma","autocomplete":false,"lat":39.577844,"lon":2.6380319,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-antoni-pons"}
+{"category":"street","query":"camí vell d'Inca, Campanet","autocomplete":false,"lat":39.7689982,"lon":2.9591316,"tolerance_m":500.0,"gid":"geko:street:es-07012-cm-vell-inca"}
+{"category":"street","query":"camí de Sant Nofre, Sant Joan","autocomplete":false,"lat":39.615640299999995,"lon":3.0436180999999998,"tolerance_m":500.0,"gid":"geko:street:es-07049-cm-sant-nofre"}
+{"category":"street","query":"Carrer dels Tamarells, Alcúdia","autocomplete":false,"lat":39.8202686,"lon":3.1143224,"tolerance_m":500.0,"gid":"geko:street:es-07003-cl-tamarells"}
+{"category":"street","query":"camí de Biniatró, Campanet","autocomplete":false,"lat":39.814144399999996,"lon":2.9673466,"tolerance_m":500.0,"gid":"geko:street:es-07012-cm-biniatro"}
+{"category":"street","query":"carrer de Màntua, Palma","autocomplete":false,"lat":39.5925855,"lon":2.6167897,"tolerance_m":500.0,"gid":"geko:street:es-07040-cl-mantua"}
+{"category":"street","query":"Carrer 6 del Caló d'en Reial, Sant Josep de sa Talaia","autocomplete":false,"lat":38.9220969,"lon":1.2255669999999999,"tolerance_m":500.0,"gid":"geko:street:es-07048-cl-6-calo-reial"}
+{"category":"street","query":"carrer des Centre, Calvià","autocomplete":false,"lat":39.5242608,"lon":2.4745996999999997,"tolerance_m":500.0,"gid":"geko:street:es-07011-cl-centre"}
+{"category":"street","query":"Carrer de Gandia, Formentera","autocomplete":false,"lat":38.7060408,"lon":1.4593859999999999,"tolerance_m":500.0,"gid":"geko:street:es-07024-cl-gandia"}
+{"category":"street","query":"Carrer des Foc, Sant Llorenç des Cardassar","autocomplete":false,"lat":39.594611199999996,"lon":3.3797927,"tolerance_m":500.0,"gid":"geko:street:es-07051-cl-foc"}
+{"category":"street","query":"Carrer Fleming, Llucmajor","autocomplete":false,"lat":39.490507199999996,"lon":2.8846130999999997,"tolerance_m":500.0,"gid":"geko:street:es-07031-cl-fleming"}
+{"category":"street","query":"carretera de Béns d'Avall, Sóller","autocomplete":false,"lat":39.7775834,"lon":2.6762816,"tolerance_m":500.0,"gid":"geko:street:es-07061-cr-bens-avall"}
+{"category":"street","query":"Plaça d'Enric Fajarnés i Tur, Eivissa","autocomplete":false,"lat":38.910298399999995,"lon":1.4291144999999998,"tolerance_m":500.0,"gid":"geko:street:es-07026-pz-enric-fajarnes-tur"}
+{"category":"street","query":"camí de Ca na Cili, Santa Maria del Camí","autocomplete":false,"lat":39.661103399999995,"lon":2.7591101,"tolerance_m":500.0,"gid":"geko:street:es-07056-cm-ca-cili"}
+{"category":"street","query":"avinguda del Mar, Calvià","autocomplete":false,"lat":39.5239567,"lon":2.4702351,"tolerance_m":500.0,"gid":"geko:street:es-07011-av-mar"}
+{"category":"street","query":"Túnels de Gènova, Palma","autocomplete":false,"lat":39.563086399999996,"lon":2.6046036,"tolerance_m":500.0,"gid":"geko:street:es-07040-tunels-genova"}
+{"category":"street","query":"Carrer de l'Ocarina, Marratxí","autocomplete":false,"lat":39.616138,"lon":2.7383249,"tolerance_m":500.0,"gid":"geko:street:es-07036-cl-ocarina"}
+{"category":"street","query":"camí de Son Gorgut, Petra","autocomplete":false,"lat":39.592835699999995,"lon":3.0811143,"tolerance_m":500.0,"gid":"geko:street:es-07041-cm-son-gorgut"}
+{"category":"street","query":"carrer del Morro de sa Vaca, Manacor","autocomplete":false,"lat":39.5357346,"lon":3.3365633,"tolerance_m":500.0,"gid":"geko:street:es-07033-cl-morro-vaca"}
+{"category":"street","query":"Carrer de les Flors, Marratxí","autocomplete":false,"lat":39.6120379,"lon":2.6878925,"tolerance_m":500.0,"gid":"geko:street:es-07036-cl-flors"}
+{"category":"street","query":"carrer Riu Guadiana, Calvià","autocomplete":false,"lat":39.5045301,"lon":2.476051,"tolerance_m":500.0,"gid":"geko:street:es-07011-cl-riu-guadiana"}
+{"category":"municipality","query":"Eivissa","autocomplete":false,"lat":38.910072,"lon":1.430454,"tolerance_m":3000.0,"gid":"geko:municipality:es-07026"}
+{"category":"municipality","query":"Costitx","autocomplete":false,"lat":39.6575923,"lon":2.9496833,"tolerance_m":3000.0,"gid":"geko:municipality:es-07017"}
+{"category":"municipality","query":"Son Servera","autocomplete":false,"lat":39.6222728,"lon":3.3605983,"tolerance_m":3000.0,"gid":"geko:municipality:es-07062"}
+{"category":"municipality","query":"Valldemossa","autocomplete":false,"lat":39.710846499999995,"lon":2.6230264,"tolerance_m":3000.0,"gid":"geko:municipality:es-07063"}
+{"category":"municipality","query":"Maria de la Salut","autocomplete":false,"lat":39.666110599999996,"lon":3.0752319,"tolerance_m":3000.0,"gid":"geko:municipality:es-07035"}
+{"category":"municipality","query":"Deià","autocomplete":false,"lat":39.7477362,"lon":2.6483432,"tolerance_m":3000.0,"gid":"geko:municipality:es-07018"}
+{"category":"municipality","query":"es Castell","autocomplete":false,"lat":39.879861999999996,"lon":4.2904574,"tolerance_m":3000.0,"gid":"geko:municipality:es-07064"}
+{"category":"municipality","query":"Sant Joan","autocomplete":false,"lat":39.5971435,"lon":3.0379931,"tolerance_m":3000.0,"gid":"geko:municipality:es-07049"}
+{"category":"municipality","query":"Sant Lluís","autocomplete":false,"lat":39.849129399999995,"lon":4.2579831,"tolerance_m":3000.0,"gid":"geko:municipality:es-07052"}
+{"category":"municipality","query":"Sant Antoni de Portmany","autocomplete":false,"lat":38.9830568,"lon":1.3009484999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07046"}
+{"category":"municipality","query":"es Mercadal","autocomplete":false,"lat":39.988126799999996,"lon":4.0925999,"tolerance_m":3000.0,"gid":"geko:municipality:es-07037"}
+{"category":"municipality","query":"Sant Joan de Labritja","autocomplete":false,"lat":39.0780348,"lon":1.5140637,"tolerance_m":3000.0,"gid":"geko:municipality:es-07050"}
+{"category":"municipality","query":"Escorca","autocomplete":false,"lat":39.822406799999996,"lon":2.8844056,"tolerance_m":3000.0,"gid":"geko:municipality:es-07019"}
+{"category":"municipality","query":"Sóller","autocomplete":false,"lat":39.7663047,"lon":2.7150537999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07061"}
+{"category":"municipality","query":"Ciutadella","autocomplete":false,"lat":40.000440399999995,"lon":3.8352372,"tolerance_m":3000.0,"gid":"geko:municipality:es-07015"}
+{"category":"municipality","query":"Bunyola","autocomplete":false,"lat":39.6961887,"lon":2.6989574,"tolerance_m":3000.0,"gid":"geko:municipality:es-07010"}
+{"category":"municipality","query":"Ferreries","autocomplete":false,"lat":39.983348,"lon":4.0109465,"tolerance_m":3000.0,"gid":"geko:municipality:es-07023"}
+{"category":"municipality","query":"Campos","autocomplete":false,"lat":39.4313098,"lon":3.0197912,"tolerance_m":3000.0,"gid":"geko:municipality:es-07013"}
+{"category":"municipality","query":"Santa Eulària des Riu","autocomplete":false,"lat":38.984611699999995,"lon":1.534421,"tolerance_m":3000.0,"gid":"geko:municipality:es-07054"}
+{"category":"municipality","query":"Pollença","autocomplete":false,"lat":39.8792073,"lon":3.0157097999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07042"}
+{"category":"municipality","query":"Sant Josep de sa Talaia","autocomplete":false,"lat":38.9220629,"lon":1.2939942,"tolerance_m":3000.0,"gid":"geko:municipality:es-07048"}
+{"category":"municipality","query":"Binissalem","autocomplete":false,"lat":39.688927899999996,"lon":2.8420532,"tolerance_m":3000.0,"gid":"geko:municipality:es-07008"}
+{"category":"municipality","query":"Búger","autocomplete":false,"lat":39.759085,"lon":2.9856092,"tolerance_m":3000.0,"gid":"geko:municipality:es-07009"}
+{"category":"municipality","query":"Alaior","autocomplete":false,"lat":39.9337077,"lon":4.1397673,"tolerance_m":3000.0,"gid":"geko:municipality:es-07002"}
+{"category":"municipality","query":"Palma","autocomplete":false,"lat":39.5695818,"lon":2.6500744999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07040"}
+{"category":"municipality","query":"Inca","autocomplete":false,"lat":39.7211448,"lon":2.9111493,"tolerance_m":3000.0,"gid":"geko:municipality:es-07027"}
+{"category":"municipality","query":"Sant Llorenç des Cardassar","autocomplete":false,"lat":39.6106866,"lon":3.2854509999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07051"}
+{"category":"municipality","query":"sa Pobla","autocomplete":false,"lat":39.769740899999995,"lon":3.0246803,"tolerance_m":3000.0,"gid":"geko:municipality:es-07044"}
+{"category":"municipality","query":"Montuïri","autocomplete":false,"lat":39.567247099999996,"lon":2.9813248,"tolerance_m":3000.0,"gid":"geko:municipality:es-07038"}
+{"category":"municipality","query":"Artà","autocomplete":false,"lat":39.6950088,"lon":3.3506343,"tolerance_m":3000.0,"gid":"geko:municipality:es-07006"}
+{"category":"municipality","query":"Banyalbufar","autocomplete":false,"lat":39.6874544,"lon":2.5147714999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07007"}
+{"category":"municipality","query":"Manacor","autocomplete":false,"lat":39.569645799999996,"lon":3.2106461,"tolerance_m":3000.0,"gid":"geko:municipality:es-07033"}
+{"category":"municipality","query":"Lloseta","autocomplete":false,"lat":39.718283299999996,"lon":2.8665761,"tolerance_m":3000.0,"gid":"geko:municipality:es-07029"}
+{"category":"municipality","query":"Lloret de Vistalegre","autocomplete":false,"lat":39.61793,"lon":2.9751724999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07028"}
+{"category":"municipality","query":"Sineu","autocomplete":false,"lat":39.643139999999995,"lon":3.0116110999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07060"}
+{"category":"municipality","query":"Maó","autocomplete":false,"lat":39.8894922,"lon":4.2662071,"tolerance_m":3000.0,"gid":"geko:municipality:es-07032"}
+{"category":"poi","query":"Coves de Gènova, Palma","autocomplete":false,"lat":39.5616736,"lon":2.5988605,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n3609083366"}
+{"category":"poi","query":"Col·legi d'Educació Infantil i Primària Puig D´en Valls, Santa Eulària des Riu","autocomplete":false,"lat":38.9304019,"lon":1.4314362999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w867769453"}
+{"category":"poi","query":"Auditòrium, Palma","autocomplete":false,"lat":39.5674377,"lon":2.6290624,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w57380160"}
+{"category":"poi","query":"Cala Espart, Santa Eulària des Riu","autocomplete":false,"lat":38.9297458,"lon":1.4914673999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w308405135"}
+{"category":"poi","query":"Pou des Lleó, Santa Eulària des Riu","autocomplete":false,"lat":39.0354895,"lon":1.6066135,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w446011243"}
+{"category":"poi","query":"Creu de Sant Blai, Campos","autocomplete":false,"lat":39.409607099999995,"lon":3.0282286999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4302820831"}
+{"category":"poi","query":"Mercat, Sóller","autocomplete":false,"lat":39.766713599999996,"lon":2.7142448999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n26765659"}
+{"category":"poi","query":"Caló d'en Rafelino, Manacor","autocomplete":false,"lat":39.556072799999995,"lon":3.3669411,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w332963998"}
+{"category":"poi","query":"Can Tacón, Palma","autocomplete":false,"lat":39.5726091,"lon":2.6473687,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w762375780"}
+{"category":"poi","query":"Es Telègraf, Capdepera","autocomplete":false,"lat":39.73834,"lon":3.4515493999999998,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n498467381"}
+{"category":"poi","query":"EIX Lagotel Holiday Resort, Muro","autocomplete":false,"lat":39.811087199999996,"lon":3.106038,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w342301212"}
+{"category":"poi","query":"Museu de la Mar, Sóller","autocomplete":false,"lat":39.797647,"lon":2.6914233999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n26751679"}
+{"category":"poi","query":"Can March, Palma","autocomplete":false,"lat":39.5690226,"lon":2.6514804,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w933168773"}
+{"category":"poi","query":"Col·legi d'Educació Infantil i Primària S'Olivera, Santa Eulària des Riu","autocomplete":false,"lat":38.9237922,"lon":1.4317003,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w867769452"}
+{"category":"poi","query":"Hacia del sur, Palma","autocomplete":false,"lat":39.566972799999995,"lon":2.6461682,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n7294155382"}
+{"category":"poi","query":"Cala Marçal, Felanitx","autocomplete":false,"lat":39.409874099999996,"lon":3.2578643,"tolerance_m":150.0,"gid":"geko:poi:es-osm-r2174815"}
+{"category":"poi","query":"Molí d'en Fèlix, Eivissa","autocomplete":false,"lat":38.9040982,"lon":1.4322892,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w322721851"}
+{"category":"poi","query":"Sepulcre megalític de s’Aigua Dolça, Artà","autocomplete":false,"lat":39.7500345,"lon":3.3032466,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w348682648"}
+{"category":"poi","query":"Cala Blava, Llucmajor","autocomplete":false,"lat":39.4852171,"lon":2.7375623,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w601322058"}
+{"category":"poi","query":"Mercat Municipal, Felanitx","autocomplete":false,"lat":39.468949599999995,"lon":3.1486856999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w91873797"}
+{"category":"poi","query":"Torre del Verger, Banyalbufar","autocomplete":false,"lat":39.6837004,"lon":2.5000312,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w307781617"}
+{"category":"poi","query":"escola de Son Proenç, Felanitx","autocomplete":false,"lat":39.4946256,"lon":3.1816204999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w550607262"}
+{"category":"poi","query":"Serenity Apartments, Alcúdia","autocomplete":false,"lat":39.8368733,"lon":3.1134312,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w756481519"}
+{"category":"poi","query":"Teatre des Born, Ciutadella","autocomplete":false,"lat":40.0014483,"lon":3.8361726999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n6668102012"}
+{"category":"poi","query":"Institut d'Educació Secundària Berenguer d'Anoia, Inca","autocomplete":false,"lat":39.7270234,"lon":2.9218489,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w267067124"}
+{"category":"poi","query":"Cala Fustam, es Migjorn Gran","autocomplete":false,"lat":39.9262509,"lon":4.0008283,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w113869765"}
+{"category":"poi","query":"Galilea, Puigpunyent","autocomplete":false,"lat":39.608221,"lon":2.503681,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w967970679"}
+{"category":"poi","query":"Castell de Santueri, Felanitx","autocomplete":false,"lat":39.4320235,"lon":3.1878164,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n2795373918"}
+{"category":"poi","query":"Institut d'Educació Secundària Josep Maria Llompart, Palma","autocomplete":false,"lat":39.5852879,"lon":2.651986,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w379787346"}
+{"category":"poi","query":"UBS de s'Illot, Manacor","autocomplete":false,"lat":39.558911099999996,"lon":3.3714771,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w331237278"}
+{"category":"poi","query":"Casa natal del Fra Juníper Serra, Petra","autocomplete":false,"lat":39.611459599999996,"lon":3.1105974,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w836359659"}
+{"category":"poi","query":"puig des Racó, Artà","autocomplete":false,"lat":39.7111934,"lon":3.3892203999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n948776402"}
+{"category":"poi","query":"Casal Solleric, Palma","autocomplete":false,"lat":39.5709563,"lon":2.6463080999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w303079462"}
+{"category":"poi","query":"BC 2001, Palma","autocomplete":false,"lat":39.5653028,"lon":2.6483062,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n13995089582"}
+{"category":"poi","query":"es Vedrà, Sant Josep de sa Talaia","autocomplete":false,"lat":38.8657147,"lon":1.1957818999999998,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w10316139"}
+{"category":"poi","query":"na Corberana, ses Salines","autocomplete":false,"lat":39.3121162,"lon":2.9869719,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w59196328"}
+{"category":"poi","query":"Platja Caló d'es Morts, Formentera","autocomplete":false,"lat":38.659644899999996,"lon":1.5177171999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w535757296"}
+{"category":"poi","query":"Platja de ses Canyes, Formentera","autocomplete":false,"lat":38.730089199999995,"lon":1.450278,"tolerance_m":150.0,"gid":"geko:poi:es-osm-r2181667"}
+{"category":"poi","query":"Can Abril, Sóller","autocomplete":false,"lat":39.7653736,"lon":2.7172948,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1243133365"}
+{"category":"poi","query":"Far de la Punta de l'Avançada, Pollença","autocomplete":false,"lat":39.8998296,"lon":3.1106564999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w128300363"}
+{"category":"poi","query":"Parc de sa Riera, Palma","autocomplete":false,"lat":39.5834507,"lon":2.6402026999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w32762713"}
+{"category":"poi","query":"Talaiot de S'Illot, Sant Llorenç des Cardassar","autocomplete":false,"lat":39.5687085,"lon":3.3722243,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w120741516"}
+{"category":"poi","query":"Naveta of Binimaimut, Maó","autocomplete":false,"lat":39.879869,"lon":4.200826999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4810635971"}
+{"category":"poi","query":"Església de Jesús, Santa Eulària des Riu","autocomplete":false,"lat":38.931019299999996,"lon":1.4496875999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4400260080"}
+{"category":"poi","query":"Far de n'Ensiola, Palma","autocomplete":false,"lat":39.1291295,"lon":2.9215207,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w469597988"}
+{"category":"poi","query":"Institut d'Educació Secundària Bendinat, Calvià","autocomplete":false,"lat":39.539254799999995,"lon":2.5860216,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w156783540"}
+{"category":"poi","query":"Residencia Asistida Cas Serres, Eivissa","autocomplete":false,"lat":38.901108799999996,"lon":1.4125879,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1046253692"}
+{"category":"poi","query":"Alua Illa de Menorca, Sant Lluís","autocomplete":false,"lat":39.8354046,"lon":4.2972655,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w586364217"}
+{"category":"poi","query":"Apartamentos Can Denga, Pollença","autocomplete":false,"lat":39.908171599999996,"lon":3.0830132,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1037082143"}
+{"category":"poi","query":"creu de sa Cometa, Sencelles","autocomplete":false,"lat":39.6451628,"lon":2.8943246,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n8445255612"}
+{"category":"poi","query":"Cala Binibèquer, Sant Lluís","autocomplete":false,"lat":39.8164673,"lon":4.239812199999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-r1601902"}
+{"category":"poi","query":"Cala Anguila, Manacor","autocomplete":false,"lat":39.5231079,"lon":3.3178579999999998,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w33882111"}
+{"category":"poi","query":"Bosch, Palma","autocomplete":false,"lat":39.571275199999995,"lon":2.6474168,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n501860056"}
+{"category":"poi","query":"Can Oms, Palma","autocomplete":false,"lat":39.5688581,"lon":2.65005,"tolerance_m":150.0,"gid":"geko:poi:es-osm-r10352228"}
+{"category":"poi","query":"Lloseta, Lloseta","autocomplete":false,"lat":39.7163416,"lon":2.8691844,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n8048772619"}
+{"category":"poi","query":"Església de Sant Lluís, Sant Lluís","autocomplete":false,"lat":39.849092,"lon":4.258421,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w158588189"}
+{"category":"poi","query":"Institut d'Educació Secundària Llorenç Garcias i Font, Artà","autocomplete":false,"lat":39.6954906,"lon":3.3439736,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w280116442"}
+{"category":"poi","query":"Habitacions de Son Noguera - Pleta des Forn de Calç, Llucmajor","autocomplete":false,"lat":39.484367299999995,"lon":2.8601535,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4825969636"}
+{"category":"poi","query":"Cala Boix, Santa Eulària des Riu","autocomplete":false,"lat":39.030765599999995,"lon":1.6061387999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n3376853769"}
+{"category":"poi","query":"els Arcs, Escorca","autocomplete":false,"lat":39.8162877,"lon":2.8245367999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w170646264"}
+{"category":"poi","query":"Binissalem, Binissalem","autocomplete":false,"lat":39.692493899999995,"lon":2.8412242,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n8048763086"}
+{"category":"poi","query":"Biblioteca Pública Municipal de Banyalbufar, Banyalbufar","autocomplete":false,"lat":39.6878892,"lon":2.5130778,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w290638849"}
+{"category":"poi","query":"Torre de Bajaolí, Ciutadella","autocomplete":false,"lat":40.013828,"lon":3.802637,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1211609949"}
+{"category":"poi","query":"La Residència, Deià","autocomplete":false,"lat":39.7495123,"lon":2.6492659,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w422794663"}
+{"category":"poi","query":"Puig de Santa Magdalena, Inca","autocomplete":false,"lat":39.7210585,"lon":2.9568741,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n748150766"}
+{"category":"poi","query":"Estadi Maones, Maó","autocomplete":false,"lat":39.885618699999995,"lon":4.260793,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w42075385"}
+{"category":"poi","query":"Catedral d'Eivissa, Eivissa","autocomplete":false,"lat":38.906692,"lon":1.4367931999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w173542977"}
+{"category":"poi","query":"Col·legi d'Educació Infantil i Primària Camilo José Cela, Palma","autocomplete":false,"lat":39.566907799999996,"lon":2.6693016999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w386816470"}
+{"category":"poi","query":"FERGUS Club Carema Splash, es Mercadal","autocomplete":false,"lat":40.0443802,"lon":4.1094264,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1355153734"}
+{"category":"poi","query":"Torre de Sa Mesquida, Maó","autocomplete":false,"lat":39.913857799999995,"lon":4.286531,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w201553644"}
+{"category":"poi","query":"Centre d'Educació Infantil i Primària Son Oliva, Palma","autocomplete":false,"lat":39.5859971,"lon":2.6656187,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w301007193"}
+{"category":"poi","query":"Punta Nati, Ciutadella","autocomplete":false,"lat":40.050376899999996,"lon":3.821846,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n10858753652"}
+{"category":"poi","query":"Gran Hotel Montesol Ibiza, Curio Collection by Hilton, Eivissa","autocomplete":false,"lat":38.909970799999996,"lon":1.4346580999999998,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n2501033853"}
+{"category":"poi","query":"Puig de Son Reus, Algaida","autocomplete":false,"lat":39.520673099999996,"lon":2.9169049,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n940361020"}
+{"category":"poi","query":"Col·legi d'Educació Infantil i Primària Tresorer Cladera, sa Pobla","autocomplete":false,"lat":39.7720966,"lon":3.0278864999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w334463675"}
+{"category":"poi","query":"Torre des Forat, Escorca","autocomplete":false,"lat":39.8419665,"lon":2.7673156,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w149382179"}
+{"category":"poi","query":"Zafiro Palace Andratx, Andratx","autocomplete":false,"lat":39.5408925,"lon":2.4267045,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w778367403"}
+{"category":"poi","query":"Ca's Batle Negre, Banyalbufar","autocomplete":false,"lat":39.6871097,"lon":2.5143343,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w840128098"}
+{"category":"poi","query":"Centre d'Educació Infantil i Primària S'Hort des Fassers, Alcúdia","autocomplete":false,"lat":39.8489611,"lon":3.1299845,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w265109130"}
+{"category":"poi","query":"Puig de Sa Morisca, Calvià","autocomplete":false,"lat":39.5074611,"lon":2.4805729,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w293567375"}
+{"category":"poi","query":"Platja d'en Bossa, Sant Josep de sa Talaia","autocomplete":false,"lat":38.883123399999995,"lon":1.4059471,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w119370890"}
+{"category":"poi","query":"Institut d'Educació Secundària Son Ferrer, Calvià","autocomplete":false,"lat":39.4977124,"lon":2.5031838,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w355060857"}
+{"category":"poi","query":"Centre d'Educació Infantil i Primària Pedra Viva, Binissalem","autocomplete":false,"lat":39.6855506,"lon":2.8389048999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w141490727"}
+{"category":"poi","query":"The Standard Ibiza, Eivissa","autocomplete":false,"lat":38.9102925,"lon":1.4338769,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w290661348"}
+{"category":"poi","query":"talaiot de Son Fred, Sencelles","autocomplete":false,"lat":39.6586661,"lon":2.9119683,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n972552996"}
+{"category":"poi","query":"Molí d'en Pep Joan, Eivissa","autocomplete":false,"lat":38.9045914,"lon":1.4314742999999999,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w322722769"}
+{"category":"poi","query":"Can Pasqual, Palma","autocomplete":false,"lat":39.5671767,"lon":2.6503873,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w736629223"}
+{"category":"poi","query":"Sant Blai, Campos","autocomplete":false,"lat":39.404205999999995,"lon":3.0342002999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w231958703"}
+{"category":"poi","query":"Es Castellet des Pop Mosquer, Ciutadella","autocomplete":false,"lat":40.02139,"lon":3.7988899999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4822594921"}
+{"category":"poi","query":"AluaSun Far Menorca, Sant Lluís","autocomplete":false,"lat":39.833129299999996,"lon":4.302378,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w586664647"}
+{"category":"poi","query":"Sa Pobla, sa Pobla","autocomplete":false,"lat":39.7644684,"lon":3.0292591,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4455669566"}
+{"category":"poi","query":"Hyatt Inclusive Collection Europe, Palma","autocomplete":false,"lat":39.60185,"lon":2.6561645,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n11078764052"}
+{"category":"poi","query":"es Foner, Palma","autocomplete":false,"lat":39.5674437,"lon":2.6461826999999998,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n3869963569"}
+{"category":"poi","query":"Naveta of Cotaina de Can Rabassó, Alaior","autocomplete":false,"lat":39.885432,"lon":4.176715,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4810620736"}
+{"category":"poi","query":"Creu d'en Reüll, Sant Joan","autocomplete":false,"lat":39.5969455,"lon":3.0447856,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n4806917081"}
+{"category":"poi","query":"FERGUS Style Cala Blanca Suites, Calvià","autocomplete":false,"lat":39.522366399999996,"lon":2.4699492999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w563123493"}
+{"category":"poi","query":"Castell de Santa Àgueda, Ferreries","autocomplete":false,"lat":40.027554099999996,"lon":4.0076409,"tolerance_m":150.0,"gid":"geko:poi:es-osm-n1445506763"}
+{"category":"poi","query":"Es Torrent, Sant Josep de sa Talaia","autocomplete":false,"lat":38.8747847,"lon":1.2989663,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1067049512"}
+{"category":"poi","query":"Institut d'Educació Secundària Isidor Macabich, Eivissa","autocomplete":false,"lat":38.9219242,"lon":1.4254162,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w1434675955"}
+{"category":"poi","query":"Centre d'Educació Infantil i Primària S'Albufera, Alcúdia","autocomplete":false,"lat":39.841591,"lon":3.1245800999999997,"tolerance_m":150.0,"gid":"geko:poi:es-osm-w96855281"}
+{"category":"autocomplete_municipality","query":"sa P","autocomplete":true,"lat":39.769740899999995,"lon":3.0246803,"tolerance_m":3000.0,"gid":"geko:municipality:es-07044"}
+{"category":"autocomplete_municipality","query":"Estel","autocomplete":true,"lat":39.6535102,"lon":2.4810336,"tolerance_m":3000.0,"gid":"geko:municipality:es-07021"}
+{"category":"autocomplete_municipality","query":"Poll","autocomplete":true,"lat":39.8792073,"lon":3.0157097999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07042"}
+{"category":"autocomplete_municipality","query":"Sant Llu","autocomplete":true,"lat":39.849129399999995,"lon":4.2579831,"tolerance_m":3000.0,"gid":"geko:municipality:es-07052"}
+{"category":"autocomplete_municipality","query":"Sant Antoni ","autocomplete":true,"lat":38.9830568,"lon":1.3009484999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07046"}
+{"category":"autocomplete_municipality","query":"Sant Llorenç ","autocomplete":true,"lat":39.6106866,"lon":3.2854509999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07051"}
+{"category":"autocomplete_municipality","query":"Sence","autocomplete":true,"lat":39.6475972,"lon":2.8977427,"tolerance_m":3000.0,"gid":"geko:municipality:es-07047"}
+{"category":"autocomplete_municipality","query":"Santa Eulàr","autocomplete":true,"lat":38.984611699999995,"lon":1.534421,"tolerance_m":3000.0,"gid":"geko:municipality:es-07054"}
+{"category":"autocomplete_municipality","query":"es Ca","autocomplete":true,"lat":39.879861999999996,"lon":4.2904574,"tolerance_m":3000.0,"gid":"geko:municipality:es-07064"}
+{"category":"autocomplete_municipality","query":"Mancor de","autocomplete":true,"lat":39.7501386,"lon":2.8709873,"tolerance_m":3000.0,"gid":"geko:municipality:es-07034"}
+{"category":"autocomplete_municipality","query":"Camp","autocomplete":true,"lat":39.4313098,"lon":3.0197912,"tolerance_m":3000.0,"gid":"geko:municipality:es-07013"}
+{"category":"autocomplete_municipality","query":"Andr","autocomplete":true,"lat":39.574595599999995,"lon":2.4202060999999997,"tolerance_m":3000.0,"gid":"geko:municipality:es-07005"}
+{"category":"autocomplete_municipality","query":"Lloret de ","autocomplete":true,"lat":39.61793,"lon":2.9751724999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07028"}
+{"category":"autocomplete_municipality","query":"es Mer","autocomplete":true,"lat":39.988126799999996,"lon":4.0925999,"tolerance_m":3000.0,"gid":"geko:municipality:es-07037"}
+{"category":"autocomplete_municipality","query":"Cons","autocomplete":true,"lat":39.6685608,"lon":2.8134417,"tolerance_m":3000.0,"gid":"geko:municipality:es-07016"}
+{"category":"autocomplete_municipality","query":"Eivi","autocomplete":true,"lat":38.910072,"lon":1.430454,"tolerance_m":3000.0,"gid":"geko:municipality:es-07026"}
+{"category":"autocomplete_municipality","query":"Son Se","autocomplete":true,"lat":39.6222728,"lon":3.3605983,"tolerance_m":3000.0,"gid":"geko:municipality:es-07062"}
+{"category":"autocomplete_municipality","query":"Llucm","autocomplete":true,"lat":39.490845,"lon":2.8913178999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07031"}
+{"category":"autocomplete_municipality","query":"Forme","autocomplete":true,"lat":38.705403,"lon":1.4284409999999998,"tolerance_m":3000.0,"gid":"geko:municipality:es-07024"}
+{"category":"autocomplete_municipality","query":"Santa Mari","autocomplete":true,"lat":39.647945299999996,"lon":2.7779083,"tolerance_m":3000.0,"gid":"geko:municipality:es-07056"}
+{"category":"autocomplete_municipality","query":"Ferre","autocomplete":true,"lat":39.983348,"lon":4.0109465,"tolerance_m":3000.0,"gid":"geko:municipality:es-07023"}
+{"category":"autocomplete_municipality","query":"Santa Eug","autocomplete":true,"lat":39.622706799999996,"lon":2.8365544,"tolerance_m":3000.0,"gid":"geko:municipality:es-07053"}
+{"category":"autocomplete_municipality","query":"Esco","autocomplete":true,"lat":39.822406799999996,"lon":2.8844056,"tolerance_m":3000.0,"gid":"geko:municipality:es-07019"}
+{"category":"autocomplete_municipality","query":"Forna","autocomplete":true,"lat":39.782612,"lon":2.7410901,"tolerance_m":3000.0,"gid":"geko:municipality:es-07025"}

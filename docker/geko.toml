@@ -1,0 +1,18 @@
+# Sample configuration of the geko image. Replace it with your own, mounted at
+# /etc/geko/geko.toml: the countries (and regions) to serve, and the licences of their sources.
+
+[modules]
+geocoder = true
+tiles    = false
+
+[[scope]]
+country = "LU"          # ISO 3166-1; regions = ["ES-PM"] narrows a country to some regions
+
+[data]
+# Downloading needs your acceptance of the licences of the sources (ODbL for OpenStreetMap,
+# CDLA-Permissive for Overture, those of the national sources): set it to true.
+accept_licenses = false
+
+# The image serves on 0.0.0.0:8080 whatever [serve] listen says (the command of the Dockerfile).
+[serve]
+listen = "0.0.0.0:8080"

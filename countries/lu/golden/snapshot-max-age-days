@@ -1,0 +1,5 @@
+# Days after which the golden warns that its snapshot should be renewed (ci/test.sh). Luxembourg has
+# one source, OSM, whose addresses follow a stable official register (CACLR); mostly its POIs move.
+# An estimate (2026-10-21): tune it with the hits lost by the golden on fresh data
+# (GEKO_GOLDEN_FRESH=1) at each age.
+120

@@ -1,0 +1,27 @@
+# Words of addresses in the languages of Spain. Folded unless noted: lowercase, without diacritics.
+
+# Words that link a street type to its name, and articles. They are dropped when comparing names:
+# "Carrer de la Mercè" and "CALLE MERCE" match.
+connectors = [
+    "de", "del", "dels", "d", "la", "las", "el", "els", "los", "les", "l", "lo", "sa", "ses", "s", "des", "en", "na",
+    "da", "do", "das", "dos", "a", "i", "y", "e",
+]
+
+# Words that introduce a house number: "nº 12", "num. 12", "número 12". On a road, the number of an
+# address is its kilometre: "N-340 km 1050", "A-7 pk 230".
+number_markers = ["n", "no", "num", "numero", "nro", "km", "pk", "kilometro", "quilometre", "quilometro"]
+
+# Floor, door and similar details written after the house number; they are not a locality.
+unit_words = [
+    "piso", "planta", "puerta", "pta", "esc", "escalera", "bajo", "bajos", "entlo", "entresuelo", "atico", "local",
+    "pral", "principal", "izq", "izda", "izquierda", "dcha", "dcho", "derecha", "porta", "pis", "baixos", "atic",
+    "entresol", "esquerra", "dreta", "bloque", "bloc", "portal",
+]
+
+# "No number", as written in a query (lowercase).
+unnumbered = ["s/n", "sn", "s/n.", "s.n"]
+
+# House number suffixes that are words (uppercase); single letters are always suffixes.
+housenumber_suffixes = ["BIS", "TER", "QUATER"]
+# Recognised by their start too: "12 bisa" is 12 BIS.
+housenumber_suffix_prefixes = ["BIS"]

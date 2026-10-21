@@ -1,0 +1,9 @@
+# English words of the street types of the pack, for the English reference queries
+# (`geko-eval english`, english.jsonl). Types without one are left out of them.
+
+[street_types]
+CL = "Street"
+AV = "Avenue"
+PZ = "Square"
+CR = "Road"
+PS = "Promenade"

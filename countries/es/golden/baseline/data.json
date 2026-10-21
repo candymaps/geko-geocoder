@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "addresses": 441354,
+    "conflicts": 1931,
+    "places": 7831,
+    "pois": 29384,
+    "postcodes": 160,
+    "streets": 31618
+  },
+  "records": {
+    "addresses.cartociudad": 418098,
+    "addresses.osm": 149990,
+    "admins.osm": 131,
+    "places.osm": 7840,
+    "pois.osm": 32297,
+    "streets.osm": 37782
+  },
+  "inferred": {
+    "address_postcodes": 11476,
+    "poi_addresses": 18139,
+    "poi_postcodes": 28824
+  },
+  "duplicates": {
+    "duplicate_addresses": 0,
+    "duplicate_streets": 2,
+    "homonymous_streets": 287
+  },
+  "problems": {
+    "addresses_in_an_unknown_municipality": 0,
+    "addresses_with_an_unknown_postcode": 0,
+    "addresses_without_municipality": 28,
+    "addresses_without_street": 0,
+    "pois_in_an_unknown_municipality": 0,
+    "pois_with_an_unknown_postcode": 0,
+    "pois_without_municipality": 2,
+    "repeated_public_ids": 0,
+    "streets_in_an_unknown_municipality": 0,
+    "streets_without_municipality": 22
+  }
+}

@@ -1,0 +1,100 @@
+# Street types of Luxembourg in French, German and Luxembourgish, with their usual
+# abbreviations, mapped to a code common to every language. Words are folded: lowercase, without
+# diacritics. Most street names are French ("Rue de la Gare"); the Luxembourgish ones are the
+# official second names on many signs ("Garer Strooss").
+#
+# - `words`: every way of writing the type, longest match wins.
+# - `display`: one word per language, for the index-time variants of each name.
+# - `generic`: never a street name on its own.
+# - `area`: names an area rather than a way: a query starting with one is as likely a place.
+
+[[types]]
+code = "RUE"
+words = ["rue", "r", "strooss", "strasse", "str", "gaass", "gasse"]
+display = ["rue", "strooss", "strasse"]
+generic = true
+
+[[types]]
+code = "AV"
+words = ["avenue", "av", "ave", "allee"]
+display = ["avenue"]
+generic = true
+
+[[types]]
+code = "BD"
+words = ["boulevard", "bd", "bld", "blvd"]
+display = ["boulevard"]
+generic = true
+
+[[types]]
+code = "RTE"
+words = ["route", "rte"]
+display = ["route"]
+generic = true
+
+[[types]]
+code = "CH"
+words = ["chemin", "ch", "wee", "weg"]
+display = ["chemin", "wee", "weg"]
+generic = true
+
+[[types]]
+code = "PL"
+words = ["place", "pl", "plaz", "platz"]
+display = ["place", "plaz", "platz"]
+generic = true
+area = true
+
+[[types]]
+code = "IMP"
+words = ["impasse", "imp", "cul de sac", "sackgasse"]
+display = ["impasse"]
+generic = true
+
+[[types]]
+code = "MTE"
+words = ["montee", "mtee"]
+display = ["montee"]
+generic = true
+
+[[types]]
+code = "SQ"
+words = ["square", "sq"]
+display = ["square"]
+generic = true
+area = true
+
+[[types]]
+code = "QUAI"
+words = ["quai"]
+display = ["quai"]
+generic = true
+
+[[types]]
+code = "SENT"
+words = ["sentier", "pfad"]
+display = ["sentier"]
+generic = true
+
+[[types]]
+code = "COTE"
+words = ["cote"]
+display = ["cote"]
+
+[[types]]
+code = "PARC"
+words = ["parc", "park"]
+display = ["parc"]
+area = true
+
+[[types]]
+code = "CITE"
+words = ["cite"]
+display = ["cite"]
+area = true
+
+[[types]]
+code = "ZA"
+words = ["zone artisanale", "zone industrielle", "zone d activites", "za", "zi", "zae"]
+display = ["zone"]
+area = true

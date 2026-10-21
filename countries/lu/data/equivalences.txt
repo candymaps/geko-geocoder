@@ -1,0 +1,3 @@
+# Word pairs that are the same in two languages of Luxembourg, `a b`, folded. Most of them are
+# learned from the multilingual names of OSM (`name:fr`, `name:de`, `name:lb`); this file only
+# adds or rules out pairs (`-a b`).

@@ -1,0 +1,13 @@
+# Country pack of Luxembourg (PROJECT.md §2.4): what the generic text rules need to know about the
+# country. Street types and address words are in data/.
+
+country = "LU"
+# Raise it with every change to the pack (this file, data/ or sources/): it is published as the
+# tag pack-<version>, and publishing refuses other files under a version already published.
+version = 1
+languages = ["lb", "fr", "de"]
+
+# Four digits, often written with the country letter: "L-1930".
+[postcode]
+digits = 4
+country_prefixes = ["L-", "L"]

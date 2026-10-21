@@ -1,0 +1,3 @@
+# Frozen downloads of LU that the golden baseline is measured on (ci/test.sh, ci/golden-snapshot.sh).
+file=golden-lu-20261017.tar.gz
+sha256=c796627b647936b13cd16c226fa02b331981b7d68887119cac01a345d9bda68b

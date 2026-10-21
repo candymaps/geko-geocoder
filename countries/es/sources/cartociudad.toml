@@ -1,0 +1,45 @@
+# CartoCiudad (PROJECT.md §6.1, §7.6): the addresses of Spain, from the OGC API Features of the
+# IDEE, collection `address`. The WFS INSPIRE was analysed and ruled out.
+#
+# The API has no sorting and deep `offset` pages are slow (76 s at offset 1.15 M), but the
+# postcode filter is indexed (0.13 s when empty, under 5 s for 10 000 results). Spanish postcodes
+# start with the INE code of their province, so a province is fetched by walking its 999 possible
+# postcodes and paging only within a postcode. Staging schema: schemas/staging/cartociudad.md.
+#
+# `[sources.cartociudad]` in geko.toml can change any of these fields, or disable the source with
+# `enabled = false`.
+
+kind = "ogc-api-features"
+license = { name = "CC BY 4.0", attribution = "CartoCiudad CC BY 4.0 scne.es", url = "https://www.scne.es/" }
+base = "https://api-features.idee.es"
+collection = "address"
+page_size = 10000
+parallel_requests = 4
+# When the data are due for a check ([data] max_age_days in geko.toml, the same for every source),
+# a download is kept if it was made after the latest date of this ISO 19139 record, for up to
+# `max_unchanged_days`.
+catalog_url = "https://www.idee.es/csw-inspire-idee/srv/spa/csw?service=CSW&version=2.0.2&request=GetRecordById&id=spaign_cartociudad_addresses&outputSchema=http://www.isotc211.org/2005/gmd&elementSetName=full"
+max_unchanged_days = 365
+
+# A province: the postcodes <postcode_prefix>001 to <postcode_prefix>999.
+[walk]
+property = "component_PostalDescriptor"
+prefix = "postcode_prefix"
+from = 1
+to = 999
+digits = 3
+
+[staging]
+schema = "cartociudad-staging/2"
+columns = [
+    { name = "street", property = "component_ThoroughfareName" },
+    # 9998 and 9999 are CartoCiudad's numbers for addresses without one.
+    { name = "number", property = "locator_designator_addressNumber", null_values = ["9998", "9999"] },
+    { name = "number_extension", property = "locator_designator_addressNumberExtension" },
+    { name = "postcode", property = "component_PostalDescriptor" },
+    { name = "place", property = "component_AddressAreaName" },
+    { name = "municipality", property = "component_AdminUnitName_4" },
+    { name = "province", property = "component_AdminUnitName_3" },
+    { name = "data_provider", property = "dataProvider" },
+    { name = "version", property = "beginLifespanVersion" },
+]

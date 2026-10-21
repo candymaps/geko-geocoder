@@ -1,0 +1,25 @@
+# Words of addresses in the languages of Luxembourg: Luxembourgish, French and German. Folded:
+# lowercase, without diacritics.
+
+# Words that link a street type to its name, and articles. They are dropped when comparing names:
+# "Rue de la Gare" and "RUE GARE" match.
+connectors = [
+    "de", "du", "des", "la", "le", "les", "l", "d", "a", "au", "aux", "et",
+    "der", "die", "das", "dem", "den", "von", "vom", "zum", "zur", "am", "an", "im", "und",
+    "vun", "um", "op", "ze", "zu",
+]
+
+# Words that introduce a house number: "nº 12", "no 12".
+number_markers = ["n", "no", "nr", "num", "numero"]
+
+# Floor, door and similar details written after the house number; they are not a locality.
+unit_words = [
+    "etage", "appartement", "app", "apt", "boite", "bte", "rez", "rdc", "porte",
+    "stock", "wohnung", "whg", "og", "eg", "tur",
+]
+
+# "No number", as written in a query (lowercase).
+unnumbered = ["sn", "s/n"]
+
+# House number suffixes that are words (uppercase); single letters are always suffixes.
+housenumber_suffixes = ["BIS", "TER"]

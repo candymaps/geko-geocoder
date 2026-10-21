@@ -1,0 +1,3 @@
+# Frozen downloads of ES-PM that the golden baseline is measured on (ci/test.sh, ci/golden-snapshot.sh).
+file=golden-es-ES-PM-20261017.tar.gz
+sha256=c90cf31e8364fae98ca286a7e17d5d04d591c0a5b20f41cdd8ddc740d2a6b2d6
