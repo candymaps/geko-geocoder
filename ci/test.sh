@@ -33,7 +33,7 @@
 # snapshot, or with GEKO_GOLDEN_FRESH=1, it downloads the sources (PROJECT.md §7, accepting
 # their licenses) instead; CartoCiudad is a public service, so do that on a schedule or by hand.
 # A snapshot not in $GEKO_GOLDEN_DIR/snapshots is pulled from
-# ghcr.io/edgaza/geko/countries/<country>/golden:<snapshot>, a private package that the CI reads
+# ghcr.io/candymaps/geko/countries/<country>/golden:<snapshot>, a private package that the CI reads
 # with its own token and a machine after `oras login ghcr.io`. Environment, besides that of
 # ci/golden.sh:
 #   GEKO_GOLDEN_SETS       query sets of the pack (default: those listed in golden/sets, and every

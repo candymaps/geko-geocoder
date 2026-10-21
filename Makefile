@@ -20,7 +20,7 @@ GEKO   := /usr/local/bin/geko
 IMAGE    ?= geko
 # Where `make release` publishes the image, and the tags it gives it: the version of geko and the
 # commit, besides `latest`.
-REGISTRY ?= ghcr.io/edgaza/geko
+REGISTRY ?= ghcr.io/candymaps/geko
 VERSION  := $(shell sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
 # The commit, read from .git where git is not installed (WSL compiles a checkout made on Windows).
 COMMIT   := $(shell git rev-parse --short HEAD 2>/dev/null || { \

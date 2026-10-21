@@ -48,7 +48,7 @@ publish() {
     [ -f "$dir/snapshots/$file" ] || { echo "$dir/snapshots/$file does not exist: run ci/golden-snapshot.sh create --scope $country first" >&2; return 1; }
     (cd "$dir/snapshots" && oras push --no-tty "$(snapshot_ref "$country" "$file")" "$file" \
         --artifact-type application/vnd.geko.golden-snapshot.v1 \
-        --annotation "org.opencontainers.image.source=https://github.com/edgaza/geko" \
+        --annotation "org.opencontainers.image.source=https://github.com/candymaps/geko" \
         --annotation "org.opencontainers.image.description=Frozen downloads of the golden of $country (OpenStreetMap ODbL 1.0, © OpenStreetMap contributors; national sources under their licenses, see countries/$country/README.md)" \
         --annotation "org.opencontainers.image.created=1970-01-01T00:00:00Z")
     echo "published $(snapshot_ref "$country" "$file")"

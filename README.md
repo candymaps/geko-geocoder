@@ -4,10 +4,10 @@
 <h3 align="center">A modular, multi-country geospatial engine that is easy to configure.</h3>
 <p align="center">geko automatically downloads the data for each configured scope and serves it with outstanding efficiency.</p>
 <p align="center">
-  <a href="https://github.com/edgaza/geko/releases/latest"><img src="https://img.shields.io/github/v/release/edgaza/geko?label=version&color=blue&style=plastic" alt="Version"></a>
+  <a href="https://github.com/candymaps/geko/releases/latest"><img src="https://img.shields.io/github/v/release/candymaps/geko?label=version&color=blue&style=plastic" alt="Version"></a>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/license-AGPL--3.0-orange?style=plastic" alt="License"></a>
-  <a href="https://github.com/edgaza?tab=packages&q=geko"><img src="https://img.shields.io/badge/docker-ghcr.io-informational?style=plastic&logo=docker" alt="Docker"></a>
-  <a href="https://github.com/edgaza/geko/actions/workflows/ci.yml"><img src="https://github.com/edgaza/geko/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/orgs/candymaps/packages?repo_name=geko"><img src="https://img.shields.io/badge/docker-ghcr.io-informational?style=plastic&logo=docker" alt="Docker"></a>
+  <a href="https://github.com/candymaps/geko/actions/workflows/ci.yml"><img src="https://github.com/candymaps/geko/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
 </p>
 <p align="center">
   <a href="#installation-and-usage"><b>🚀 Installation</b></a>&nbsp;&nbsp;&nbsp;∣&nbsp;&nbsp;&nbsp;
@@ -58,7 +58,7 @@ Without a mounted `geko.toml`, the image uses its sample one: Luxembourg, with t
 
 ```bash
 docker run -d --name geko -p 8080:8080 -v geko-data:/var/lib/geko \
-  -v "$PWD/geko.toml:/etc/geko/geko.toml:ro" ghcr.io/edgaza/geko
+  -v "$PWD/geko.toml:/etc/geko/geko.toml:ro" ghcr.io/candymaps/geko
 ```
 
 The first time, it downloads the data for those countries, builds the indexes and serves them (it answers 503 until then): about 2 minutes for Luxembourg, around an hour for all of Spain (about 8 GB of disk while building and 5 GB afterwards, and 3 GB of memory). Follow it with `docker logs -f geko`. Later starts reuse the `geko-data` volume and only rebuild what changed.
@@ -70,7 +70,7 @@ The first time, it downloads the data for those countries, builds the indexes an
 - Autocomplete: `/v1/autocomplete?text=gran+v`; reverse: `/v1/reverse?lat=40.4168&lon=-3.7038`
 - The full API: [openapi.yaml](openapi.yaml), which `geko serve` also serves at `/openapi.yaml` and, browsable with Swagger UI, at `/docs`.
 
-To update: `docker pull ghcr.io/edgaza/geko`, remove the container and start it again with the same command; the data stays in the volume.
+To update: `docker pull ghcr.io/candymaps/geko`, remove the container and start it again with the same command; the data stays in the volume.
 
 ## Data sources
 

@@ -1,5 +1,5 @@
 //! Download of the packs of the scope from the registry where they are published, by default
-//! `ghcr.io/edgaza/geko/countries/<country>` (PROJECT.md §2.4). The tag is the format this binary
+//! `ghcr.io/candymaps/geko/countries/<country>` (PROJECT.md §2.4). The tag is the format this binary
 //! reads (`format-1`), so that each geko gets the newest pack it understands.
 //!
 //! A pack copied by hand into the folder of the packs (`make install`, without the `.digest` that a
@@ -13,7 +13,7 @@ use geko_fetch::oci::{OciClient, Reference};
 
 use crate::signature::{self, FORMAT};
 
-pub const DEFAULT_REGISTRY: &str = "ghcr.io/edgaza/geko/countries";
+pub const DEFAULT_REGISTRY: &str = "ghcr.io/candymaps/geko/countries";
 /// Beside the files of a downloaded pack: the digest of its manifest in the registry.
 pub const DIGEST_FILE: &str = ".digest";
 
@@ -137,8 +137,8 @@ mod tests {
 
     #[test]
     fn references_name_the_format() {
-        let r = reference("ghcr.io/edgaza/geko/countries/", country("ES")).unwrap();
-        assert_eq!(r.to_string(), format!("ghcr.io/edgaza/geko/countries/es:format-{FORMAT}"));
+        let r = reference("ghcr.io/candymaps/geko/countries/", country("ES")).unwrap();
+        assert_eq!(r.to_string(), format!("ghcr.io/candymaps/geko/countries/es:format-{FORMAT}"));
     }
 
     #[test]
