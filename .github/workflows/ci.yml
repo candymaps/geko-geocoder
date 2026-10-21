@@ -118,8 +118,8 @@ jobs:
   #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
   #   (not only documentation or packs), the image (ghcr.io/edgaza/geko, tag <version>-<commit>);
   # - when that version has no git tag yet (it was raised in Cargo.toml), also the tag <version> on
-  #   every pack and on the image, latest on the image, and the git tag v<version>. Raising the
-  #   version is how a release is made.
+  #   every pack and on the image, latest on the image, and the git tag v<version> on the pushed
+  #   commit, with its GitHub release. Raising the version is how a release is made.
   # The image carries no country pack: geko downloads those of its scope (PROJECT.md §2.4). Needs
   # the secret GEKO_PACK_SIGNING_KEY; GitHub's own token pushes. Only once every check that ran
   # passed: a check skipped because nothing it covers changed does not hold it.
@@ -189,7 +189,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       # The tag goes last: if something could not be published, the next run makes the release again.
+      # gh creates the tag and its GitHub release in one call, so neither is left without the other.
       - if: steps.version.outputs.release == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git tag "v${{ steps.version.outputs.version }}"
-          git push origin "v${{ steps.version.outputs.version }}"
+          gh release create "v${{ steps.version.outputs.version }}" --target "$GITHUB_SHA" \
+            --title "v${{ steps.version.outputs.version }}" --generate-notes

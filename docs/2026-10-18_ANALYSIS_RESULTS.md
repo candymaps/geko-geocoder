@@ -16,7 +16,7 @@ Sobre la medida del 2026-10-17 (abajo), con `ci/check.sh spain`, los golden de B
 
 **Frente a Pelias** (Baleares, entidades que Pelias también tiene, repetido el 2026-10-18): top-1 96,3 % frente a 61,2 % y 96,8 % frente a 63,6 %; mejor en todas las categorías de los dos conjuntos. La más ajustada sigue siendo «dirección sin municipio», 89 frente a 88 % y 85 frente a 84 %.
 
-**Latencia:** los objetivos no cambian respecto al 2026-10-17. En esta máquina, las pruebas de carga con 16 a la vez han variado hasta un 40 % entre tandas con el mismo binario (inversa: 18.300, 24.700 y 31.200 QPS), así que solo valen comparadas A/B en la misma tanda (CLAUDE.md).
+**Latencia:** los objetivos no cambian respecto al 2026-10-17. En esta máquina, las pruebas de carga con 16 a la vez han variado hasta un 40 % entre tandas con el mismo binario (inversa: 18.300, 24.700 y 31.200 QPS), así que solo valen comparadas A/B en la misma tanda (AGENTS.md).
 
 **Nuevo en el servicio:** página de demostración en `/`, `geko up`, `lang`, CORS, claves de API y límite de peticiones por cliente (apagados por defecto).
 
@@ -114,7 +114,7 @@ Fallos conocidos (BACKLOG.md, punto 12b):
 ## Qué falta para cumplir todos los objetivos
 
 1. ~~**Repetir la comparación con Pelias.**~~ Hecho el 2026-10-16 (abajo).
-2. **Bajar el autocompletado por debajo de 5 ms.** El 2026-10-16 bajó de 8,7 a 5,6 ms (p99 en el servidor, en otro equipo; BACKLOG 8), y el 2026-10-17 sigue en 5,6 ms (en el cliente). El resto lo fija el presupuesto de tiempo, no el coste de las consultas: las caras se cortan a los 5 ms. Bajar de 5 ms exige un presupuesto menor, que cuesta unos 0,7 puntos de top-5 en las pulsaciones por cada milisegundo (CLAUDE.md, «Optimizaciones»). **Decisión pendiente (de producto):** qué presupuesto se fija, y comprobarlo en el hardware de referencia (punto 5).
+2. **Bajar el autocompletado por debajo de 5 ms.** El 2026-10-16 bajó de 8,7 a 5,6 ms (p99 en el servidor, en otro equipo; BACKLOG 8), y el 2026-10-17 sigue en 5,6 ms (en el cliente). El resto lo fija el presupuesto de tiempo, no el coste de las consultas: las caras se cortan a los 5 ms. Bajar de 5 ms exige un presupuesto menor, que cuesta unos 0,7 puntos de top-5 en las pulsaciones por cada milisegundo (AGENTS.md, «Optimizaciones»). **Decisión pendiente (de producto):** qué presupuesto se fija, y comprobarlo en el hardware de referencia (punto 5).
 3. **Mantener los p99 con 16 consultas a la vez.** La búsqueda ya lo cumple (14,1 ms el 2026-10-17); el autocompletado, no (15,0 ms). Con el servidor fijado a 4 núcleos, el p99 del autocompletado con 4 a la vez (unos 2.000–2.500 QPS) queda en 7–9 ms: el tiempo se va en la cola de CPU. **Pendiente** del mismo presupuesto y del hardware de referencia.
 4. ~~**Medir la inversa en reposo.**~~ Hecho el 2026-10-16: p99 de 0,33 ms.
 5. **Repetir las medidas en el hardware de referencia**, con el cliente en otra máquina. **Pendiente del hardware.** Ya está automatizado: `GEKO_REFERENCE_MACHINE=1 ci/check.sh spain` comprueba allí todos los objetivos de §1.1.

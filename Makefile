@@ -4,7 +4,7 @@
 # Run from Windows, make starts without the login profile that puts cargo in the PATH.
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 export CARGO_TARGET_DIR ?= $(HOME)/.cache/geko-target
-# Without a C compiler (WSL without build-essential), Zig compiles and links, if it is there (CLAUDE.md).
+# Without a C compiler (WSL without build-essential), Zig compiles and links, if it is there (AGENTS.md).
 ifeq ($(shell command -v cc 2>/dev/null),)
 ifneq ($(wildcard $(HOME)/.local/bin/zigcc),)
 export CC := $(HOME)/.local/bin/zigcc
@@ -73,7 +73,7 @@ image: bin ## Docker image IMAGE with the last release build (docker build compi
 	@need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(BIN) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
 	[ "$$(printf '%s\n' $$need $(IMAGE_GLIBC) | sort -V | tail -1)" = "$(IMAGE_GLIBC)" ] || { \
 	  echo "geko needs glibc $$need, newer than the $(IMAGE_GLIBC) of the image: it would not start." >&2; \
-	  echo "Build it on an older system, with Zig (CLAUDE.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; }
+	  echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; }
 	rm -rf $(CARGO_TARGET_DIR)/image && mkdir -p $(CARGO_TARGET_DIR)/image
 	cp $(BIN) $(CARGO_TARGET_DIR)/image/geko
 	BUILDX_GIT_INFO=false docker build --build-context binary=$(CARGO_TARGET_DIR)/image --build-arg VERSION=$(VERSION) --build-arg REVISION=$(COMMIT)$(DIRTY) -t $(IMAGE) .

@@ -60,7 +60,7 @@ impl LoadReport {
     }
 }
 
-/// Load runs on the same machine still vary by ±20 % (CLAUDE.md): a p99 or a throughput is worse
+/// Load runs on the same machine still vary by ±20 % (AGENTS.md): a p99 or a throughput is worse
 /// only past this factor, and a p99 also by this many milliseconds.
 pub const LOAD_FACTOR: f64 = 1.5;
 pub const LOAD_MARGIN_MS: f64 = 1.0;
@@ -118,7 +118,7 @@ const AB_SLICES: u32 = 5;
 
 /// The same load on two servers measured in turns, in `AB_SLICES` slices each (base and other,
 /// then other and base, and so on), so that whatever else the machine does in that time weighs the
-/// same on both (CLAUDE.md: measure A/B in the same run). Each side is measured for `duration` in
+/// same on both (AGENTS.md: measure A/B in the same run). Each side is measured for `duration` in
 /// all, and each of its figures is the median of its slices: a burst of the machine that spoils
 /// one or two of them does not move it.
 pub fn run_ab(base_url: &str, url: &str, cases: &[Case], route: Route, concurrency: usize, warmup: Duration, duration: Duration) -> (LoadReport, LoadReport) {

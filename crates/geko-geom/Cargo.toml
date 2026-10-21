@@ -3,6 +3,7 @@ name = "geko-geom"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [dependencies]
 rustc-hash = "2"

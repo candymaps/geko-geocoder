@@ -106,7 +106,7 @@ only() {
     [ -z "$bad" ] || { echo "$what:$bad" >&2; return 1; }
 }
 
-# The rules of CLAUDE.md that the dependency graph can show: geko-core holds only the domain and
+# The rules of AGENTS.md that the dependency graph can show: geko-core holds only the domain and
 # the traits, and each concrete technology stays inside its provider or its crate. A new user of
 # one of them is either a rule broken or a decision to write down here.
 architecture() {
@@ -154,9 +154,9 @@ snapshot_age() {
     [ -n "$day" ] || return 0
     age=$((($(date -u +%s) - $(date -u -d "$day" +%s)) / 86400))
     [ "$age" -gt "$max" ] || return 0
-    echo "warning: the snapshot of $country is $age days old ($file): renew it (README, «Instantáneas del golden»)" >&2
+    echo "warning: the snapshot of $country is $age days old ($file): renew it (docs/PROJECT.md §20.1)" >&2
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
-        echo "::warning::the snapshot of $country is $age days old: renew it (README, «Instantáneas del golden»)"
+        echo "::warning::the snapshot of $country is $age days old: renew it (docs/PROJECT.md §20.1)"
     fi
 }
 
@@ -497,7 +497,7 @@ BENCH_FACTOR=1.03
 BENCH_PATHS="parse search autocomplete reverse"
 
 # Sets $valgrind: VALGRIND, the one on the PATH, or the one extracted without root where it is
-# not installed (CLAUDE.md, «Entorno»). Without it the instruction counts are an error, unless
+# not installed (AGENTS.md, «Entorno»). Without it the instruction counts are an error, unless
 # GEKO_BENCH=0 skips them: skipping them in silence hid that they did not run.
 find_valgrind() {
     local extracted="$HOME/.local/valgrind-deb/root/usr"
@@ -586,7 +586,7 @@ golden_base_bundle() {
 # depend on how busy the machine is (hits, data, sizes, memory, instructions) is compared with
 # the baseline of the base, measured once for each base commit and data in $dir/check-baseline.
 # What does (latency, throughput, hits under load), only with --include-performance, is measured on
-# both servers at once, in turns, in the same run (CLAUDE.md: measure A/B in the same run). The
+# both servers at once, in turns, in the same run (AGENTS.md: measure A/B in the same run). The
 # variants choose the rest: results (the query sets and keystrokes), data (the canonical dataset,
 # the size of the bundle and the memory of the build) and instructions. Environment:
 #   GEKO_SPAIN_DIR         data directory (default /var/lib/geko)

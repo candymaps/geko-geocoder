@@ -12,7 +12,7 @@
 # (GEKO_GOLDEN_FRESH=1 GEKO_GOLDEN_UPDATE=1 ci/test.sh), freezes those same downloads (`create`)
 # and publishes them (`publish`), unless `--only-local`: then the snapshot stays on this machine,
 # and the golden of the CI cannot find it until it is published. Then review the data table of
-# the report and commit golden/snapshot with golden/baseline (README, «Instantáneas del golden»).
+# the report and commit golden/snapshot with golden/baseline (docs/PROJECT.md §20.1).
 # Publishing needs `oras login ghcr.io` with a token with write:packages. Environment: that of
 # ci/golden.sh.
 set -euo pipefail

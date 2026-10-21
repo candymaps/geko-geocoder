@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs `make test` before a push (CLAUDE.md, «Comprobaciones»): the deterministic checks that the
+# Runs `make test` before a push (AGENTS.md, «Comprobaciones»): the deterministic checks that the
 # CI ran on every push, now that it is off. They test the working tree, so it must be clean: what
 # is pushed is then what was tested. From Git for Windows they run inside WSL, where geko builds.
 # `git push --no-verify` skips them. Enabled with `git config core.hooksPath .githooks`.
@@ -24,7 +24,7 @@ if [ -n "${WSL_DISTRO_NAME:-}" ] || [ "$(uname -s)" = Linux ]; then
 else
     # Without /dev/null, wsl.exe would read the refs that git writes to the hook.
     dir=$(wsl.exe wslpath -a "$root" < /dev/null | tr -d '\r')
-    # Rust and its target directory as CLAUDE.md sets them (outside /mnt, to build fast).
+    # Rust and its target directory as AGENTS.md sets them (outside /mnt, to build fast).
     wsl.exe -- bash -lc ". \"\$HOME/.cargo/env\" 2> /dev/null; export CARGO_TARGET_DIR=\"\${CARGO_TARGET_DIR:-\$HOME/.cache/geko-target}\"; cd '$dir' && make test" < /dev/null
 fi
 status=$?

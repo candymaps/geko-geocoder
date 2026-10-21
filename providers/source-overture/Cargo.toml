@@ -3,6 +3,7 @@ name = "source-overture"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [dependencies]
 geko-core.workspace = true

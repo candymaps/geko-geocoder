@@ -330,7 +330,7 @@ fn row<'a>(report: &'a Report, name: &str) -> Option<&'a CategoryScore> {
 }
 
 /// Categories of `report` worse than in `baseline` by more than `tolerance` percentage points
-/// in top-1 or top-5 (CLAUDE.md: no category may get worse). A category of the baseline missing
+/// in top-1 or top-5 (AGENTS.md: no category may get worse). A category of the baseline missing
 /// from the report is a regression too.
 pub fn hit_regressions(baseline: &Report, report: &Report, tolerance: f64) -> Vec<String> {
     let mut out = Vec::new();

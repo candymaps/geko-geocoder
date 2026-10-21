@@ -447,7 +447,9 @@ Puntuación estática por entidad, normalizada entre 0 y 1 y guardada como `u16`
 
 Fusionar OSM con otras fuentes crea una base de datos derivada sujeta a ODbL (share-alike) si se usa públicamente. Los resultados sueltos de una búsqueda son obra producida: basta con atribuirlos.
 
-**Decisión (2026-10-18):** el código sigue siendo privado. La obligación de la cláusula 4.6 se cumple ofreciendo **el método** de hacer la base derivada, no la base: una descripción pública del algoritmo de fusión y el compromiso de dar el código necesario para reproducirla a quien reciba resultados y lo pida. Las fuentes añadidas a OSM ya son públicas.
+**Decisión (2026-10-21):** el código se licencia con AGPL-3.0-only ([LICENSE](../LICENSE)), y toda contribución externa exige firmar antes el CLA ([CLA.md](../CLA.md), Harmony con cualquier licencia de salida), para poder cambiar de licencia o dar licencias comerciales. Publicar el código cumple por sí solo la cláusula 4.6.
+
+**Decisión (2026-10-18), mientras el repositorio siga privado:** la obligación de la cláusula 4.6 se cumple ofreciendo **el método** de hacer la base derivada, no la base: una descripción pública del algoritmo de fusión y el compromiso de dar el código necesario para reproducirla a quien reciba resultados y lo pida. Las fuentes añadidas a OSM ya son públicas.
 
 - `/v1/attribution` (sin clave de API): las licencias y atribuciones de las fuentes del bundle, que lista su manifiesto; el aviso de base derivada; dónde está el método, y a quién pedir el código (`[serve] attribution_contact`).
 - `/v1/attribution/method`: la descripción del método ([FUSION_METHOD.md](FUSION_METHOD.md)), embebida en el binario. Hay que mantenerla al día cuando cambien las reglas de fusión.
@@ -1097,7 +1099,7 @@ Lo que queda por hacer, con su estado, está en la sección 17. Estado a 2026-10
    11. `geko-eval` (generación de consultas de referencia y evaluación por HTTP) y comparación con Pelias en Baleares (§13.4 bis); afinado del ranking con esas métricas. *(hecho, con prueba de carga; el p99 se resolvió con el presupuesto de tiempo por consulta y el pool acotado: §11)*
 2. **España completa y más datos**: España completa *(hecho)*; IGN, INE, NGBE, Catastro y catastros forales, callejeros autonómicos y Wikidata, todos con descarga automática *(Catastro, aplazado; INE e IGN, no compensan por ahora; Nomenclátor y callejeros, sin estudiar: `countries/es/README.md`; la importancia sale de los nombres de OSM sin descargar Wikidata)*; puntos kilométricos *(hecho)*, referencia catastral y capa `parcels` *(aplazadas con el Catastro)*; publicación, descarga solo de lo cambiado y cambio atómico, generación y servicio en máquinas distintas *(hecho: `[serve] bundles_url`)*. Comparación con Pelias *(hecho: `ci/test.sh --scope pelias`)*.
 3. **Teselas y API completa**: *(teselas aplazadas por decisión, 2026-10-18: el módulo `tiles` se queda en su esqueleto)* `tiles-planetiler` con descarga automática del jar y de los datos auxiliares, esquema Shortbread y profile propio; `tiles-pmtiles` con estilo, glyphs y sprites; publicación estática como alternativa; `/v1/search/structured`, `/v1/batch`, modos compatibles con Pelias y Photon *(hecho)*; POIs de Overture *(hecho)* y registros oficiales; caché de respuestas *(hecho, apagada por defecto)*.
-4. **Optimización guiada por métricas**: JSON preserializado *(hecho)*, `rkyv`, `mimalloc` *(hecho)*, SIMD, PGO, índice fonético, ajustes de ranking e importancia con las consultas de referencia *(en curso: CLAUDE.md, «Optimizaciones»)*.
+4. **Optimización guiada por métricas**: JSON preserializado *(hecho)*, `rkyv`, `mimalloc` *(hecho)*, SIMD, PGO, índice fonético, ajustes de ranking e importancia con las consultas de referencia *(en curso: AGENTS.md, «Optimizaciones»)*.
 5. **Operación y más países**: diffs diarios de OSM, métricas por fase *(hecho: `/metrics` y `build_report.json`)*, registro de consultas lentas *(hecho)*, regeneración programada, `BundleStore` con S3, reparto de países entre nodos *(`[serve] countries` hecho; falta el enrutador)*; pack de un segundo país *(hecho: Luxemburgo)*; packs de país como datos firmados, descargados de ghcr.io, y publicación automática de packs e imagen *(hecho, 2026-10-20: §2.4)*.
 
 ## 16. Stack
@@ -1109,9 +1111,9 @@ Lo que queda por hacer, con su estado, está en la sección 17. Estado a 2026-10
 
 ## 17. Pendiente
 
-Lo que queda por hacer del motor genérico. Lo propio de un país está en el README de su pack (`countries/<país>/README.md`, «Pendiente y decisiones»). Al cerrar un punto, bórralo de aquí; si cambia la especificación, actualiza la sección que corresponda de este documento, y si enseña algo (una optimización que funcionó o no), apúntalo en CLAUDE.md.
+Lo que queda por hacer del motor genérico. Lo propio de un país está en el README de su pack (`countries/<país>/README.md`, «Pendiente y decisiones»). Al cerrar un punto, bórralo de aquí; si cambia la especificación, actualiza la sección que corresponda de este documento, y si enseña algo (una optimización que funcionó o no), apúntalo en AGENTS.md.
 
-Los puntos cerrados hasta el 2026-10-20, con su historia y sus medidas, están en `git show 8679454:docs/BACKLOG.md` (y `BACKLOG_ES.md`, `BACKLOG_CI.md`). Los «BACKLOG <n>» que citan CLAUDE.md, este documento y el código se refieren a esa versión.
+Los puntos cerrados hasta el 2026-10-20, con su historia y sus medidas, están en `git show 8679454:docs/BACKLOG.md` (y `BACKLOG_ES.md`, `BACKLOG_CI.md`). Los «BACKLOG <n>» que citan AGENTS.md, este documento y el código se refieren a esa versión.
 
 Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Estado: ⬜ pendiente, ⏸️ aplazado (con el motivo y cuándo retomarlo). Todo debe resolverse de forma genérica, válida para cualquier país y fuente: los ejemplos españoles de un punto solo ilustran el fallo.
 
@@ -1120,7 +1122,7 @@ Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Es
 | 1 | Consultas reales de usuarios | El ranking se validó con consultas generadas (semillas 42 y 7) y pulsaciones simuladas; faltan las de usuarios reales | S | ⬜ Cuando haya registro de consultas de un uso real |
 | 8 | Latencia medida desde otra máquina | PROJECT.md §13 pide medir el cliente fuera del servidor. El autocompletado está en unos 5,6 ms de p99 frente al objetivo de 5 (presupuesto de 5 ms, aceptado como decisión de producto) | S | ⬜ Necesita el hardware de referencia o, al menos, otra máquina en la red |
 | 12c | Nombres en lenguas ajenas al país | Los `name:*` de OSM en cualquier lengua (`name:la`, `name:en`…) se indexan igual que los del país y meten ruido al autocompletar: «Nova» da Vitoria-Gasteiz («Nova Victoria», en latín) | M | ⏸️ Aplazado (2026-10-17): poco valor medido. Casi todos los fallos son prefijos cortos que coinciden con un nombre secundario legítimo de una entidad importante («Villanueva» da Vilanova i la Geltrú), y penalizarlos empeoraría esos casos. Exigiría índices de palabras separados para nombres principales y secundarios |
-| 13 | POIs famosos que aún fallan | «alhambra» (a 0,036 del municipio homónimo), «estación de atocha» (el nombre de la estación no lleva «estación»), «catedral de santiago» (gana la de Bilbao, que se llama así); «aeropuerto de palma» da La Palma, que es ambiguo | M | ⬜ No se arregla subiendo el peso de la fama (probado, CLAUDE.md). Los hunde el texto, no la importancia |
+| 13 | POIs famosos que aún fallan | «alhambra» (a 0,036 del municipio homónimo), «estación de atocha» (el nombre de la estación no lleva «estación»), «catedral de santiago» (gana la de Bilbao, que se llama así); «aeropuerto de palma» da La Palma, que es ambiguo | M | ⬜ No se arregla subiendo el peso de la fama (probado, AGENTS.md). Los hunde el texto, no la importancia |
 | 14 | Interpolación de números de portal que faltan | Hoy se devuelve el número más cercano del mismo lado (a 10 como mucho, `approximate`) | M | ⏸️ Aplazado (2026-10-17). Un portal interpolado obliga a llevar número y posición propios en `Hit` (`geko-core`, todos los motores y la suite de conformidad) y a decidir su id público y qué devuelve `/place`. Antes, añadir a los conjuntos casos de números que faltan, para medir el beneficio |
 | 18 | Fixture `.osm.pbf` para la conformidad de `source-osm` | Su suite solo prueba los metadatos y el error sin descargas, no el staging | S | ⬜ |
 | 24 | Comparar con Pelias en la misma máquina | La latencia medida contra Pelias incluye red: geko responde en 0,3–0,5 ms de mediana en el servidor; Pelias, unos 60 ms con la red | M | ⬜ Necesita un Pelias local (Elasticsearch, varios GB de RAM) en una máquina con memoria libre |
@@ -1135,3 +1137,183 @@ Esfuerzo: **S** = horas, **M** = una o dos jornadas, **L** = varias jornadas. Es
 | 43 | `BundleStore` con S3 y enrutador entre nodos | Hoy los bundles se sirven de disco o por HTTP (`bundles_url`), y `[serve] countries` reparte países sin un enrutador delante (fase 5) | M | ⬜ Cuando un nodo no baste |
 | 44 | Opciones de configuración previstas | Elegir provider por configuración, capas opcionales (`[serve.layers]`), pesos del ranking (`[serve.ranking]`) y activar o no los modos compatibles (§4.1) | M | ⬜ Cada una, cuando haga falta: el provider, con su segunda implementación |
 | 45 | Extracto del continente | Si los extractos de Geofabrik del ámbito pesan más que el del continente, bajar el continente (§7.4) | S | ⬜ |
+## 18. Rutas
+
+- `geko` lee siempre `/etc/geko/geko.toml` y guarda siempre sus datos en `/var/lib/geko`: descargas (`raw/`), ficheros de trabajo (`staging/`, `relocated/`, `canonical/`, `segments/`) y bundles publicados (`bundles/`). Ni el `geko.toml` ni la línea de órdenes cambian estas rutas.
+- Para generar en una máquina y servir en otra, la que genera ofrece su `/var/lib/geko/bundles` por HTTP (cualquier servidor web o almacenamiento de objetos) y la que sirve lo indica en `[serve] bundles_url`: en cada recarga baja la versión nueva a su propio `/var/lib/geko/bundles`, solo con los artefactos que cambiaron.
+- Los packs de país se leen al arrancar de `/var/lib/geko/packs/<país>/`, solo los de los países que se piden. `geko plan`, `fetch`, `build` y `up` bajan los del ámbito que falten o hayan cambiado de `ghcr.io/edgaza/geko/countries/<país>` (`[packs] registry`), con la etiqueta del formato que entiende el binario (`format-2`), y solo los usan si llevan la firma de los packs publicados. Cada pack lleva su versión (`version` en `pack.toml`, publicada también como `pack-<n>`), que muestran `geko plan` y `geko build`. Un pack copiado a mano se usa tal cual y nunca se reemplaza; para probar uno sin publicar, `GEKO_PACKS=$PWD/countries` usa los del repositorio. Cada bundle lleva el pack con que se generó, y `geko serve` lee ese: la máquina que solo sirve no necesita la carpeta de los packs. La imagen de Docker no lleva ninguno: baja los de su ámbito al volumen.
+- Las variables de entorno `GEKO_CONFIG` y `GEKO_DATA` cambian las dos rutas, y `GEKO_PACKS` la de los packs. Son para las comprobaciones (`ci/test.sh`) y la CI, que generan varios países a la vez y no escriben en `/etc` ni en `/var/lib`.
+- Al cambiar el ámbito, lo que ya no está en él se queda en `/var/lib/geko`, por si vuelve. Se borra con `geko purge`:
+  - `geko purge data`: las descargas y los ficheros de trabajo de los países, las regiones y las fuentes que la configuración ya no pide. `geko build --purge` y `geko up --purge` hacen lo mismo antes de generar.
+  - `geko purge country-packs`: los packs descargados de los países fuera del ámbito; con `--all`, todos (se vuelven a bajar al generar). Los copiados a mano se quedan.
+  - `geko purge`, sin más: todo lo anterior.
+  - Las versiones antiguas de los bundles las retira `[build] keep`: por defecto solo se conserva la que se sirve; con 2 se puede volver a la anterior. Un servicio que aún tenga cargada la versión retirada sigue funcionando hasta cargar la nueva.
+
+## 19. Estado
+
+Fase 1 terminada (las fases, en la hoja de ruta, §15). Resultados en las Islas Baleares (§13.4 bis), con consultas de referencia que no se usaron para afinar el ranking (semilla 7):
+
+| | geko | Pelias (OSM) |
+|---|---|---|
+| Acierto en top-1, comparación justa de motor | **95,9 %** | 63,7 % |
+| Acierto en top-1, producto completo (con CartoCiudad) | **93,5 %** | 38,2 % |
+| Latencia por petición HTTP (mediana) | **0,1–3 ms** (local) | 60–90 ms (en la nube, con red) |
+| Caudal (concurrencia 16, máquina de desarrollo) | búsqueda 3.372 QPS, autocompletado 7.409 QPS, inversa 67.718 QPS | — |
+
+Hecho tras la fase 1 (el detalle, en `git show 8679454:docs/BACKLOG.md`; lo pendiente, en la sección 17):
+
+- **Generación:** incremental, que solo rehace las etapas cuyo código o entradas cambian (Baleares sin cambios: de 81 a 0,5 s).
+- **Puertos:** cada uno tiene su suite de conformidad.
+- **CI:** en GitHub Actions, en cada push a `main`: comprueba lo que cambió con `ci/test.sh` y, si pasa, lo publica.
+- **España completa:** ya se genera y se sirve (§13.4 ter):
+
+| España | |
+|---|---|
+| Datos | 16,1 M de portales, 1,27 M de calles, 685.000 lugares, 880.000 POIs |
+| Descarga (OSM + CartoCiudad), solo la primera vez | 36 min |
+| Generación | 16 min sin descargas, con Overture (2026-10-20; 6,6 min sin Overture el 2026-10-16), 2,9 GB de pico en el índice |
+| Segmento | índice de 1,8 GB e inversa de 687 MB (mapeada) |
+| Servicio | carga en 0,97 s, 932 MB residentes |
+| Acierto en top-1: dirección completa / con errata / sin municipio, con foco | 92–96 % / 90–95 % / 94 % |
+
+- **Packs de país como datos:** leídos al arrancar, firmados y publicados en ghcr.io; `geko` baja los de su ámbito, y la imagen de Docker sirve para cualquier combinación de países sin llevar ninguno (§2.4).
+- **Segundo país:** Luxemburgo, con su pack (`countries/lu/`) y su golden, sin tocar el motor salvo arreglos genéricos ([countries/README.md](../countries/README.md)).
+- **Servicio:** página de demostración en `/`, `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
+- Las últimas medidas completas, del 2026-10-18, en [docs/2026-10-18_ANALYSIS_RESULTS.md](2026-10-18_ANALYSIS_RESULTS.md).
+
+## 20. Comprobaciones y evaluación
+
+Todas viven en `ci/test.sh`, igual en local que en la CI (GitHub solo lo llama), que solo ejecuta pruebas: `--variant` dice qué se prueba y `--scope`, sobre qué datos. Los datos del golden los prepara aparte `ci/golden-snapshot.sh`. Cada prueba se usa donde tiene sentido:
+
+- **Antes de cada push, en local**: `make test`, que lanza solo `.githooks/pre-push` (se activa una vez por clon con `git config core.hooksPath .githooks`; `git push --no-verify` lo salta). Es todo lo determinista, con el golden de todos los países.
+- **En cada push a `main`, en la CI** (`ci.yml`): lo determinista de lo que cambió. El código, si cambió el motor; los contratos, si cambió el motor o algún pack; y el golden de cada país, de todos si cambió el motor o solo de los packs cambiados. Si todo pasa, publica los packs cambiados y, si el push toca lo que entra en ella, la imagen, con la versión del `Cargo.toml`. Las demás ramas no tienen CI.
+- **Solo en local y a demanda** (o en un runner propio con el hardware de referencia de §1.1): España completa (`make test-regression`) y toda latencia, caudal o memoria, los datos frescos (`GEKO_GOLDEN_FRESH=1`) y la comparación con Pelias.
+
+```bash
+ci/test.sh [--variant <variantes>] [--scope <ámbitos>] [--include-performance]
+```
+
+| `--variant` (por defecto, todas) | Qué prueba |
+|---|---|
+| `code` | clippy (avisos como errores), reglas de dependencias, licencias y avisos de seguridad (cargo-deny) y cada combinación de features |
+| `contracts` | tests unitarios y suites de conformidad de cada puerto |
+| `results` | aciertos consulta a consulta y en cada pulsación, calibración de `confidence`, duplicados y modos Pelias y Photon |
+| `data` | recuentos e integridad del canónico, tamaño del bundle y determinismo del build |
+| `robustness` | fuzz y recarga del bundle con carga |
+| `instructions` | instrucciones de las rutas calientes, con valgrind (obligatorio; `GEKO_BENCH=0` las salta), frente a las del último commit subido (`GEKO_BASE` para otro), contadas en la misma pasada y en la misma máquina |
+
+| `--scope` (por defecto, `es,lu`) | Sobre qué datos |
+|---|---|
+| `es`, `lu`… | el golden de un pack, con sus datos congelados (`countries/<país>/golden/snapshot`): Baleares para `es`, el país entero para los demás |
+| `spain` | España completa, en local, frente al último commit subido |
+| `pelias` | el golden de `es` frente a una instancia de Pelias con los mismos datos de OSM, la de `GEKO_PELIAS_URL` (solo `results`) |
+
+`--include-performance` añade lo que depende de la máquina: las latencias del golden frente a las de esta máquina (con `results`) y, en `spain`, la carga, el acierto con carga y el servidor frente a los de su base. `code` y `contracts` no dependen del ámbito.
+
+```bash
+make test              # ci/test.sh: todo menos lo de la máquina, con el golden de todos los países
+make test-golden-es    # el golden de Baleares: results, data, robustness, instructions
+make test-golden-lu    # lo mismo con Luxemburgo entero
+make test-regression   # España completa, en local y a demanda, con la carga (--include-performance)
+GEKO_GOLDEN_UPDATE=1 make test-golden-es     # acepta los resultados como nueva línea base
+GEKO_SPAIN_BUILD_AB=1 make test-regression   # además, el tiempo del build: base, nuevo, base, nuevo
+GEKO_PELIAS_URL=<url> ci/test.sh --variant results --scope pelias   # frente a Pelias, en Baleares
+```
+
+### 20.1 Instantáneas del golden
+
+**Para qué sirven.** El golden son las consultas de referencia de cada pack (`countries/<país>/golden/`): miles de direcciones, calles, lugares y POIs con su resultado esperado. Cada cambio se compara con su línea base consulta a consulta, con tolerancia 0. Eso solo vale si los datos no cambian entre una medida y otra: con datos frescos, OSM cambia a diario y no se sabría si una consulta perdida viene del código o de los datos. Por eso el golden no descarga, sino que usa una **instantánea**: las descargas de su ámbito (Baleares, Luxemburgo) congeladas en un archivo, sobre el que se midió la línea base. Con ella, solo un cambio del código puede cambiar los resultados. Renovarla solo hace falta para que el golden mida con datos actuales, cuando las fuentes se han alejado bastante.
+
+**Dónde están.** La instantánea de cada país es la que nombra `countries/<país>/golden/snapshot`, con su sha256, y se guarda como paquete privado en `ghcr.io/edgaza/geko/countries/<país>/golden:<instantánea>`. La CI la lee con su propio token y corre el golden en cada push a `main` que puede cambiar sus resultados: el de todos los países si cambia el motor o `ci/`, solo el de uno si solo cambia su pack. En local, si no está en disco, se baja de ahí: hace falta una vez `oras login --registry-config ~/.config/oras/config.json ghcr.io -u <usuario>` con un token con `read:packages`.
+
+**Cuándo renovarlos.** El golden avisa, sin fallar, en local y en la CI, cuando su instantánea pasa de los días que fija su pack en `golden/snapshot-max-age-days`, según lo deprisa que cambian sus fuentes: 60 en Baleares (OSM, CartoCiudad y POIs turísticos) y 120 en Luxemburgo (solo OSM, con direcciones estables). Son estimaciones, que se afinan con lo que pierde el golden con datos frescos a cada edad; `GEKO_SNAPSHOT_MAX_AGE_DAYS` las sobrescribe en una pasada. Solo hace falta cuando hay que medir con datos actuales: cuando las fuentes reales se han alejado bastante de la instantánea, o cuando un cambio necesita datos que la instantánea no tiene (una fuente nueva, una región nueva). Para saber si se han alejado, `GEKO_GOLDEN_FRESH=1 ci/test.sh --variant results,robustness --scope es,lu` pasa el golden con datos recién descargados: si pierde bastantes consultas que con la instantánea acierta, toca renovarla. Nunca en cada cambio: el golden vale porque compara siempre sobre los mismos datos.
+
+**Renovar los datos del golden**, en local:
+
+```bash
+make golden-snapshot                 # todos los países con golden; SCOPE=es o SCOPE=lu para uno
+make golden-snapshot-local           # lo mismo, sin publicar: solo en esta máquina
+```
+
+Por cada país, `ci/golden-snapshot.sh renew` (lo que lanzan los dos):
+
+1. Descarga de nuevo las fuentes del ámbito del golden y mide sobre ellas la línea base nueva (`GEKO_GOLDEN_FRESH=1 GEKO_GOLDEN_UPDATE=1 ci/test.sh`).
+2. Congela esas mismas descargas como instantánea y escribe `golden/snapshot` (`ci/golden-snapshot.sh create`).
+3. La publica en ghcr.io (`ci/golden-snapshot.sh publish`), salvo con `golden-snapshot-local`. Hace falta una vez `oras login --registry-config ~/.config/oras/config.json ghcr.io -u <usuario>` con un token con `write:packages`.
+
+Después, a mano:
+
+4. Revisa la tabla de datos del informe (`entities …`: línea base y ahora), con entidades, duplicados e integridad, antes de aceptarla (AGENTS.md).
+5. Commit de `golden/snapshot` junto con `golden/baseline`. La CI pasará el golden sobre la instantánea nueva en el push a `main`, y para eso tiene que estar publicada: una hecha con `golden-snapshot-local` se publica antes con `ci/golden-snapshot.sh publish --scope <país>`.
+
+`ci/test.sh --scope spain` compara el árbol de trabajo con el último commit subido (`GEKO_BASE` para otro), cuyos binarios compila en un worktree (`/var/lib/geko/ab/base`). Lo que no depende de lo ocupada que esté la máquina (aciertos, datos, tamaños, memoria) lo compara con la línea base de ese commit, que mide sola una vez por commit y por datos y guarda junto a ellos (`/var/lib/geko/check-baseline/`). Las instrucciones de cada ruta las cuenta con valgrind en los dos binarios, cada uno sobre su bundle. Lo que sí depende de la máquina (latencia, caudal, acierto con carga), solo con `--include-performance`, lo mide en los dos servidores a la vez, en cinco tajadas por turnos de cada combinación de ruta y concurrencia, y compara la mediana de las tajadas: así una máquina más o menos cargada pesa igual en los dos, y una racha en una tajada no mueve el resultado. Con 8 núcleos o más, los servidores van fijados a 4 núcleos, como el hardware de referencia, y el cliente a los demás.
+
+Para añadir un país, la guía está en [countries/README.md](../countries/README.md).
+
+Las consultas de referencia se generan y evalúan con `geko-eval`. Las de `countries/es/golden/` son de Baleares; las `spain-*.jsonl`, de España completa:
+
+```bash
+geko-eval generate --canonical /var/lib/geko/canonical/ES --seed 42 --out countries/es/golden/generated.jsonl
+geko-eval focus --canonical /var/lib/geko/canonical/ES --cases countries/es/golden/generated.jsonl --out countries/es/golden/focus.jsonl
+geko-eval english --canonical /var/lib/geko/canonical/ES --words countries/es/golden/english.toml --out countries/es/golden/english.jsonl
+geko-eval run --name geko --url http://127.0.0.1:8080 --cases countries/es/golden/generated.jsonl --out geko.json
+geko-eval compare geko.json pelias.json
+geko-eval check --baseline countries/es/golden/baseline/generated.json --report geko.json
+geko-eval load --url http://127.0.0.1:8080 --cases countries/es/golden/spain-generated.jsonl --route search --concurrency 1,4,16
+```
+
+## 21. Desarrollo y uso local
+
+### 21.1 Con Docker
+
+La imagen, `ghcr.io/edgaza/geko`, lleva el binario y una configuración de ejemplo (`docker/geko.toml`), y ningún pack de país: al generar, `geko` baja los de su ámbito al volumen. Sirve igual para un país que para varios. Se monta la propia en `/etc/geko/geko.toml` (con `accept_licenses = true`; escucha siempre en `0.0.0.0:8080`) y un volumen en `/var/lib/geko`, donde quedan las descargas y los bundles:
+
+```bash
+docker build -t geko .
+docker run -p 8080:8080 -v geko-data:/var/lib/geko -v ./geko.toml:/etc/geko/geko.toml geko
+```
+
+La orden por defecto es `up`: empieza a servir enseguida y, mientras, descarga y genera en segundo plano lo que pide la configuración. Hasta que se publica el primer bundle responde 503; Luxemburgo tarda unos 2 minutos desde un volumen vacío, y España completa, una media hora la primera vez. Después sigue sirviendo y, cada `[data] max_age_days` (30 días), comprueba las fuentes y genera de nuevo lo que cambió, sin cron y sin reiniciar: sirve el bundle de antes hasta que el nuevo está publicado, y lo recoge sin cortes. Si una generación falla, se queda el que sirve y lo vuelve a intentar al cabo de una hora. Un pack de país nuevo se usa al reiniciar el contenedor. Con `serve` en vez de `up`, solo sirve lo que ya hay en `/var/lib/geko` o, con `[serve] bundles_url`, lo que publica otra máquina. La imagen ocupa 162 MB.
+
+### 21.2 Atajos: `make`
+
+En Linux y macOS, `make <objetivo>` en la raíz del repositorio. En Windows, `make.cmd`, que lo ejecuta dentro de WSL: `make <objetivo>` en cmd y `.\make <objetivo>` en PowerShell. `make help` los lista:
+
+- `make serve`: sirve el bundle publicado en el puerto 8080 de todas las interfaces (`LISTEN=127.0.0.1:8080` lo limita a la propia máquina): `http://localhost:8080`, con la página de prueba en `/` y la API en `/docs`. `make up` descarga y genera antes lo que pide la configuración.
+- `make query Q="gran via 1, madrid"`, `make parse Q="…"` y `make reverse LAT=40.4168 LON=-3.7038`.
+- `make test`, `make test-golden-es`, `make test-golden-lu` y `make test-regression`: las comprobaciones de `ci/test.sh`.
+- `make image`: la imagen de Docker con el binario de la última compilación, sin compilar dentro de Docker. Se niega si el binario pide una glibc más nueva que la de la imagen (2.36), porque no arrancaría.
+- `make dev`: compila el código tal como está en la rama, cambios sin commit incluidos, construye la imagen `geko:dev` y vuelve a crear el contenedor `geko-dev`. Este sirve en `http://localhost:8080` (`DEV_PORT=` lo cambia): la demo en `/` y la API en `/docs`. Usa la configuración de prueba `docker/dev.toml` (Baleares, con `keep_downloads = true`; `DEV_CONFIG=` usa otra) y los packs del repositorio, sin publicar. Sus datos van al volumen `geko-dev-data`, que se conserva entre ejecuciones; `docker volume rm geko-dev-data`, con el contenedor parado, lo borra todo. Desde WSL necesita la integración de Docker Desktop con la distribución (Settings → Resources → WSL integration).
+  - Volver a lanzarlo con el código cambiado recompila solo lo que cambió y sustituye el contenedor por uno con la imagen nueva, unos segundos sin servicio. El contenedor nuevo sirve enseguida el bundle que ya había en el volumen, salvo que el cambio altere su formato: entonces responde 503 hasta publicar el nuevo.
+  - En segundo plano rehace solo las etapas cuyo código o entradas cambiaron, sin volver a bajar nada, y recoge el bundle nuevo sin reiniciar. Un cambio de ranking o de búsqueda no rehace ningún dato; uno en el staging de una fuente rehace ese staging y lo que depende de él. Los cambios de los packs y de `docker/dev.toml` también entran, porque van montados.
+  - Solo toca el contenedor `geko-dev`. El de «Instalación y uso» del README (`geko`) usa el mismo puerto: para tener los dos a la vez, `make dev DEV_PORT=8081`.
+- `make release-packs`: firma los packs de país con `~/.config/geko/pack-signing.key` y sube los que cambiaron a `ghcr.io/edgaza/geko/countries/<país>` (`ci/packs.sh publish`, con `oras`, o con su imagen si no está instalado).
+- **Publicación automática:** el trabajo `publish` de `ci.yml`, tras pasar las comprobaciones en `main`, publica los packs que cambian y, si el push toca algo que entra en ella (no solo documentación o packs), la imagen, etiquetados `<versión>-<commit>` con la versión del `Cargo.toml`. Para sacar una versión basta subirla en `[workspace.package]`: el workflow añade `<versión>` a packs e imagen, `latest` a la imagen y crea la etiqueta de git `v<versión>` en el commit subido, con su release de GitHub. Necesita el secreto `GEKO_PACK_SIGNING_KEY`.
+- `make release`: compila, hace la imagen y la sube a `ghcr.io/edgaza/geko` con tres etiquetas: la versión y el commit (`0.1.0-6fb024c`), la versión y `latest`. Solo con todo en commit, para que la imagen sea la de ese commit, y tras `docker login ghcr.io` con un token con permiso `write:packages`.
+
+Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, con `sudo`): el binario en `/usr/local/bin/geko`, el `geko.toml` del repositorio en `/etc/geko/geko.toml` si aún no hay ninguno, y `/var/lib/geko` a nombre del usuario. El `/etc/geko/geko.toml` es el que se edita (ámbito, `accept_licenses = true`…); el del repositorio se queda con `accept_licenses = false`. El puerto se cambia con `LISTEN=…`.
+
+### 21.3 Prueba local (Islas Baleares), desde PowerShell
+
+Primero, la ruta del repositorio en WSL, por ejemplo `$GEKO_REPO = '/mnt/d/geko'` para `D:\geko`. Desde la línea de órdenes:
+
+```powershell
+wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko query 'carrer de sant miquel 30, palma'"
+wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko reverse 39.5675 2.6482"
+```
+
+Como servicio HTTP (deja la consola ocupada; se para con Ctrl+C):
+
+```powershell
+wsl -e bash -lc "cd '$GEKO_REPO' && ~/.cache/geko-target/release/geko serve"
+```
+
+Y desde otra consola o el navegador:
+
+```
+http://127.0.0.1:8080/v1/search?text=carrer de sant miquel 30, palma
+http://127.0.0.1:8080/v1/autocomplete?text=valldem
+http://127.0.0.1:8080/v1/reverse?lat=39.5675&lon=2.6482
+http://127.0.0.1:8080/v1/place/geko:municipality:es-07040
+http://127.0.0.1:8080/health
+```

@@ -3,6 +3,7 @@ name = "geko-eval"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "geko-eval"
