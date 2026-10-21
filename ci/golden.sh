@@ -5,12 +5,12 @@
 #                          Spain; the whole country for any other)
 #   GEKO_GOLDEN_DIR        data directory, kept between runs as a cache (default
 #                          /var/lib/geko/golden/<country>)
-#   GEKO_GOLDEN_REGISTRY   where the snapshots are published (default ghcr.io/edgaza/geko/countries)
+#   GEKO_GOLDEN_REGISTRY   where the snapshots are published (default ghcr.io/candymaps/geko/countries)
 
 # shellcheck source=ci/oras.sh
 . ci/oras.sh
 # Where the golden snapshots are published: <registry>/<country>/golden:<snapshot>, private.
-GOLDEN_REGISTRY="${GEKO_GOLDEN_REGISTRY:-ghcr.io/edgaza/geko/countries}"
+GOLDEN_REGISTRY="${GEKO_GOLDEN_REGISTRY:-ghcr.io/candymaps/geko/countries}"
 
 golden_dir() { echo "${GEKO_GOLDEN_DIR:-/var/lib/geko/golden/$(golden_country)}"; }
 golden_country() { echo "${GEKO_GOLDEN_COUNTRY:-es}"; }

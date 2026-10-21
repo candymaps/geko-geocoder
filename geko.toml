@@ -34,7 +34,7 @@ parallel_requests  = 4              # requests at the same time, kept low out of
 max_unchanged_days = 365            # a download older than this is made again whatever the catalog says
 
 [packs]
-registry = "ghcr.io/edgaza/geko/countries"   # where the country packs are downloaded from
+registry = "ghcr.io/candymaps/geko/countries"   # where the country packs are downloaded from
 
 [build]
 keep = 1                            # published versions kept (2 to be able to roll back)

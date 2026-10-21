@@ -68,7 +68,7 @@ jobs:
   # The golden of each country that `changes` lists, on the frozen data of
   # countries/<country>/golden/snapshot, with no tolerance: hits, data, sizes, robustness and
   # instructions (counted with the commit before too, on the same runner). The snapshots are the
-  # private packages ghcr.io/edgaza/geko/countries/<country>/golden, read with the token of the
+  # private packages ghcr.io/candymaps/geko/countries/<country>/golden, read with the token of the
   # workflow. Without --include-performance: the latencies would be those of another machine.
   golden:
     needs: changes
@@ -97,7 +97,7 @@ jobs:
       - run: |
           file=$(sed -n 's/^file=//p' "countries/${{ matrix.country }}/golden/snapshot")
           tag=${file#golden-}
-          ref="ghcr.io/edgaza/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
+          ref="ghcr.io/candymaps/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
           oras manifest fetch "$ref" > /dev/null || { echo "::error::$ref is not published"; exit 1; }
       - run: rustup toolchain install
       - run: sudo apt-get install -y valgrind
@@ -114,19 +114,22 @@ jobs:
           path: .geko-golden/reports
 
   # Publishes in ghcr.io, with the version of Cargo.toml:
-  # - on every push, the country packs that changed (ghcr.io/edgaza/geko/countries/<country>,
+  # - on every push, the country packs that changed (ghcr.io/candymaps/geko/countries/<country>,
   #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
-  #   (not only documentation or packs), the image (ghcr.io/edgaza/geko, tag <version>-<commit>);
-  # - when that version has no git tag yet (it was raised in Cargo.toml), also the tag <version> on
-  #   every pack and on the image, latest on the image, and the git tag v<version> on the pushed
-  #   commit, with its GitHub release. Raising the version is how a release is made.
+  #   (not only documentation or packs), the image (ghcr.io/candymaps/geko, tag <version>-<commit>);
+  # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
+  #   <version> on every pack and on the image, latest on the image, and the git tag v<version> on
+  #   the pushed commit, with its GitHub release, whose notes say how to pull the image. Raising the
+  #   version is how a release is made. A tag v<version> without a release (pushed by hand, or left
+  #   by a cut publication) is released only if it is on the pushed commit; on another, the version
+  #   must be raised.
   # The image carries no country pack: geko downloads those of its scope (PROJECT.md §2.4). Needs
   # the secret GEKO_PACK_SIGNING_KEY; GitHub's own token pushes. Only once every check that ran
   # passed: a check skipped because nothing it covers changed does not hold it.
   publish:
     needs: [changes, check, golden]
     if: >-
-      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'edgaza/geko'
+      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'candymaps/geko'
       && needs.changes.result == 'success'
       && contains(fromJSON('["success", "skipped"]'), needs.check.result)
       && contains(fromJSON('["success", "skipped"]'), needs.golden.result)
@@ -139,13 +142,26 @@ jobs:
         with:
           fetch-depth: 0
       - id: version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
           commit=$(git rev-parse --short HEAD)
+          # A release when v<version> has none on GitHub. Any other error of gh stops the job, so
+          # that a failed query does not publish a version twice.
           release=0
-          git rev-parse -q --verify "refs/tags/v$version" > /dev/null || release=1
-          tags="ghcr.io/edgaza/geko:$version-$commit"
-          [ "$release" = 0 ] || tags="$tags,ghcr.io/edgaza/geko:$version,ghcr.io/edgaza/geko:latest"
+          if ! out=$(gh release view "v$version" 2>&1); then
+            [[ $out == *"release not found"* ]] || { echo "$out" >&2; exit 1; }
+            tagged=$(git rev-parse -q --verify "refs/tags/v$version^{commit}" || true)
+            if [ -z "$tagged" ] || [ "$tagged" = "$(git rev-parse HEAD)" ]; then
+              release=1
+            else
+              echo "::error::v$version is tagged on $tagged, not on this commit, and has no release: raise the version in Cargo.toml"
+              exit 1
+            fi
+          fi
+          tags="ghcr.io/candymaps/geko:$version-$commit"
+          [ "$release" = 0 ] || tags="$tags,ghcr.io/candymaps/geko:$version,ghcr.io/candymaps/geko:latest"
           # A new image only when the push changed what goes into it, or makes a release. Without
           # the commit before the push (a new branch, a forced push), always.
           image=1
@@ -190,9 +206,11 @@ jobs:
           cache-to: type=gha,mode=max
       # The tag goes last: if something could not be published, the next run makes the release again.
       # gh creates the tag and its GitHub release in one call, so neither is left without the other.
+      # The notes start with the image of the release; GitHub appends the changes since the last one.
       - if: steps.version.outputs.release == '1'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          gh release create "v${{ steps.version.outputs.version }}" --target "$GITHUB_SHA" \
-            --title "v${{ steps.version.outputs.version }}" --generate-notes
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes \
+            --notes "$(printf 'Image: `ghcr.io/candymaps/geko:%s`\n\n```\ndocker pull ghcr.io/candymaps/geko:%s\n```\n\nThe country packs of this version are in `ghcr.io/candymaps/geko/countries/<country>:%s`.' "$VERSION" "$VERSION" "$VERSION")"

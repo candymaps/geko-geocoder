@@ -9,7 +9,7 @@
 #
 # Publishing needs GEKO_PACK_SIGNING_KEY (hex; locally, the contents of
 # ~/.config/geko/pack-signing.key) and a login to the registry with permission to push. Each pack
-# goes to $GEKO_PACKS_REGISTRY/<country>, by default ghcr.io/edgaza/geko/countries/<country>, with
+# goes to $GEKO_PACKS_REGISTRY/<country>, by default ghcr.io/candymaps/geko/countries/<country>, with
 # the tag of the format geko reads (format-<n>), which each geko downloads, pack-<n> with the
 # version of the pack (pack.toml), and <version>-<commit>, the version being that of Cargo.toml,
 # as the image. A pack that changed under a version already published with other files is
@@ -59,7 +59,7 @@ sys.exit(0 if remote == local else 1)
 
 publish() {
     : "${GEKO_PACK_SIGNING_KEY:?GEKO_PACK_SIGNING_KEY is not set}"
-    local registry=${GEKO_PACKS_REGISTRY:-ghcr.io/edgaza/geko/countries}
+    local registry=${GEKO_PACKS_REGISTRY:-ghcr.io/candymaps/geko/countries}
     local target=${CARGO_TARGET_DIR:-target} format version commit tags work country files ref pack
     local changed=() refused=()
     cargo build --release --locked -p geko-country-pack --bin geko-pack-sign

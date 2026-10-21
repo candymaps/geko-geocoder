@@ -4,7 +4,7 @@ Todo lo propio de un país vive en su pack, `countries/<país>/` (PROJECT.md §2
 
 Un pack es **datos, no código**: `geko` lo lee al arrancar de la carpeta de los packs (`/var/lib/geko/packs/<país>/`, o la de `GEKO_PACKS`), y solo los de los países del ámbito. `ci/packs.sh` copia ahí lo que se lee (`pack.toml`, `data/`, `sources/*.toml`); `make install` lo hace solo. Las comprobaciones (`ci/test.sh`) leen los packs tal como están en el repositorio.
 
-Los packs se publican firmados en `ghcr.io/edgaza/geko/countries/<país>` (`make release-packs`, o el trabajo `publish` de `ci.yml` en cada cambio de un pack en `main`), y `geko` baja los del ámbito al generar. Un pack nuevo se publica igual: el workflow lo encuentra por su `pack.toml`. La primera vez, su paquete de ghcr.io nace privado: hay que hacerlo público en GitHub («Package settings»), o nadie más podrá bajarlo.
+Los packs se publican firmados en `ghcr.io/candymaps/geko/countries/<país>` (`make release-packs`, o el trabajo `publish` de `ci.yml` en cada cambio de un pack en `main`), y `geko` baja los del ámbito al generar. Un pack nuevo se publica igual: el workflow lo encuentra por su `pack.toml`. La primera vez, su paquete de ghcr.io nace privado: hay que hacerlo público en GitHub («Package settings»), o nadie más podrá bajarlo.
 
 | Pack | Lenguas | Fuentes | Particiones | Golden |
 |---|---|---|---|---|
