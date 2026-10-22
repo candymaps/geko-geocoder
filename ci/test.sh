@@ -76,19 +76,12 @@ test() {
     cargo test --workspace --locked
 }
 
-# Modules and sources are chosen by Cargo feature: each one left out must still compile and pass
-# clippy. The host with each module or none, and the geocoder with only the providers it cannot do
-# without.
+# The providers are chosen by Cargo feature: each one left out must still compile and pass clippy.
+# The geocoder with only the providers it cannot do without.
 features() {
-    local set failed=0
-    for set in "" geocoder tiles; do
-        echo "geko-app features: [${set}]"
-        cargo clippy -p geko-app --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
-    done
-    set=source-osm,geocode-fst,reverse-rstar
+    local set=source-osm,geocode-fst,reverse-rstar
     echo "geko-module-geocoder features: [$set]"
-    cargo clippy -p geko-module-geocoder --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
-    return $failed
+    cargo clippy -p geko-module-geocoder --no-default-features --features "$set" --all-targets --locked -- -D warnings
 }
 
 direct_dependencies() { cargo tree -p "$1" -e normal --depth 1 --prefix none --locked | tail -n +2 | cut -d' ' -f1 | sort -u; }
@@ -114,19 +107,18 @@ only() {
 architecture() {
     local failed=0
     only "geko-core depends on" "geko-module-sdk serde serde_json" "$(direct_dependencies geko-core)" || failed=1
-    # The host knows no module but through the contract of the SDK (docs/MODULES_PLAN.md): nothing
-    # of the geocoder in geko-server, and in geko-app only the module itself, linked in.
-    only "geko-module-sdk depends on" "hex serde serde_json sha2 thiserror tracing" "$(direct_dependencies geko-module-sdk)" || failed=1
-    only "geko-server depends on" "arc-swap axum geko-module-sdk serde serde_json tokio tower-http tracing" "$(direct_dependencies geko-server)" || failed=1
-    only "geko-app depends on" "anyhow clap geko-artifact geko-fetch geko-module-geocoder geko-module-sdk geko-module-tiles geko-server hex libloading mimalloc serde serde_json sha2 tokio toml tracing tracing-subscriber" "$(direct_dependencies geko-app)" || failed=1
+    # The host (candymaps/geko) is only the binary of the checks, geko-host: the geocoder speaks to
+    # it through the contract of the SDK alone (docs/MODULES_PLAN.md).
+    only "geko-app is used by" "geko-host" "$(direct_dependents geko-app)" || failed=1
+    only "geko-host depends on" "anyhow geko-app geko-module-geocoder geko-module-sdk mimalloc" "$(direct_dependencies geko-host)" || failed=1
     only "fst is used by" "geocode-fst" "$(direct_dependents fst)" || failed=1
     only "levenshtein_automata is used by" "geocode-fst" "$(direct_dependents levenshtein_automata)" || failed=1
     only "osmpbf is used by" "source-osm" "$(direct_dependents osmpbf)" || failed=1
     only "ureq is used by" "geko-fetch geko-eval" "$(direct_dependents ureq)" || failed=1
-    only "tokio is used by" "geko-server geko-app" "$(direct_dependents tokio)" || failed=1
-    local http="geko-server"
-    only "axum is used by" "$http" "$(direct_dependents axum)" || failed=1
-    only "tower-http is used by" "$http" "$(direct_dependents tower-http)" || failed=1
+    # HTTP is the host's: the geocoder answers the requests it hands over.
+    only "tokio is used by" "" "$(direct_dependents tokio)" || failed=1
+    only "axum is used by" "" "$(direct_dependents axum)" || failed=1
+    only "tower-http is used by" "" "$(direct_dependents tower-http)" || failed=1
     return $failed
 }
 
@@ -207,7 +199,8 @@ base_commit() {
 
 # The binaries of `commit`, built in a worktree of it ($AB_DIR/base) with their own target
 # directory, both kept between runs so that only what changed is built again. Prints that target
-# directory.
+# directory. A commit from before geko-host (when the host lived in the same tree) builds only
+# geko-bench: its geko cannot be built in this repository.
 base_binaries() {
     local commit=$1 tree="$AB_DIR/base" target
     target="$(realpath -m "${CARGO_TARGET_DIR:-target}")-base"
@@ -217,8 +210,12 @@ base_binaries() {
         mkdir -p "$AB_DIR"
         git worktree add --detach "$tree" "$commit" >&2
     fi
-    (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --release --locked -p geko-app >&2 \
-        && CARGO_TARGET_DIR="$target" cargo build --profile ci --locked -p geko-bench >&2)
+    if git cat-file -e "$commit:crates/geko-host/Cargo.toml" 2> /dev/null; then
+        (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --release --locked -p geko-host >&2)
+    else
+        echo "base $(git rev-parse --short "$commit") is from before geko-host: only its geko-bench is built" >&2
+    fi
+    (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --profile ci --locked -p geko-bench >&2)
     echo "$target"
 }
 
@@ -226,7 +223,7 @@ base_binaries() {
 # behind the host, docs/MODULES_PLAN.md, with its own file and its routes under /geocoder) or
 # `legacy` (before them: everything in geko.toml, the routes at the root).
 config_format() {
-    if git cat-file -e "$1:crates/geko-module-sdk/Cargo.toml" 2> /dev/null; then echo modules; else echo legacy; fi
+    if git cat-file -e "$1:modules/geko-geocoder/Cargo.toml" 2> /dev/null; then echo modules; else echo legacy; fi
 }
 
 # Where the geocoder of a server on `port` answers, in the layout `format`.
@@ -370,7 +367,7 @@ golden_serve() {
         offline=true
     fi
     local profile="${GEKO_GOLDEN_PROFILE:-release}"
-    cargo build --profile "$profile" --locked -p geko-app -p geko-eval
+    cargo build --profile "$profile" --locked -p geko-host -p geko-eval
     bin="${CARGO_TARGET_DIR:-target}/$profile"
     golden_config "$dir/geko.toml" modules "$offline" "$port"
     run_geko "$bin" "$dir/geko.toml" build
@@ -627,7 +624,7 @@ spain() {
     if wants instructions && [ "${GEKO_BENCH:-1}" != 0 ]; then
         find_valgrind || return 1
     fi
-    cargo build --release --locked -p geko-app -p geko-eval
+    cargo build --release --locked -p geko-host -p geko-eval
     cargo build --profile ci --locked -p geko-bench
     local bin base_target base_bin
     bin=$(realpath "${CARGO_TARGET_DIR:-target}/release")

@@ -1,7 +1,7 @@
 # The checks of what a merge to main changed, and its publication. On every push to main (or by
 # hand): `changes` finds what changed since the commit before; `check` and `golden` run the
 # deterministic checks of ci/test.sh on it; and when they pass, `publish` publishes the country
-# packs that changed and, if what goes into it changed, the image, with the version of
+# packs that changed and, if what goes into it changed, the geocoder, with the version of
 # Cargo.toml. Other branches are checked locally: .githooks/pre-push runs `make test`.
 name: ci
 
@@ -39,7 +39,7 @@ jobs:
           all=$(for d in countries/*/golden; do basename "$(dirname "$d")"; done)
           engine=1 packs=1 countries=$all
           if git cat-file -e "$before^{commit}" 2> /dev/null; then
-            git diff --quiet "$before" HEAD -- crates modules providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile develop && engine=0
+            git diff --quiet "$before" HEAD -- crates modules providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml && engine=0
             git diff --quiet "$before" HEAD -- countries && packs=0
             if [ "$engine" = 0 ]; then
               countries=$(for c in $all; do git diff --quiet "$before" HEAD -- "countries/$c" || echo "$c"; done)
@@ -58,6 +58,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The host (Cargo.toml: the SDK, and geko-app for the checks) is a private repository that the
+      # token of this workflow cannot read: GEKO_HOST_TOKEN, with read access to its contents.
+      - run: git config --global url."https://x-access-token:${{ secrets.GEKO_HOST_TOKEN }}@github.com/candymaps/geko.git".insteadOf https://github.com/candymaps/geko.git
       # The toolchain pinned in rust-toolchain.toml.
       - run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
@@ -99,6 +102,9 @@ jobs:
           tag=${file#golden-}
           ref="ghcr.io/candymaps/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
           oras manifest fetch "$ref" > /dev/null || { echo "::error::$ref is not published"; exit 1; }
+      # The host (Cargo.toml: the SDK, and geko-app for the checks) is a private repository that the
+      # token of this workflow cannot read: GEKO_HOST_TOKEN, with read access to its contents.
+      - run: git config --global url."https://x-access-token:${{ secrets.GEKO_HOST_TOKEN }}@github.com/candymaps/geko.git".insteadOf https://github.com/candymaps/geko.git
       - run: rustup toolchain install
       - run: sudo apt-get install -y valgrind
       - uses: Swatinem/rust-cache@v2
@@ -115,24 +121,21 @@ jobs:
 
   # Publishes in ghcr.io, with the version of Cargo.toml:
   # - on every push, the country packs that changed (ghcr.io/candymaps/geko/countries/<country>,
-  #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
-  #   (not only documentation or packs), the modules (ghcr.io/candymaps/geko-<module>, tags
-  #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh) and the image
-  #   (ghcr.io/candymaps/geko, tag <version>-<commit>), which carries no module, and is published
-  #   only if every contract of it has a module published;
+  #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes
+  #   into it (not only documentation or packs), the geocoder (ghcr.io/candymaps/geko-geocoder, tags
+  #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh), which geko
+  #   downloads;
   # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
-  #   <version> on every pack and on the image, latest on the image, and the git tag v<version> on
-  #   the pushed commit, with its GitHub release, whose notes say how to pull the image. Raising the
-  #   version is how a release is made. A tag v<version> without a release (pushed by hand, or left
-  #   by a cut publication) is released only if it is on the pushed commit; on another, the version
-  #   must be raised.
-  # The image carries no country pack: geko downloads those of its scope (PROJECT.md §2.4). Needs
-  # the secret GEKO_PACK_SIGNING_KEY; GitHub's own token pushes. Only once every check that ran
-  # passed: a check skipped because nothing it covers changed does not hold it.
+  #   <version> on every pack and on the geocoder (<version>-<platform>), and the git tag v<version>
+  #   on the pushed commit, with its GitHub release. Raising the version is how a release is made. A
+  #   tag v<version> without a release (pushed by hand, or left by a cut publication) is released
+  #   only if it is on the pushed commit; on another, the version must be raised.
+  # Needs the secrets GEKO_PACK_SIGNING_KEY and GEKO_HOST_TOKEN; GitHub's own token pushes. Only once
+  # every check that ran passed: a check skipped because nothing it covers changed does not hold it.
   publish:
     needs: [changes, check, golden]
     if: >-
-      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'candymaps/geko'
+      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'candymaps/geko-geocoder'
       && needs.changes.result == 'success'
       && contains(fromJSON('["success", "skipped"]'), needs.check.result)
       && contains(fromJSON('["success", "skipped"]'), needs.golden.result)
@@ -144,12 +147,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - run: git config --global url."https://x-access-token:${{ secrets.GEKO_HOST_TOKEN }}@github.com/candymaps/geko.git".insteadOf https://github.com/candymaps/geko.git
       - id: version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
-          commit=$(git rev-parse --short HEAD)
           # A release when v<version> has none on GitHub. Any other error of gh stops the job, so
           # that a failed query does not publish a version twice.
           release=0
@@ -163,22 +166,18 @@ jobs:
               exit 1
             fi
           fi
-          tags="ghcr.io/candymaps/geko:$version-$commit"
-          [ "$release" = 0 ] || tags="$tags,ghcr.io/candymaps/geko:$version,ghcr.io/candymaps/geko:latest"
-          # A new image only when the push changed what goes into it, or makes a release. Without
+          # A new module only when the push changed what goes into it, or makes a release. Without
           # the commit before the push (a new branch, a forced push), always.
-          image=1
+          module=1
           before="${{ github.event.before }}"
           if [ "$release" = 0 ] && git cat-file -e "$before^{commit}" 2> /dev/null \
-            && git diff --quiet "$before" HEAD -- crates modules providers languages Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile develop; then
-            image=0
+            && git diff --quiet "$before" HEAD -- crates modules providers languages Cargo.toml Cargo.lock rust-toolchain.toml; then
+            module=0
           fi
           {
             echo "version=$version"
-            echo "commit=$commit"
             echo "release=$release"
-            echo "tags=$tags"
-            echo "image=$image"
+            echo "module=$module"
           } >> "$GITHUB_OUTPUT"
       - run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
@@ -188,59 +187,30 @@ jobs:
         env:
           GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
           GEKO_RELEASE: ${{ steps.version.outputs.release }}
-      # The modules, when their code changed (the same paths as the image), compiled on the Debian of
-      # the image, whose glibc is older than that of the runner: a module built here would not start
-      # there.
-      - if: steps.version.outputs.image == '1'
+      # The geocoder, compiled on the Debian of the image of geko, whose glibc is older than that of
+      # the runner: a module built here would not start there. Its dependencies are fetched here,
+      # where the token reads the host, and the container builds offline with them.
+      - if: steps.version.outputs.module == '1'
         env:
           GEKO_RELEASE: ${{ steps.version.outputs.release }}
         run: |
+          cargo fetch --locked
           toolchain=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)
           docker run --rm -v "$PWD:/src" -w /src -e GEKO_RELEASE -e CARGO_TARGET_DIR=/src/target \
-            -u "$(id -u):$(id -g)" -e HOME=/tmp -e CARGO_HOME=/tmp/cargo \
+            -u "$(id -u):$(id -g)" -e HOME=/tmp -e CARGO_HOME=/tmp/cargo -e CARGO_NET_OFFLINE=true \
+            -v "$HOME/.cargo/registry:/tmp/cargo/registry" -v "$HOME/.cargo/git:/tmp/cargo/git" \
             "rust:$toolchain-bookworm" ci/modules.sh build target/modules
-      - if: steps.version.outputs.image == '1'
+      - if: steps.version.outputs.module == '1'
         run: ci/modules.sh publish target/modules
         env:
           GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
-      # No image, tag or release of a host that no published module speaks to.
-      - run: ci/modules.sh check
-      # The SDK of the contract, which the modules outside this repository use as a git dependency:
-      # sdk-<n> follows the last commit that changed it within contract <n>.
-      - if: steps.version.outputs.image == '1'
-        run: |
-          contract=$(sed -n 's/^pub const CONTRACT: u32 = \([0-9]*\);/\1/p' crates/geko-module-sdk/src/module.rs)
-          if [ "$(git rev-parse -q --verify "refs/tags/sdk-$contract^{commit}" || true)" = "" ] \
-            || ! git diff --quiet "sdk-$contract" HEAD -- crates/geko-module-sdk; then
-            git tag -f "sdk-$contract" HEAD
-            git push -f origin "refs/tags/sdk-$contract"
-          fi
-      - if: steps.version.outputs.image == '1'
-        uses: docker/setup-buildx-action@v3
-      - if: steps.version.outputs.image == '1'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - if: steps.version.outputs.image == '1'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.version.outputs.tags }}
-          build-args: |
-            VERSION=${{ steps.version.outputs.version }}
-            REVISION=${{ steps.version.outputs.commit }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       # The tag goes last: if something could not be published, the next run makes the release again.
       # gh creates the tag and its GitHub release in one call, so neither is left without the other.
-      # The notes start with the image of the release; GitHub appends the changes since the last one.
+      # The notes start with where the release is; GitHub appends the changes since the last one.
       - if: steps.version.outputs.release == '1'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes \
-            --notes "$(printf 'Image: `ghcr.io/candymaps/geko:%s`\n\n```\ndocker pull ghcr.io/candymaps/geko:%s\n```\n\nThe country packs of this version are in `ghcr.io/candymaps/geko/countries/<country>:%s`.' "$VERSION" "$VERSION" "$VERSION")"
+            --notes "$(printf 'The geocoder: `ghcr.io/candymaps/geko-geocoder:%s-<platform>`, which geko downloads with `[modules.geocoder] version = "%s"`.\n\nThe country packs of this version are in `ghcr.io/candymaps/geko/countries/<country>:%s`.' "$VERSION" "$VERSION" "$VERSION")"

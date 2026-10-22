@@ -11,7 +11,8 @@
 #   results, data     what builds or searches the bundle: the providers, the geocoder, the build,
 #                     the core, the packs and the languages; the golden of every country, or of
 #                     the one whose pack alone changed
-#   robustness        what serves it: the server, the host, the SDK and the search providers
+#   robustness        what serves it: the host (geko-host, and the SDK and the host of Cargo.lock)
+#                     and the search providers
 #   instructions      the hot paths of a query
 # A file of those whose diff only touches comments, logs or progress (`tracing::`, `progress::`),
 # or a `progress.rs`, which only reports, counts for code and contracts alone: a log line does not
@@ -50,9 +51,9 @@ while IFS= read -r file; do
             results=1 all_countries=1 robustness=1 instructions=1 ;;
         providers/geocode-fst/* | providers/reverse-rstar/* | providers/text-rules/* | modules/geko-geocoder/* | crates/geko-core/* | crates/geko-geom/*)
             results=1 all_countries=1 robustness=1 instructions=1 ;;
-        providers/* | crates/geko-build/* | crates/geko-fetch/* | crates/geko-country-pack/*)
+        providers/* | crates/geko-build/* | crates/geko-country-pack/*)
             results=1 all_countries=1 ;;
-        crates/geko-server/* | crates/geko-app/* | crates/geko-module-sdk/*)
+        crates/geko-host/*)
             results=1 all_countries=1 robustness=1 ;;
     esac
 done < <(git diff --name-only "${range[@]}")
