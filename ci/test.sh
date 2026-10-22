@@ -116,7 +116,7 @@ architecture() {
     only "geko-core depends on" "geko-module-sdk serde serde_json" "$(direct_dependencies geko-core)" || failed=1
     # The host knows no module but through the contract of the SDK (docs/MODULES_PLAN.md): nothing
     # of the geocoder in geko-server, and in geko-app only the module itself, linked in.
-    only "geko-module-sdk depends on" "hex serde serde_json sha2 thiserror" "$(direct_dependencies geko-module-sdk)" || failed=1
+    only "geko-module-sdk depends on" "hex serde serde_json sha2 thiserror tracing" "$(direct_dependencies geko-module-sdk)" || failed=1
     only "geko-server depends on" "arc-swap axum geko-module-sdk serde serde_json tokio tower-http tracing" "$(direct_dependencies geko-server)" || failed=1
     only "geko-app depends on" "anyhow clap geko-artifact geko-fetch geko-module-geocoder geko-module-sdk geko-module-tiles geko-server hex libloading mimalloc serde serde_json sha2 tokio toml tracing tracing-subscriber" "$(direct_dependencies geko-app)" || failed=1
     only "fst is used by" "geocode-fst" "$(direct_dependents fst)" || failed=1
