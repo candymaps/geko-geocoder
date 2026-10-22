@@ -1,6 +1,6 @@
 # Módulos descargables: plan
 
-Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), con la medición A/B con España: se elige `DylibModule`, que falta poner por defecto; paso 3 (registro y versiones) hecho (2026-10-22); paso 4 (CI, imagen y Makefile) hecho (2026-10-22), salvo las pruebas cruzadas, que pasan al paso 7; paso 5 (`tiles`) hecho (2026-10-22); después, las caídas de `ProcessModule` y el paso 6. Punto 46 de PROJECT.md §17.
+Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), con la medición A/B con España: se elige `DylibModule`, que falta poner por defecto; paso 3 (registro y versiones) hecho (2026-10-22); paso 4 (CI, imagen y Makefile) hecho (2026-10-22), salvo las pruebas cruzadas, que pasan al paso 7; paso 5 (`tiles`) hecho (2026-10-22), con las caídas de `ProcessModule`; queda el paso 6. Punto 46 de PROJECT.md §17.
 
 ## Objetivo
 
@@ -189,7 +189,7 @@ Cada paso deja el golden de `es` y `lu` igual (tolerancia 0) y el segmento idén
 5. **`tiles` al mismo contrato**, como segunda implementación.
    - Hecho (2026-10-22). `crates/geko-module-tiles` pasa a `modules/geko-tiles`, como el geocoder: biblioteca (enlazada en el host con la *feature* `tiles`), binario `geko-tiles` (`ProcessModule`), `cdylib` aparte (`modules/geko-tiles/dylib`, `libgeko_tiles.so`) y `module.toml`, que `ci/modules.sh` publica igual. `make modules` compila los dos módulos. Probado como proceso y como biblioteca (`geko --modules tiles plan`); sigue siendo un esqueleto que responde 503.
    - Hecho (2026-10-22), los cuatro de abajo, en `process.rs` (`Limits`, con sus valores por defecto: espera 1 s doblando hasta 60, 5 caídas en 10 min paran 15 min, 2 caídas en curso ponen la petición en cuarentena 15 min, plazo de 30 s), con un test por cada uno. `Response` gana cabeceras opcionales (`Retry-After`) y `Module` gana `unavailable()`, del lado del host, que `/health` muestra en `modules_unavailable`.
-   - **Después, antes del paso 6: caídas de `ProcessModule`.** Si el proceso del módulo muere (aborto, segfault, OOM; un pánico solo responde 500), hoy se relanza bajo el cerrojo de la conexión: todas las peticiones esperan a que el nuevo cargue el bundle (con España, segundos), y una consulta que lo tumba y un cliente repite lo deja casi parado. En `crates/geko-app/src/process.rs`, con tests rápidos:
+   - **Caídas de `ProcessModule`** (hechas, arriba). Si el proceso del módulo muere (aborto, segfault, OOM; un pánico solo responde 500), hoy se relanza bajo el cerrojo de la conexión: todas las peticiones esperan a que el nuevo cargue el bundle (con España, segundos), y una consulta que lo tumba y un cliente repite lo deja casi parado. En `crates/geko-app/src/process.rs`, con tests rápidos:
      1. Relanzar y cargar el bundle en un hilo aparte; mientras, cada petición responde 503 con `Retry-After`, sin esperar en el cerrojo.
      2. Espera creciente entre relanzamientos (1, 2, 4… hasta 60 s); tras N caídas en poco tiempo, queda caído con 503, error en el log y en `/health`, en vez de relanzar sin fin.
      3. Cuarentena de la consulta que lo tumba: huella (ruta, parámetros, hash del cuerpo) de las peticiones en curso al morir; la que estaba en curso en dos caídas se rechaza sin reenviarla durante un tiempo, y su huella va al log.
