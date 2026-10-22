@@ -108,8 +108,10 @@ pub fn stage_partitions(source: &SelectedSource, scope: &Scope) -> Vec<Partition
 /// Inputs are keyed by `identities` where their source gave one, so a staging is reused even if
 /// its downloads were removed after publishing (`[data] keep_downloads = false`). Before
 /// staging a pair again, the source fetches what those partitions read with `restore`, which
-/// brings back removed downloads, and nothing else. Every pair is attempted even if another one
-/// fails.
+/// brings back removed downloads, and nothing else: every source first, as part of the downloads
+/// of the build, then `staging` is called and every pair is staged. Every pair is attempted even
+/// if another one fails.
+#[allow(clippy::too_many_arguments)]
 pub fn stage_all(
     selected: &[SelectedSource],
     scope: &Scope,
@@ -118,26 +120,29 @@ pub fn stage_all(
     force: bool,
     identities: &Identities,
     restore: &dyn Downloader,
+    staging: &dyn Fn(),
 ) -> Vec<(SourceId, Partition, Result<StageOutcome>)> {
     let mut results = Vec::new();
     let none = BTreeMap::new();
+    let key = |source: &SelectedSource, partition: &Partition, identities: &BTreeMap<PathBuf, String>| -> Result<String> {
+        let id = source.provider.id();
+        Ok(incremental::Key::new("stage")
+            .add("source", &id.0)
+            .add("code", &code(&id))
+            .inputs(&source.provider.stage_inputs(partition, &raw_dir(data_dir, &id))?, identities)?
+            .finish())
+    };
+    // The partitions to stage again of every source, with the identities of their inputs.
+    let mut pending = Vec::new();
     for source in selected {
         let provider = source.provider.as_ref();
         let id = provider.id();
         let raw = raw_dir(data_dir, &id);
-        let code = code(&id);
-        let key = |partition: &Partition, identities: &BTreeMap<PathBuf, String>| -> Result<String> {
-            Ok(incremental::Key::new("stage")
-                .add("source", &id.0)
-                .add("code", &code)
-                .inputs(&provider.stage_inputs(partition, &raw)?, identities)?
-                .finish())
-        };
         let known = identities.get(&id).unwrap_or(&none);
         let mut stale = Vec::new();
         for partition in stage_partitions(source, scope) {
             let out = staging_dir(data_dir, &id, &partition);
-            let up_to_date = key(&partition, known).map(|key| incremental::up_to_date(&out.path, &key).filter(|_| !force));
+            let up_to_date = key(source, &partition, known).map(|key| incremental::up_to_date(&out.path, &key).filter(|_| !force));
             match up_to_date {
                 Ok(Some(stamp)) => {
                     let records = stamp.info["records"].as_u64().unwrap_or(0);
@@ -150,13 +155,19 @@ pub fn stage_all(
         if stale.is_empty() {
             continue;
         }
-        // Only what was removed after publishing ([data] keep_downloads = false), which can take
-        // longer than the staging itself.
-        let on = progress::working_on(format!("(downloading {} again)", provider.name()));
-        let restored = restore_scope(scope, &stale).and_then(|sub| provider.fetch(&sub, restore, &raw));
-        drop(on);
-        let restored = match restored {
-            Ok(report) => report,
+        // Only what was removed after publishing ([data] keep_downloads = false), counted off by
+        // the source as every download.
+        let restored = restore_scope(scope, &stale).and_then(|sub| {
+            progress::expect(provider.plan(&sub, restore, &raw).map_or(1, |p| p.len().max(1) as u64));
+            let _on = progress::working_on(format!("{} (again)", provider.name()));
+            provider.fetch(&sub, restore, &raw)
+        });
+        match restored {
+            Ok(report) => {
+                let mut current = known.clone();
+                current.extend(report.identities);
+                pending.push((source, stale, current));
+            }
             Err(e) => {
                 let message = e.to_string();
                 for partition in stale {
@@ -165,19 +176,26 @@ pub fn stage_all(
                     ));
                     results.push((id.clone(), partition, Err(error)));
                 }
-                continue;
             }
-        };
-        let mut current = known.clone();
-        current.extend(restored.identities);
-        // Each partition weighs what its inputs take on disk: a provider may count what it reads
-        // of them as it goes (`progress::Reading`), and the rest counts when it ends.
-        let weights: Vec<u64> = stale.iter().map(|p| input_bytes(provider, p, &raw)).collect();
-        progress::expect(weights.iter().sum());
-        let mut staged = progress::done();
+        }
+    }
+    staging();
+    // Each partition weighs what its inputs take on disk: a provider may count what it reads of
+    // them as it goes (`progress::Reading`), and the rest counts when it ends.
+    let weights: Vec<Vec<u64>> = pending
+        .iter()
+        .map(|(source, stale, _)| stale.iter().map(|p| input_bytes(source.provider.as_ref(), p, &raw_dir(data_dir, &source.provider.id()))).collect())
+        .collect();
+    progress::expect(weights.iter().flatten().sum());
+    let mut staged = 0;
+    for ((source, stale, current), weights) in pending.into_iter().zip(weights) {
+        let provider = source.provider.as_ref();
+        let id = provider.id();
+        let raw = raw_dir(data_dir, &id);
+        let code = code(&id);
         for (partition, weight) in stale.into_iter().zip(weights) {
             let out = staging_dir(data_dir, &id, &partition);
-            let result = key(&partition, &current).and_then(|key| stage_one(provider, &partition, &raw, &out, key, &code));
+            let result = key(source, &partition, &current).and_then(|key| stage_one(provider, &partition, &raw, &out, key, &code));
             results.push((id.clone(), partition, result));
             staged += weight;
             progress::reach(staged);
@@ -358,7 +376,7 @@ mod tests {
         let mut scope = Scope::default();
         scope.add(es, vec![geko_core::country::RegionCode::new("ES-PM").unwrap()]).unwrap();
         let run = |code: &str, force: bool| -> Vec<bool> {
-            stage_all(&selected, &scope, dir.path(), &|_| code.to_owned(), force, &Identities::new(), &NoNetwork)
+            stage_all(&selected, &scope, dir.path(), &|_| code.to_owned(), force, &Identities::new(), &NoNetwork, &|| {})
                 .into_iter()
                 .map(|(_, _, r)| {
                     let r = r.unwrap();
@@ -380,7 +398,7 @@ mod tests {
 
         // A failed stage leaves no stamp: the next build stages again.
         std::fs::remove_file(dir.path().join("raw/w/input")).unwrap();
-        assert!(stage_all(&selected, &scope, dir.path(), &|_| "2".into(), false, &Identities::new(), &NoNetwork)[0].2.is_err());
+        assert!(stage_all(&selected, &scope, dir.path(), &|_| "2".into(), false, &Identities::new(), &NoNetwork, &|| {})[0].2.is_err());
         std::fs::write(dir.path().join("raw/w/input"), b"v2, longer").unwrap();
         assert_eq!(run("2", false), [false]);
     }
@@ -450,7 +468,7 @@ mod tests {
         let run = |code: &str| -> bool {
             let fetched = fetch_all(&selected, &scope, &NoNetwork, dir.path(), 1);
             let ids = identities(&fetched);
-            let results = stage_all(&selected, &scope, dir.path(), &|_| code.to_owned(), false, &ids, &Restorer);
+            let results = stage_all(&selected, &scope, dir.path(), &|_| code.to_owned(), false, &ids, &Restorer, &|| {});
             results[0].2.as_ref().unwrap().reused
         };
 

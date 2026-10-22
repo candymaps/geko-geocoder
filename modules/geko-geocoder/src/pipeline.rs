@@ -593,9 +593,9 @@ fn stage(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: bool) -
     let (mut out, identities) = fetched(setup, prepared, dl)?;
     let mut failed = Vec::new();
     let code = |id: &geko_core::model::SourceId| prepared.codes.get(&id.0).cloned().unwrap_or_default();
-    progress::step("staging", 2, steps(prepared), Unit::Share);
     let restore = restorer(setup);
-    let staged = stage_all(&prepared.selected, &prepared.scope, &setup.data_dir, &code, force, &identities, &restore);
+    let staging = || progress::step("staging", 2, steps(prepared), Unit::Share);
+    let staged = stage_all(&prepared.selected, &prepared.scope, &setup.data_dir, &code, force, &identities, &restore, &staging);
     for (id, partition, result) in staged {
         let label = match &partition.region {
             Some(r) => format!("{}/{r}", id.0),
