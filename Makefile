@@ -87,7 +87,7 @@ release-packs: ## Sign the country packs and push them to PACKS_REGISTRY (needs 
 test: ## Every check but those of the machine, on the golden of every country (ci/test.sh)
 	ci/test.sh
 
-test-changed: ## Only the checks that what changed since BASE (default: where it leaves dev) can fail, as pre-push
+test-changed: ## Only the checks that what changed since BASE (default: where it leaves dev) can fail, as the CI of pull requests
 	@args=$$(ci/affected.sh $(or $(BASE),$$(git merge-base HEAD origin/dev))) && if [ -z "$$args" ]; then echo "only documentation changed"; else echo "ci/test.sh $$args"; ci/test.sh $$args; fi
 
 test-golden-es: ## The golden of the Balearic Islands: results, data, robustness and instructions

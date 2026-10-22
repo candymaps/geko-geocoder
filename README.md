@@ -7,7 +7,7 @@
   <a href="https://github.com/candymaps/geko/releases/latest"><img src="https://img.shields.io/github/v/release/candymaps/geko?label=version&color=blue&style=plastic" alt="Version"></a>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/license-AGPL--3.0-orange?style=plastic" alt="License"></a>
   <a href="https://github.com/orgs/candymaps/packages?repo_name=geko"><img src="https://img.shields.io/badge/docker-ghcr.io-informational?style=plastic&logo=docker" alt="Docker"></a>
-  <a href="https://github.com/candymaps/geko/actions/workflows/ci.yml"><img src="https://github.com/candymaps/geko/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/candymaps/geko-geocoder/actions/workflows/publish.yml"><img src="https://github.com/candymaps/geko-geocoder/actions/workflows/publish.yml/badge.svg?branch=main" alt="publish"></a>
 </p>
 <p align="center">
   <a href="#installation-and-usage"><b>🚀 Installation</b></a>&nbsp;&nbsp;&nbsp;∣&nbsp;&nbsp;&nbsp;
