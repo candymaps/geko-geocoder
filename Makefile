@@ -14,10 +14,8 @@ endif
 endif
 # geko with the geocoder linked in (crates/geko-host), the binary of the checks and of `make serve`.
 BIN    := $(CARGO_TARGET_DIR)/release/geko
-# `make modules`: the geocoder as a process of its own or a library, in a directory as
-# GEKO_MODULES reads it.
+# `make modules`: the geocoder as the library geko loads, in a directory as GEKO_MODULES reads it.
 MODULES ?= $(CARGO_TARGET_DIR)/modules
-MODULE_KIND ?= process
 MODULE_NAMES := geocoder
 # The repository of the host beside this one (AGENTS.md), whose develop/geko.toml `make install`
 # copies the first time.
@@ -43,17 +41,11 @@ help: ## This list
 bin: ## Compile geko, with the geocoder linked in, in release
 	cargo build --release -p geko-host
 
-modules: ## Compile the geocoder in MODULES, run as MODULE_KIND (process or dylib): GEKO_MODULES=MODULES geko … uses them
-	cargo build --release $(foreach m,$(MODULE_NAMES),-p geko-module-$(m) --bin geko-$(m))
+modules: ## Compile the geocoder, as the library geko loads, in MODULES: GEKO_MODULES=MODULES geko … uses it
 	cargo build --release $(foreach m,$(MODULE_NAMES),-p geko-module-$(m)-dylib)
 	@for m in $(MODULE_NAMES); do \
-	  install -D -m 755 $(CARGO_TARGET_DIR)/release/geko-$$m $(MODULES)/$$m/geko-$$m; \
-	  install -m 755 $(CARGO_TARGET_DIR)/release/libgeko_$$m.so $(MODULES)/$$m/libgeko_$$m.so; \
-	  if [ "$(MODULE_KIND)" = dylib ]; then \
-	    printf 'name = "%s"\nkind = "dylib"\nentry = "libgeko_%s.so"\n' $$m $$m > $(MODULES)/$$m/module.toml; \
-	  else \
-	    install -m 644 modules/geko-$$m/module.toml $(MODULES)/$$m/module.toml; \
-	  fi; \
+	  install -D -m 755 $(CARGO_TARGET_DIR)/release/libgeko_$$m.so $(MODULES)/$$m/libgeko_$$m.so; \
+	  install -m 644 modules/geko-$$m/module.toml $(MODULES)/$$m/module.toml; \
 	done
 
 install: bin ## Install geko, /etc/geko/geko.toml (that of HOST) and geko-geocoder.toml (the samples, if they are not) and /var/lib/geko

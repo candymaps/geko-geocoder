@@ -1,6 +1,6 @@
 # Módulos descargables: plan
 
-Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), con la medición A/B con España: se elige `DylibModule`, aunque `process` sigue por defecto (aplazado); paso 3 (registro y versiones) hecho (2026-10-22); paso 4 (CI, imagen y Makefile) hecho (2026-10-22), salvo las pruebas cruzadas, que pasan al paso 7; paso 5 (`tiles`) hecho (2026-10-22), con las caídas de `ProcessModule`; paso 6, la suite de conformidad hecha (2026-10-22), y quedan las semanas de uso real. Punto 46 de PROJECT.md §17.
+Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), con la medición A/B con España: se elige `DylibModule`, el único adaptador desde el 2026-10-23 (`ProcessModule` se quitó); paso 3 (registro y versiones) hecho (2026-10-22); paso 4 (CI, imagen y Makefile) hecho (2026-10-22), salvo las pruebas cruzadas, que pasan al paso 7; paso 5 (`tiles`) hecho (2026-10-22), con las caídas de `ProcessModule`; paso 6, la suite de conformidad hecha (2026-10-22), y quedan las semanas de uso real; paso 7 (repositorios aparte) hecho (2026-10-22), salvo las pruebas cruzadas. Punto 46 de PROJECT.md §16.
 
 ## Objetivo
 
@@ -110,15 +110,17 @@ Una opción que el host ya no conoce y sigue en `geko.toml` (p. ej. `[serve] sea
 
 ## Adaptadores
 
-El host solo maneja `Arc<dyn Module>`; el adaptador decide cómo se ejecuta el paquete. El manifiesto del paquete dice cuál usar (`kind = "process" | "dylib"`).
+El host solo maneja `Arc<dyn Module>`; el adaptador decide cómo se ejecuta el paquete. El manifiesto del paquete dice cuál usar (`kind = "dylib"`, el único desde el 2026-10-23).
 
 | Adaptador | Qué es | Para qué |
 |---|---|---|
 | `StaticModule` | Enlazado en el binario, como hoy | Monorrepo (paso 1), tests, golden con valgrind |
-| `ProcessModule` | El host lanza el ejecutable del paquete y le habla por un socket Unix con mensajes versionados | Aislado (un fallo no tira el host), sin acoplamiento de compilador, el build devuelve la memoria al acabar, cambio de versión en caliente (arrancar el nuevo, cambiar, parar el viejo). Cuesta un salto por petición |
+| `ProcessModule` (quitado, 2026-10-23) | El host lanza el ejecutable del paquete y le habla por un socket Unix con mensajes versionados | Aislado (un fallo no tira el host), sin acoplamiento de compilador, el build devuelve la memoria al acabar, cambio de versión en caliente (arrancar el nuevo, cambiar, parar el viejo). Cuesta un salto por petición |
 | `DylibModule` | `dlopen` de la `.so` del paquete, con una frontera `extern "C"` mínima que pasa los mismos mensajes serializados que `ProcessModule` (decidido, 2026-10-21, en vez de `abi_stable`: un solo protocolo para los dos, y el saludo con el contrato es el primer mensaje) | Mismo proceso, sin salto. Cada función exportada envuelta en `catch_unwind` (un pánico que cruza la frontera aborta el proceso, y choca con `panic = "unwind"`); cada lado libera su memoria (el host usa mimalloc). Una `.so` no se descarga con seguridad: cambiar de versión exige reiniciar |
 
 Se implementan los dos dinámicos y se miden A/B con España completa (latencia, caudal con 16 a la vez, instrucciones). Si el salto del proceso queda dentro del ruido, `ProcessModule`; si se nota en la mediana de 0,1–0,5 ms, `DylibModule`.
+
+**Decidido (2026-10-23):** solo `DylibModule`. La medición (paso 2) dio al proceso del 19 al 55 % menos de caudal, y la frontera de la biblioteca pasa bytes, sin tipos de Rust, así que el host y el módulo se compilan cada uno con su versión de Rust en su repositorio. Al ejecutarse, geko y sus módulos son un solo proceso, como enlazados; se distribuyen por separado. A cambio: un pánico solo falla su petición, pero un fallo grave del módulo (segfault, desbordamiento de pila, aborto, quedarse sin memoria) tira geko; cambiar de versión de un módulo exige reiniciar, y el pico de memoria del build se queda en el proceso de geko. `ProcessModule`, sus caídas (paso 5) y el servidor de módulos de la SDK (`geko_module_sdk::process`) se quitaron; están en la historia de git (`git show 42e336d:crates/geko-app/src/process.rs`).
 
 ## Versiones y compatibilidad
 
@@ -189,7 +191,7 @@ Cada paso deja el golden de `es` y `lu` igual (tolerancia 0) y el segmento idén
 5. **`tiles` al mismo contrato**, como segunda implementación.
    - Hecho (2026-10-22). `crates/geko-module-tiles` pasa a `modules/geko-tiles`, como el geocoder: biblioteca (enlazada en el host con la *feature* `tiles`), binario `geko-tiles` (`ProcessModule`), `cdylib` aparte (`modules/geko-tiles/dylib`, `libgeko_tiles.so`) y `module.toml`, que `ci/modules.sh` publica igual. `make modules` compila los dos módulos. Probado como proceso y como biblioteca (`geko --modules tiles plan`); sigue siendo un esqueleto que responde 503.
    - Hecho (2026-10-22), los cuatro de abajo, en `process.rs` (`Limits`, con sus valores por defecto: espera 1 s doblando hasta 60, 5 caídas en 10 min paran 15 min, 2 caídas en curso ponen la petición en cuarentena 15 min, plazo de 30 s), con un test por cada uno. `Response` gana cabeceras opcionales (`Retry-After`) y `Module` gana `unavailable()`, del lado del host, que `/health` muestra en `modules_unavailable`.
-   - **Caídas de `ProcessModule`** (hechas, arriba). Si el proceso del módulo muere (aborto, segfault, OOM; un pánico solo responde 500), hoy se relanza bajo el cerrojo de la conexión: todas las peticiones esperan a que el nuevo cargue el bundle (con España, segundos), y una consulta que lo tumba y un cliente repite lo deja casi parado. En `crates/geko-app/src/process.rs`, con tests rápidos:
+   - **Caídas de `ProcessModule`** (hechas, arriba; quitadas con él, 2026-10-23). Si el proceso del módulo muere (aborto, segfault, OOM; un pánico solo responde 500), hoy se relanza bajo el cerrojo de la conexión: todas las peticiones esperan a que el nuevo cargue el bundle (con España, segundos), y una consulta que lo tumba y un cliente repite lo deja casi parado. En `crates/geko-app/src/process.rs`, con tests rápidos:
      1. Relanzar y cargar el bundle en un hilo aparte; mientras, cada petición responde 503 con `Retry-After`, sin esperar en el cerrojo.
      2. Espera creciente entre relanzamientos (1, 2, 4… hasta 60 s); tras N caídas en poco tiempo, queda caído con 503, error en el log y en `/health`, en vez de relanzar sin fin.
      3. Cuarentena de la consulta que lo tumba: huella (ruta, parámetros, hash del cuerpo) de las peticiones en curso al morir; la que estaba en curso en dos caídas se rechaza sin reenviarla durante un tiempo, y su huella va al log.
@@ -198,6 +200,8 @@ Cada paso deja el golden de `es` y `lu` igual (tolerancia 0) y el segmento idén
    - Hecho (2026-10-22), la suite: `geko_module_sdk::conformance::module::check`, con la *feature* `conformance`, sobre un módulo abierto con el ámbito vacío y sin bundle. Comprueba que `describe` lleve el contrato de la SDK, una versión y rutas relativas sin repetir (con `{nombre}` como parte entera), que su `openapi` sea una de sus rutas GET, órdenes sin repetir y un error para una orden desconocida, ningún progreso fuera de un build y `/metrics` en el formato de Prometheus, bajo `geko_`. Cada ruta, con peticiones raras (vacía, valores imposibles, 10.000 letras, nulos, un id con `..`, un cuerpo roto), se responde sin 500, y un error es `{"error": …}` en JSON; igual tras cargar un bundle sin su parte, y desde 8 hilos a la vez. La pasan el geocoder y `tiles` (`tests/conformance.rs`) y, en `geko-app`, el módulo de prueba enlazado, por el socket y por la biblioteca.
    - Queda: unas semanas de uso real con el contrato tal cual. Cada cambio que pida irá a la suite.
 7. **Extraer el repositorio** `candymaps/geko-geocoder` con `git filter-repo` (`modules/geko-geocoder/`, `countries/`, `languages/` y su documentación), con la SDK publicada por el host como dependencia de git con etiqueta (o un registro de Cargo; si es privado, la CI del módulo necesita un token). Con él, las pruebas cruzadas del paso 4.
+   - Hecho (2026-10-22). `candymaps/geko-geocoder` (con la historia de lo suyo: el módulo, los providers, los packs, los idiomas, `geko-core`, `geko-build`, `geko-eval`… y su `ci/`) y `candymaps/geko-tiles`, privados, con `geko-module-sdk`, `geko-fetch` y `geko-artifact` como dependencias de git del host (un commit hasta la primera etiqueta `sdk-1`; `git-fetch-with-cli`, para las credenciales del repositorio privado). El host se queda con `geko-app`, `geko-server` y esos tres; ya no enlaza ningún módulo ni tiene *features* de módulos, y `ci/test.sh` solo tiene `code` y `contracts`. `geko-app` es también biblioteca (`geko_app::main(linked)`): un módulo se enlaza en el host para sus propias comprobaciones (el golden, valgrind) sin que el host dependa de él. `make start-dev` compila los módulos de sus repositorios junto a este (contextos de Docker `geocoder` y `tiles`), con la SDK de este árbol en vez de la de git.
+   - Queda: las pruebas cruzadas (golden del módulo contra la última imagen del host de su contrato, y conformidad del host contra el último módulo publicado), punto 47 de PROJECT.md §16.
 8. **Documentación** en cada paso: AGENTS.md (la regla de las *features* de Cargo), PROJECT.md §2.3, §2.4, §3, §3.1, §4, §4.1, §12, §14, §18, §19, README, `geko.toml` y `geko-geocoder.toml`.
 
 ## Efecto esperado en lo que se mide
@@ -226,7 +230,7 @@ La medición del paso 2 confirma o corrige estas estimaciones. Si `ProcessModule
 
 ## Riesgos
 
-- Latencia del salto del proceso (paso 2). Cruza una vez por petición, como pide §2.2.
+- Un fallo grave de un módulo tira geko, que comparte proceso con él (`DylibModule`, decidido el 2026-10-23). Un pánico solo falla su petición.
 - Cambios que tocan los dos lados, una vez separados los repositorios: publicar la SDK, subirla en el módulo, publicar el módulo, subir el contrato en el host. Se mitiga con un contrato pequeño y aditivo, y extrayendo el repositorio solo tras estabilizarlo.
 - Pruebas repartidas entre dos repositorios: el `pre-push` (35–50 min) también.
 - Ejecutar código descargado: firma obligatoria.
@@ -234,7 +238,6 @@ La medición del paso 2 confirma o corrige estas estimaciones. Si `ProcessModule
 
 ## Pendiente de decidir
 
-- Un proceso de reserva del módulo ya cargado, que cubra al instante la caída del activo (ver «caídas de `ProcessModule`», tras el paso 5). Solo duplica la parte caliente del índice en RAM (la fría va mapeada y comparte la caché de páginas); se decide midiendo en el paso 6 su memoria con España y cuánto tarda en recargarse sin él.
 - ⏸️ Aplazado (2026-10-21): si `tiles` necesita datos por país (sus propios paquetes o los del geocoder). Ahora solo se prepara el terreno para su módulo; se decide al crearlo.
 
 Decidido (2026-10-21): la imagen del host no lleva módulos y baja los activos al arrancar; la SDK se publica en el repositorio del host; los idiomas y los packs se van con el geocoder (`tiles` no traduce); los idiomas siguen compilados dentro del binario del geocoder, no como paquete de datos; la SDK se usa como dependencia de git con etiqueta `sdk-<n>`, no desde un registro de Cargo.

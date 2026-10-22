@@ -884,7 +884,6 @@ dependencies = [
  "geko-geom",
  "geko-module-sdk",
  "geocode-fst",
- "mimalloc",
  "reverse-rstar",
  "serde",
  "serde_json",
@@ -895,7 +894,6 @@ dependencies = [
  "tempfile",
  "toml",
  "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]

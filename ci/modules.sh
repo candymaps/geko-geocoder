@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The modules of this repository as the packages geko downloads (docs/MODULES_PLAN.md): each folder
-# of modules/ with a module.toml, compiled in release, with that module.toml completed (version,
-# contract, platform) and signed.
+# of modules/ with a module.toml, its library (the crate geko-module-<module>-dylib) compiled in
+# release, with that module.toml completed (version, contract, platform) and signed.
 #
 #   ci/modules.sh build <folder> [module…]   compiles every module (or those named) into
 #                                            <folder>/<module>/
@@ -62,7 +62,7 @@ build() {
         name=$(field name "$dir/module.toml")
         kind=$(field kind "$dir/module.toml")
         entry=$(field entry "$dir/module.toml")
-        GEKO_MODULE_VERSION=$version cargo build --release --locked --bin "$entry"
+        GEKO_MODULE_VERSION=$version cargo build --release --locked -p "geko-module-$name-dylib"
         rm -rf "${out:?}/$name"
         mkdir -p "$out/$name"
         cp "$target/release/$entry" "$out/$name/$entry"

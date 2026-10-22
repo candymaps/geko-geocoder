@@ -754,27 +754,20 @@ data_hashes() {
     (cd -P "$dir/bundles/current" && find . -type f "${skip[@]}" -print0 | sort -z | xargs -0 sha256sum | sed 's|  \./|  bundle/|')
 }
 
-# The load of the geocoder linked into geko against the same geocoder as a process of its own and
-# as a library, in turns, on the new bundle: what crossing the socket or the library costs. Only
-# shown, never failed: the choice of the adapter weighs it (docs/MODULES_PLAN.md, step 2).
+# The load of the geocoder linked into geko against the same geocoder as a library, in turns, on
+# the new bundle: what crossing the library costs. Only shown, never failed (docs/MODULES_PLAN.md,
+# step 2).
 spain_adapters() {
     local bin=$1 dir=$2 port=$3 reports=$4 pin_server=$5 pin_client=$6 golden=countries/es/golden
     local modules="$AB_DIR/adapters" kind server opened_ms linked route cases
-    cargo build --release --locked -p geko-module-geocoder --bin geko-geocoder -p geko-module-geocoder-dylib
-    for kind in process dylib; do
-        mkdir -p "$modules/$kind/geocoder"
-        cp "$bin/geko-geocoder" "$bin/libgeko_geocoder.so" "$modules/$kind/geocoder/"
-        if [ "$kind" = dylib ]; then
-            printf 'name = "geocoder"\nkind = "dylib"\nentry = "libgeko_geocoder.so"\n' > "$modules/$kind/geocoder/module.toml"
-        else
-            cp modules/geko-geocoder/module.toml "$modules/$kind/geocoder/"
-        fi
-    done
+    cargo build --release --locked -p geko-module-geocoder-dylib
+    mkdir -p "$modules/dylib/geocoder"
+    cp "$bin/libgeko_geocoder.so" modules/geko-geocoder/module.toml "$modules/dylib/geocoder/"
     # shellcheck disable=SC2086
     serve "$bin" "$dir/check-spain.toml" "$dir/check-serve.log" "$port" $pin_server
     linked=$server
     spain_config "$dir/check-spain-adapter.toml" "$dir" $((port + 2)) true modules
-    for kind in process dylib; do
+    for kind in dylib; do
         # shellcheck disable=SC2086
         serve "$bin" "$dir/check-spain-adapter.toml" "$dir/check-serve-$kind.log" $((port + 2)) \
             env GEKO_MODULES="$modules/$kind" $pin_server
