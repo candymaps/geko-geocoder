@@ -1,5 +1,5 @@
 # Fails a pull request that changes, removes or renames a file only the owner may change: the license,
-# the CLA, the documents of the repository, what checks and publishes it (.github, ci) and what sets
+# the documents of the repository, what checks and publishes it (.github, ci) and what sets
 # how strict the checks are (deny.toml, clippy.toml, .cargo, rust-toolchain.toml). The
 # protection of main and dev requires it beside `test`. It is a workflow of its own, on
 # pull_request_target, because GitHub runs it as it is in the base branch: the pull request it
@@ -23,7 +23,7 @@ jobs:
         with:
           script: |
             const owner = 'edgaza';
-            const protectedFiles = ['LICENSE', 'CLA.md', 'CONTRIBUTING.md', 'README.md', 'AGENTS.md', 'CLAUDE.md',
+            const protectedFiles = ['LICENSE', 'CONTRIBUTING.md', 'README.md', 'AGENTS.md', 'CLAUDE.md',
               'deny.toml', 'clippy.toml', '.clippy.toml', 'rust-toolchain.toml', 'rust-toolchain'];
             const protectedDirs = ['.github/', 'ci/', '.cargo/'];
             const pr = context.payload.pull_request;

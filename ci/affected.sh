@@ -38,7 +38,7 @@ code=0 results=0 robustness=0 instructions=0 all_countries=0
 countries=()
 while IFS= read -r file; do
     case $file in
-        *.md | docs/* | LICENSE | CLA.md | .github/* | Makefile | make.cmd | ci/affected.sh) continue ;;
+        *.md | docs/* | LICENSE | .github/* | Makefile | make.cmd | ci/affected.sh) continue ;;
     esac
     code=1
     only_quiet "$file" && continue
