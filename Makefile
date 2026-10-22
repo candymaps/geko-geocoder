@@ -56,7 +56,7 @@ DEV_MODULES ?= $(shell awk '/^\[/ { on = ($$1 == "[modules]") } on && $$2 == "="
 DEV_COMPOSE := GEKO_DEV_CONFIG="$(abspath $(DEV_CONFIG))" GEKO_DEV_PORT=$(DEV_PORT) GEKO_DEV_MODULES=$(DEV_MODULES) \
                GEKO_DEV_VERSION=$(VERSION)-$(COMMIT)$(DIRTY) docker compose -f develop/compose.yaml
 
-.PHONY: help bin modules install serve up data query parse reverse image start-dev stop-dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
+.PHONY: help bin modules install serve up data query parse reverse image start-dev stop-dev release release-packs test test-changed test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
 
 help: ## This list
 	@grep -E "^[a-z-]+:.*## " $(MAKEFILE_LIST) | awk -F ":.*## " '{ printf "  make %-10s %s\n", $$1, $$2 }'
@@ -134,6 +134,9 @@ release-packs: ## Sign the country packs and push them to REGISTRY/countries (ne
 
 test: ## Every check but those of the machine, on the golden of every country (ci/test.sh)
 	ci/test.sh
+
+test-changed: ## Only the checks that what changed since BASE (default: where it leaves dev) can fail, as pre-push
+	@args=$$(ci/affected.sh $(or $(BASE),$$(git merge-base HEAD origin/dev))) && if [ -z "$$args" ]; then echo "only documentation changed"; else echo "ci/test.sh $$args"; ci/test.sh $$args; fi
 
 test-golden-es: ## The golden of the Balearic Islands: results, data, robustness and instructions
 	ci/test.sh --variant results,data,robustness,instructions --scope es

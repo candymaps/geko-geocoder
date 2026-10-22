@@ -1190,7 +1190,7 @@ Hecho tras la fase 1 (el detalle, en `git show 8679454:docs/BACKLOG.md`; lo pend
 
 Todas viven en `ci/test.sh`, igual en local que en la CI (GitHub solo lo llama), que solo ejecuta pruebas: `--variant` dice qué se prueba y `--scope`, sobre qué datos. Los datos del golden los prepara aparte `ci/golden-snapshot.sh`. Cada prueba se usa donde tiene sentido:
 
-- **Antes de cada push, en local**: `make test`, que lanza solo `.githooks/pre-push` (se activa una vez por clon con `git config core.hooksPath .githooks`; `git push --no-verify` lo salta). Es todo lo determinista, con el golden de todos los países.
+- **Antes de cada push, en local**: lo que el cambio puede romper (`ci/affected.sh`, por las rutas que toca: nada si solo es documentación, `code,contracts` si solo toca logs o progreso, el golden y las instrucciones si toca lo que construye o busca), que lanza solo `.githooks/pre-push` (`make test-changed` a mano; `GEKO_TEST_ALL=1` corre todo `make test`) (se activa una vez por clon con `git config core.hooksPath .githooks`; `git push --no-verify` lo salta). `make test` es todo lo determinista, con el golden de todos los países.
 - **En cada push a `main`, en la CI** (`ci.yml`): lo determinista de lo que cambió. El código, si cambió el motor; los contratos, si cambió el motor o algún pack; y el golden de cada país, de todos si cambió el motor o solo de los packs cambiados. Si todo pasa, publica los packs cambiados y, si el push toca lo que entra en ella, la imagen, con la versión del `Cargo.toml`. Las demás ramas no tienen CI.
 - **Solo en local y a demanda** (o en un runner propio con el hardware de referencia de §1.1): España completa (`make test-regression`) y toda latencia, caudal o memoria, los datos frescos (`GEKO_GOLDEN_FRESH=1`) y la comparación con Pelias.
 
@@ -1217,6 +1217,7 @@ ci/test.sh [--variant <variantes>] [--scope <ámbitos>] [--include-performance]
 
 ```bash
 make test              # ci/test.sh: todo menos lo de la máquina, con el golden de todos los países
+make test-changed      # solo lo que lo cambiado desde BASE (por defecto, donde sale de dev) puede romper
 make test-golden-es    # el golden de Baleares: results, data, robustness, instructions
 make test-golden-lu    # lo mismo con Luxemburgo entero
 make test-regression   # España completa, en local y a demanda, con la carga (--include-performance)

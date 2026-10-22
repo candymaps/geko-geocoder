@@ -589,8 +589,7 @@ fn fresh_dir(dir: &std::path::Path) -> Result<std::path::PathBuf> {
 }
 
 fn stage(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: bool) -> Result<String> {
-    let names: Vec<_> = prepared.selected.iter().map(|s| s.provider.name()).collect();
-    progress::note(format_args!("sources to download: {}", names.join(", ")));
+    progress::note(format_args!("sources to download: {}", prepared.selected.iter().map(|s| s.provider.name()).collect::<Vec<_>>().join(", ")));
     progress::step("downloading sources", 1, steps(prepared), Unit::Items);
     let (mut out, identities) = fetched(setup, prepared, dl)?;
     let mut failed = Vec::new();
