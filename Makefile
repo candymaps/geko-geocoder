@@ -17,6 +17,7 @@ BIN    := $(CARGO_TARGET_DIR)/release/geko
 # GEKO_MODULES reads them.
 MODULES ?= $(CARGO_TARGET_DIR)/modules
 MODULE_KIND ?= process
+MODULE_NAMES := geocoder tiles
 # geko lives in /usr/local/bin, reads /etc/geko/geko.toml and keeps its data in /var/lib/geko.
 LISTEN ?= 0.0.0.0:8080
 GEKO   := /usr/local/bin/geko
@@ -40,10 +41,10 @@ IMAGE_GLIBC := 2.36
 HOST_BIN := $(CARGO_TARGET_DIR)/host/release/geko
 # Fails if the binary $(1) needs a newer glibc than the image has.
 define glibc
-	@need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(1) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
-	[ "$$(printf '%s\n' $$need $(IMAGE_GLIBC) | sort -V | tail -1)" = "$(IMAGE_GLIBC)" ] || { \
-	  echo "$(notdir $(1)) needs glibc $$need, newer than the $(IMAGE_GLIBC) of the image: it would not start." >&2; \
-	  echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; }
+need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(1) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
+[ "$$(printf '%s\n' $$need $(IMAGE_GLIBC) | sort -V | tail -1)" = "$(IMAGE_GLIBC)" ] || { \
+  echo "$(notdir $(1)) needs glibc $$need, newer than the $(IMAGE_GLIBC) of the image: it would not start." >&2; \
+  echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; };
 endef
 
 # `make dev`: the container, its port, its configuration and its volume.
@@ -59,16 +60,18 @@ help: ## This list
 bin: ## Compile geko in release
 	cargo build --release -p geko-app
 
-modules: ## Compile the geocoder as a module in MODULES, run as MODULE_KIND (process or dylib): GEKO_MODULES=MODULES geko … uses it
-	cargo build --release -p geko-module-geocoder --bin geko-geocoder
-	cargo build --release -p geko-module-geocoder-dylib
-	install -D -m 755 $(CARGO_TARGET_DIR)/release/geko-geocoder $(MODULES)/geocoder/geko-geocoder
-	install -m 755 $(CARGO_TARGET_DIR)/release/libgeko_geocoder.so $(MODULES)/geocoder/libgeko_geocoder.so
-ifeq ($(MODULE_KIND),dylib)
-	printf 'kind = "dylib"\nentry = "libgeko_geocoder.so"\n' > $(MODULES)/geocoder/module.toml
-else
-	install -m 644 modules/geko-geocoder/module.toml $(MODULES)/geocoder/module.toml
-endif
+modules: ## Compile every module (geocoder, tiles) in MODULES, run as MODULE_KIND (process or dylib): GEKO_MODULES=MODULES geko … uses them
+	cargo build --release $(foreach m,$(MODULE_NAMES),-p geko-module-$(m) --bin geko-$(m))
+	cargo build --release $(foreach m,$(MODULE_NAMES),-p geko-module-$(m)-dylib)
+	@for m in $(MODULE_NAMES); do \
+	  install -D -m 755 $(CARGO_TARGET_DIR)/release/geko-$$m $(MODULES)/$$m/geko-$$m; \
+	  install -m 755 $(CARGO_TARGET_DIR)/release/libgeko_$$m.so $(MODULES)/$$m/libgeko_$$m.so; \
+	  if [ "$(MODULE_KIND)" = dylib ]; then \
+	    printf 'name = "%s"\nkind = "dylib"\nentry = "libgeko_%s.so"\n' $$m $$m > $(MODULES)/$$m/module.toml; \
+	  else \
+	    install -m 644 modules/geko-$$m/module.toml $(MODULES)/$$m/module.toml; \
+	  fi; \
+	done
 
 install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the repository's, if they are not) and /var/lib/geko
 	cmp -s $(BIN) /usr/local/bin/geko || sudo install -m 755 $(BIN) /usr/local/bin/geko
@@ -96,13 +99,13 @@ reverse: install ## Reverse geocoding: make reverse LAT=40.4168 LON=-3.7038
 
 image: ## Docker image IMAGE with geko alone, from a local release build (docker build compiles it instead): it downloads its modules
 	cargo build --release -p geko-app --no-default-features --target-dir $(CARGO_TARGET_DIR)/host
-	$(call glibc,$(HOST_BIN))
+	@$(call glibc,$(HOST_BIN))
 	rm -rf $(CARGO_TARGET_DIR)/image && mkdir -p $(CARGO_TARGET_DIR)/image
 	cp $(HOST_BIN) $(CARGO_TARGET_DIR)/image/geko
 	BUILDX_GIT_INFO=false docker build --build-context binary=$(CARGO_TARGET_DIR)/image --build-arg VERSION=$(VERSION) --build-arg REVISION=$(COMMIT)$(DIRTY) -t $(IMAGE) .
 
 dev: modules ## Compile the working tree and (re)create the container geko-dev with DEV_CONFIG, the modules and the packs of the repository
-	$(call glibc,$(MODULES)/geocoder/geko-geocoder)
+	@$(foreach m,$(MODULE_NAMES),$(call glibc,$(MODULES)/$(m)/geko-$(m)))
 	$(MAKE) image IMAGE=geko:dev
 	docker rm -f geko-dev > /dev/null 2>&1 || true
 	docker run -d --name geko-dev -p $(DEV_PORT):8080 -v geko-dev-data:/var/lib/geko \

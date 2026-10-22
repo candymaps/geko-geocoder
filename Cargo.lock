@@ -928,6 +928,17 @@ name = "geko-module-tiles"
 version = "0.1.0"
 dependencies = [
  "geko-module-sdk",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "geko-module-tiles-dylib"
+version = "0.1.0"
+dependencies = [
+ "geko-module-sdk",
+ "geko-module-tiles",
+ "tracing-subscriber",
 ]
 
 [[package]]
