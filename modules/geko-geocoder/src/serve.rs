@@ -92,7 +92,6 @@ struct Shared {
 const FUSION_METHOD: &str = include_str!("../../../docs/FUSION_METHOD.md");
 /// The reference of the API of the geocoder, which the host lists at `/docs`.
 pub const OPENAPI: &str = include_str!("../openapi.yaml");
-const DEMO: &str = include_str!("demo.html");
 const GEOJSON: &str = "application/geo+json; charset=utf-8";
 
 pub struct Server {
@@ -113,7 +112,6 @@ impl Server {
         let shared = &self.shared;
         let p: HashMap<String, String> = request.query.into_iter().collect();
         let answer = match request.route.as_str() {
-            "" => return Response::new(200, "text/html; charset=utf-8", DEMO),
             "openapi.yaml" => return Response::new(200, "application/yaml", OPENAPI),
             "v1/attribution/method" => return Response::new(200, "text/markdown; charset=utf-8", FUSION_METHOD),
             "v1/search" => search_now(shared, &p, false, started),

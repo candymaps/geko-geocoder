@@ -84,7 +84,7 @@ install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the sa
 	[ -f /etc/geko/geko-geocoder.toml ] || sudo install -D -m 644 modules/geko-geocoder/geko-geocoder.toml /etc/geko/geko-geocoder.toml
 	[ -d /var/lib/geko ] || sudo install -d -o $$(id -un) -g $$(id -gn) /var/lib/geko
 
-serve: install ## Serve the published bundle on LISTEN (the demo page is at /geocoder/)
+serve: install ## Serve the published bundle on LISTEN (the demo page is at /)
 	$(GEKO) serve --listen $(LISTEN)
 
 up: install ## Serve, and build in the background what the configuration asks for (now and every max_age_days)
@@ -113,7 +113,7 @@ start-dev: ## Build geko and DEV_MODULES of the working tree inside Docker and (
 	@[ -n "$(DEV_MODULES)" ] || { echo "no module enabled in $(DEV_CONFIG): DEV_MODULES=geocoder,…" >&2; exit 1; }
 	@docker rm -f geko-dev > /dev/null 2>&1 || true
 	$(DEV_COMPOSE) up -d --build
-	@echo "geko-dev ($(DEV_MODULES)) builds, then serves http://localhost:$(DEV_PORT)/geocoder/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
+	@echo "geko-dev ($(DEV_MODULES)) builds, then serves http://localhost:$(DEV_PORT)/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
 	$(DEV_COMPOSE) logs -f
 
 stop-dev: ## Stop the container of make start-dev, keeping its volume (geko-dev_data)

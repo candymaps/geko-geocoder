@@ -794,7 +794,7 @@ Cada parte va en ficheros separados del segmento, para poder tratarlas distinto.
 
 La referencia de las rutas ya implementadas (parámetros, respuestas y errores) está en dos ficheros: las del host en [openapi.yaml](../openapi.yaml), en la raíz del repositorio, servida en `/openapi.yaml`, y las del geocoder en [modules/geko-geocoder/openapi.yaml](../modules/geko-geocoder/openapi.yaml), servida en `/geocoder/openapi.yaml`. `/docs` (Swagger UI) las muestra todas.
 
-Cada módulo sirve sus rutas bajo su nombre (`/geocoder/…`, `/tiles/…`; docs/MODULES_PLAN.md): dos módulos no pueden pisarse. `/` lleva a la página del primer módulo que tenga una.
+Cada módulo sirve sus rutas bajo su nombre (`/geocoder/…`, `/tiles/…`; docs/MODULES_PLAN.md): dos módulos no pueden pisarse. `/` es la página de demostración del host: un mapa con lo que ofrecen los módulos activos (el buscador del geocodificador, por su API).
 
 ### 10.1 Rutas
 
@@ -805,7 +805,6 @@ GET  /openapi.yaml, /docs
 GET  /health
 GET  /metrics
 
-GET  /geocoder/                     página de demostración: buscador, autocompletado e inversa sobre un mapa
 GET  /geocoder/openapi.yaml
 GET  /geocoder/v1/attribution/method
 GET  /geocoder/v1/search?text=&focus.lat=&focus.lon=&boundary.*=&boundary.country=&size=&lang=&debug=
@@ -1184,7 +1183,7 @@ Hecho tras la fase 1 (el detalle, en `git show 8679454:docs/BACKLOG.md`; lo pend
 - **Packs de país como datos:** leídos al arrancar, firmados y publicados en ghcr.io; `geko` baja los de su ámbito, y la imagen de Docker sirve para cualquier combinación de países sin llevar ninguno (§2.4).
 - **Segundo país:** Luxemburgo, con su pack (`countries/lu/`) y su golden, sin tocar el motor salvo arreglos genéricos ([countries/README.md](../countries/README.md)).
 - **Host y módulos** (2026-10-21, [MODULES_PLAN.md](MODULES_PLAN.md), paso 1): el host (`geko-app`, `geko-server`) solo conoce los módulos por el contrato de `geko-module-sdk`. El geocoder vive en `modules/geko-geocoder/`, con su configuración (`geko-geocoder.toml`) y sus rutas bajo `/geocoder/`. Se quitaron los modos compatibles con Pelias y Photon.
-- **Servicio:** página de demostración en `/geocoder/`, `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
+- **Servicio:** página de demostración en `/` (del host), `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
 - Las últimas medidas completas, del 2026-10-18, en [docs/2026-10-18_ANALYSIS_RESULTS.md](2026-10-18_ANALYSIS_RESULTS.md).
 
 ## 20. Comprobaciones y evaluación
@@ -1289,7 +1288,7 @@ En Linux y macOS, `make <objetivo>` en la raíz del repositorio. En Windows, `ma
 - `make query Q="gran via 1, madrid"`, `make parse Q="…"` y `make reverse LAT=40.4168 LON=-3.7038`.
 - `make test`, `make test-golden-es`, `make test-golden-lu` y `make test-regression`: las comprobaciones de `ci/test.sh`.
 - `make image`: la imagen de Docker publicable (geko sin módulos) con el binario de la última compilación, sin compilar dentro de Docker. Se niega si el binario pide una glibc más nueva que la de la imagen (2.36), porque no arrancaría.
-- `make start-dev` (`develop/compose.yaml`, proyecto `geko-dev`, un solo contenedor): compila dentro de Docker (objetivo `local` del `Dockerfile`, sobre la Debian de la imagen) geko y los módulos activos en su configuración, del código tal como está en la rama, cambios sin commit incluidos, y vuelve a crear el contenedor. Los módulos van dentro de la imagen (`GEKO_MODULES`), con la versión `<versión>-<commit>[-dirty]`, y nunca se descargan: uno activo que no se compiló es un error. Sirve en `http://localhost:8080` (`DEV_PORT=` lo cambia): la demo en `/geocoder/` y la API en `/docs`. Usa `develop/geko.toml` (`DEV_CONFIG=` usa otra), la muestra de la imagen, que no acepta las licencias: para generar datos, un `geko.toml` propio fuera del repositorio (`make start-dev DEV_CONFIG=~/geko-dev.toml`). `DEV_MODULES=geocoder,tiles` fuerza qué módulos compilar. Usa los packs del repositorio, sin publicar. Sus datos van al volumen `geko-dev_data`, que se conserva entre ejecuciones; `make stop-dev` para el contenedor, y `docker volume rm geko-dev_data`, con él parado, lo borra todo. Desde WSL necesita la integración de Docker Desktop con la distribución (Settings → Resources → WSL integration).
+- `make start-dev` (`develop/compose.yaml`, proyecto `geko-dev`, un solo contenedor): compila dentro de Docker (objetivo `local` del `Dockerfile`, sobre la Debian de la imagen) geko y los módulos activos en su configuración, del código tal como está en la rama, cambios sin commit incluidos, y vuelve a crear el contenedor. Los módulos van dentro de la imagen (`GEKO_MODULES`), con la versión `<versión>-<commit>[-dirty]`, y nunca se descargan: uno activo que no se compiló es un error. Sirve en `http://localhost:8080` (`DEV_PORT=` lo cambia): la demo en `/` y la API en `/docs`. Usa `develop/geko.toml` (`DEV_CONFIG=` usa otra), la muestra de la imagen, que no acepta las licencias: para generar datos, un `geko.toml` propio fuera del repositorio (`make start-dev DEV_CONFIG=~/geko-dev.toml`). `DEV_MODULES=geocoder,tiles` fuerza qué módulos compilar. Usa los packs del repositorio, sin publicar. Sus datos van al volumen `geko-dev_data`, que se conserva entre ejecuciones; `make stop-dev` para el contenedor, y `docker volume rm geko-dev_data`, con él parado, lo borra todo. Desde WSL necesita la integración de Docker Desktop con la distribución (Settings → Resources → WSL integration).
   - Volver a lanzarlo con el código cambiado recompila solo lo que cambió (caché de cargo de Docker, aparte de la de WSL) y sustituye el contenedor por uno con la imagen nueva, unos segundos sin servicio. El contenedor nuevo sirve enseguida el bundle que ya había en el volumen, salvo que el cambio altere su formato: entonces responde 503 hasta publicar el nuevo.
   - En segundo plano rehace solo las etapas cuyo código o entradas cambiaron, sin volver a bajar nada, y recoge el bundle nuevo sin reiniciar. Un cambio de ranking o de búsqueda no rehace ningún dato; uno en el staging de una fuente rehace ese staging y lo que depende de él. Los cambios de los packs y de la configuración también entran, porque van montados.
   - Solo toca el proyecto `geko-dev`. El de «Instalación y uso» del README (`geko`) usa el mismo puerto: para tener los dos a la vez, `make start-dev DEV_PORT=8081`.

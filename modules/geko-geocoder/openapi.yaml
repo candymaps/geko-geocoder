@@ -18,14 +18,6 @@ servers:
   - url: /geocoder
     description: The geocoder of the geko serving this document
 paths:
-  /:
-    get:
-      summary: A demo page, with a map, to try the search. Never needs an API key.
-      responses:
-        "200":
-          description: An HTML page that loads Leaflet from unpkg.com.
-          content:
-            text/html: {}
   /v1/search:
     get:
       summary: Forward geocoding of a complete query.

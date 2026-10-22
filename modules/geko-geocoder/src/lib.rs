@@ -86,7 +86,6 @@ impl Module for Geocoder {
             // Search, autocomplete and batches parse and rank: on the pool. Reverse and lookups
             // by id are cheap and answered where they arrive.
             routes: vec![
-                route(Method::Get, "", false, true),
                 route(Method::Get, "openapi.yaml", false, false),
                 route(Method::Get, "v1/attribution/method", false, true),
                 route(Method::Get, "v1/search", true, false),
@@ -96,7 +95,6 @@ impl Module for Geocoder {
                 route(Method::Get, "v1/reverse", false, false),
                 route(Method::Get, "v1/place/{id}", false, false),
             ],
-            home: Some(String::new()),
             openapi: Some("openapi.yaml".into()),
             attribution: Some(serde_json::json!({
                 "derivative_database": {
