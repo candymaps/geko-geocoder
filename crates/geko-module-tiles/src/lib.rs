@@ -17,7 +17,7 @@ impl Module for TilesModule {
         let route = |path: &str| Route { method: Method::Get, path: path.into(), pool: false, public: false };
         Description {
             name: ModuleName::new(NAME).expect("a valid name"),
-            version: env!("CARGO_PKG_VERSION").to_owned(),
+            version: geko_module_sdk::module_version!().to_owned(),
             contract: module::CONTRACT,
             routes: vec![route("{z}/{x}/{y}"), route("tilejson.json")],
             home: None,

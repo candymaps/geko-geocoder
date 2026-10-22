@@ -1,6 +1,6 @@
 # Módulos descargables: plan
 
-Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), salvo la medición A/B, que se hace en el paso 6; paso 3 (registro y versiones) hecho (2026-10-22); después, 4 y 5. Punto 46 de PROJECT.md §17.
+Estado: paso 1 hecho (2026-10-21, commit b814bd0); paso 2 (adaptadores dinámicos) hecho (2026-10-22), salvo la medición A/B, que se hace en el paso 6; paso 3 (registro y versiones) hecho (2026-10-22); paso 4 (CI, imagen y Makefile) hecho (2026-10-22), salvo las pruebas cruzadas, que pasan al paso 7; después, 5. Punto 46 de PROJECT.md §17.
 
 ## Objetivo
 
@@ -170,9 +170,19 @@ Cada paso deja el golden de `es` y `lu` igual (tolerancia 0) y el segmento idén
    - `geko plan` muestra de cada módulo su versión y de dónde sale; `geko purge modules` (y `geko purge`) borra las versiones bajadas que no usan ni los módulos activos ni los bundles conservados.
    - Los sellos de las etapas ya cambian con el código de cada crate (hash de sus fuentes y de `Cargo.lock`, `build.rs` del geocoder), que es más fino que la versión: no se añade.
 4. **CI, imagen y Makefile.** `publish` publica el módulo cuando cambia su código, y no publica el host sin módulo para cada contrato. `ci/test.sh` y `pre-push` usan el módulo compilado en local. Pruebas cruzadas: la CI del módulo pasa el golden con la última imagen del host de su contrato; la del host, la conformidad del contrato contra el último módulo de cada contrato que soporta. `Dockerfile` sin módulos: los baja al arrancar. `publish` crea la etiqueta `sdk-<n>` cuando cambia la SDK.
+   - Hecho (2026-10-22). `ci/modules.sh`: `build` compila cada carpeta de `modules/` con `module.toml` y completa este (`name`, `version`, `contract`, `platform`); `publish` lo firma con `geko-module-sign` (`geko-artifact`, la clave de los packs) y lo sube a `ghcr.io/candymaps/geko-<m>` con las etiquetas `<versión>-<plataforma>` y `contract-<n>-<plataforma>` y las anotaciones `geko.*`; `check` falla si no hay módulo publicado para el contrato del host.
+   - La versión de un módulo publicado es `<versión>-<commit>` (o `<versión>` en una release), compilada en él con `GEKO_MODULE_VERSION` (`module_version!` de la SDK), y la del módulo enlazado se compila igual, de modo que el bundle dice la versión exacta que lo generó.
+   - `ci.yml` (`publish`): compila los módulos en `rust:<toolchain>-bookworm`, por la glibc de la imagen; los publica cuando cambia lo que entra en la imagen; no publica imagen, etiqueta ni release sin `ci/modules.sh check`; y mueve `sdk-<contrato>` cuando cambia `crates/geko-module-sdk`.
+   - `Dockerfile` y `make image`: geko sin módulos (`--no-default-features`, en `$CARGO_TARGET_DIR/host`); `make dev` monta los de `make modules` en `/modules` (`GEKO_MODULES`).
+   - `ci/test.sh` y `pre-push` siguen con el módulo enlazado, que en este repositorio es el compilado en local; `GEKO_MODULES=… ci/test.sh` prueba el de proceso o biblioteca. Las pruebas cruzadas (golden del módulo contra la última imagen del host de su contrato, y conformidad del host contra el último módulo publicado) solo tienen sentido con dos repositorios: pasan al paso 7.
 5. **`tiles` al mismo contrato**, como segunda implementación.
+   - **Después, antes del paso 6: caídas de `ProcessModule`.** Si el proceso del módulo muere (aborto, segfault, OOM; un pánico solo responde 500), hoy se relanza bajo el cerrojo de la conexión: todas las peticiones esperan a que el nuevo cargue el bundle (con España, segundos), y una consulta que lo tumba y un cliente repite lo deja casi parado. En `crates/geko-app/src/process.rs`, con tests rápidos:
+     1. Relanzar y cargar el bundle en un hilo aparte; mientras, cada petición responde 503 con `Retry-After`, sin esperar en el cerrojo.
+     2. Espera creciente entre relanzamientos (1, 2, 4… hasta 60 s); tras N caídas en poco tiempo, queda caído con 503, error en el log y en `/health`, en vez de relanzar sin fin.
+     3. Cuarentena de la consulta que lo tumba: huella (ruta, parámetros, hash del cuerpo) de las peticiones en curso al morir; la que estaba en curso en dos caídas se rechaza sin reenviarla durante un tiempo, y su huella va al log.
+     4. Plazo por llamada (503 si no responde en X s) y vigilante: si el proceso deja de contestar del todo, el host lo mata y aplica el 2.
 6. **Estabilizar `contract-1`** con unas semanas de uso real y su suite de conformidad en el host.
-7. **Extraer el repositorio** `candymaps/geko-geocoder` con `git filter-repo` (`modules/geko-geocoder/`, `countries/`, `languages/` y su documentación), con la SDK publicada por el host como dependencia de git con etiqueta (o un registro de Cargo; si es privado, la CI del módulo necesita un token).
+7. **Extraer el repositorio** `candymaps/geko-geocoder` con `git filter-repo` (`modules/geko-geocoder/`, `countries/`, `languages/` y su documentación), con la SDK publicada por el host como dependencia de git con etiqueta (o un registro de Cargo; si es privado, la CI del módulo necesita un token). Con él, las pruebas cruzadas del paso 4.
 8. **Documentación** en cada paso: AGENTS.md (la regla de las *features* de Cargo), PROJECT.md §2.3, §2.4, §3, §3.1, §4, §4.1, §12, §14, §18, §19, README, `geko.toml` y `geko-geocoder.toml`.
 
 ## Efecto esperado en lo que se mide
@@ -209,6 +219,7 @@ La medición del paso 2 confirma o corrige estas estimaciones. Si `ProcessModule
 
 ## Pendiente de decidir
 
+- Un proceso de reserva del módulo ya cargado, que cubra al instante la caída del activo (ver «caídas de `ProcessModule`», tras el paso 5). Solo duplica la parte caliente del índice en RAM (la fría va mapeada y comparte la caché de páginas); se decide midiendo en el paso 6 su memoria con España y cuánto tarda en recargarse sin él.
 - ⏸️ Aplazado (2026-10-21): si `tiles` necesita datos por país (sus propios paquetes o los del geocoder). Ahora solo se prepara el terreno para su módulo; se decide al crearlo.
 
 Decidido (2026-10-21): la imagen del host no lleva módulos y baja los activos al arrancar; la SDK se publica en el repositorio del host; los idiomas y los packs se van con el geocoder (`tiles` no traduce); los idiomas siguen compilados dentro del binario del geocoder, no como paquete de datos; la SDK se usa como dependencia de git con etiqueta `sdk-<n>`, no desde un registro de Cargo.

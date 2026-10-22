@@ -81,7 +81,7 @@ impl Module for Geocoder {
     fn describe(&self) -> Description {
         Description {
             name: ModuleName::new(NAME).expect("a valid name"),
-            version: env!("CARGO_PKG_VERSION").to_owned(),
+            version: geko_module_sdk::module_version!().to_owned(),
             contract: module::CONTRACT,
             // Search, autocomplete and batches parse and rank: on the pool. Reverse and lookups
             // by id are cheap and answered where they arrive.

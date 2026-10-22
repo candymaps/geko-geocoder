@@ -116,7 +116,10 @@ jobs:
   # Publishes in ghcr.io, with the version of Cargo.toml:
   # - on every push, the country packs that changed (ghcr.io/candymaps/geko/countries/<country>,
   #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
-  #   (not only documentation or packs), the image (ghcr.io/candymaps/geko, tag <version>-<commit>);
+  #   (not only documentation or packs), the modules (ghcr.io/candymaps/geko-<module>, tags
+  #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh) and the image
+  #   (ghcr.io/candymaps/geko, tag <version>-<commit>), which carries no module, and is published
+  #   only if every contract of it has a module published;
   # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
   #   <version> on every pack and on the image, latest on the image, and the git tag v<version> on
   #   the pushed commit, with its GitHub release, whose notes say how to pull the image. Raising the
@@ -185,6 +188,33 @@ jobs:
         env:
           GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
           GEKO_RELEASE: ${{ steps.version.outputs.release }}
+      # The modules, when their code changed (the same paths as the image), compiled on the Debian of
+      # the image, whose glibc is older than that of the runner: a module built here would not start
+      # there.
+      - if: steps.version.outputs.image == '1'
+        env:
+          GEKO_RELEASE: ${{ steps.version.outputs.release }}
+        run: |
+          toolchain=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)
+          docker run --rm -v "$PWD:/src" -w /src -e GEKO_RELEASE -e CARGO_TARGET_DIR=/src/target \
+            -u "$(id -u):$(id -g)" -e HOME=/tmp -e CARGO_HOME=/tmp/cargo \
+            "rust:$toolchain-bookworm" ci/modules.sh build target/modules
+      - if: steps.version.outputs.image == '1'
+        run: ci/modules.sh publish target/modules
+        env:
+          GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
+      # No image, tag or release of a host that no published module speaks to.
+      - run: ci/modules.sh check
+      # The SDK of the contract, which the modules outside this repository use as a git dependency:
+      # sdk-<n> follows the last commit that changed it within contract <n>.
+      - if: steps.version.outputs.image == '1'
+        run: |
+          contract=$(sed -n 's/^pub const CONTRACT: u32 = \([0-9]*\);/\1/p' crates/geko-module-sdk/src/module.rs)
+          if [ "$(git rev-parse -q --verify "refs/tags/sdk-$contract^{commit}" || true)" = "" ] \
+            || ! git diff --quiet "sdk-$contract" HEAD -- crates/geko-module-sdk; then
+            git tag -f "sdk-$contract" HEAD
+            git push -f origin "refs/tags/sdk-$contract"
+          fi
       - if: steps.version.outputs.image == '1'
         uses: docker/setup-buildx-action@v3
       - if: steps.version.outputs.image == '1'

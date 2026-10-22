@@ -36,6 +36,15 @@ DIRTY    := $(shell command -v git > /dev/null && { git diff --quiet HEAD 2>/dev
 # The glibc of the base of the image (debian:bookworm-slim): a binary that needs a newer one does
 # not start in it.
 IMAGE_GLIBC := 2.36
+# geko alone, without the modules linked in, as the image carries it.
+HOST_BIN := $(CARGO_TARGET_DIR)/host/release/geko
+# Fails if the binary $(1) needs a newer glibc than the image has.
+define glibc
+	@need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(1) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
+	[ "$$(printf '%s\n' $$need $(IMAGE_GLIBC) | sort -V | tail -1)" = "$(IMAGE_GLIBC)" ] || { \
+	  echo "$(notdir $(1)) needs glibc $$need, newer than the $(IMAGE_GLIBC) of the image: it would not start." >&2; \
+	  echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; }
+endef
 
 # `make dev`: the container, its port, its configuration and its volume.
 DEV_PORT   ?= 8080
@@ -85,20 +94,20 @@ parse: install ## The readings of a query: make parse Q="gran via 1, madrid"
 reverse: install ## Reverse geocoding: make reverse LAT=40.4168 LON=-3.7038
 	$(GEKO) geocoder reverse $(LAT) $(LON)
 
-image: bin ## Docker image IMAGE with the last release build (docker build compiles it instead)
-	@need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(BIN) | sed 's/GLIBC_//' | sort -Vu | tail -1); \
-	[ "$$(printf '%s\n' $$need $(IMAGE_GLIBC) | sort -V | tail -1)" = "$(IMAGE_GLIBC)" ] || { \
-	  echo "geko needs glibc $$need, newer than the $(IMAGE_GLIBC) of the image: it would not start." >&2; \
-	  echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; }
+image: ## Docker image IMAGE with geko alone, from a local release build (docker build compiles it instead): it downloads its modules
+	cargo build --release -p geko-app --no-default-features --target-dir $(CARGO_TARGET_DIR)/host
+	$(call glibc,$(HOST_BIN))
 	rm -rf $(CARGO_TARGET_DIR)/image && mkdir -p $(CARGO_TARGET_DIR)/image
-	cp $(BIN) $(CARGO_TARGET_DIR)/image/geko
+	cp $(HOST_BIN) $(CARGO_TARGET_DIR)/image/geko
 	BUILDX_GIT_INFO=false docker build --build-context binary=$(CARGO_TARGET_DIR)/image --build-arg VERSION=$(VERSION) --build-arg REVISION=$(COMMIT)$(DIRTY) -t $(IMAGE) .
 
-dev: ## Compile the working tree and (re)create the container geko-dev with DEV_CONFIG and the packs of the repository
+dev: modules ## Compile the working tree and (re)create the container geko-dev with DEV_CONFIG, the modules and the packs of the repository
+	$(call glibc,$(MODULES)/geocoder/geko-geocoder)
 	$(MAKE) image IMAGE=geko:dev
 	docker rm -f geko-dev > /dev/null 2>&1 || true
 	docker run -d --name geko-dev -p $(DEV_PORT):8080 -v geko-dev-data:/var/lib/geko \
-	  -v "$(abspath $(DEV_CONFIG))":/etc/geko/geko.toml:ro -v "$(CURDIR)/countries":/packs:ro -e GEKO_PACKS=/packs geko:dev
+	  -v "$(abspath $(DEV_CONFIG))":/etc/geko/geko.toml:ro -v "$(CURDIR)/countries":/packs:ro -e GEKO_PACKS=/packs \
+	  -v "$(MODULES)":/modules:ro -e GEKO_MODULES=/modules geko:dev
 	@echo "geko-dev builds, then serves http://localhost:$(DEV_PORT)/geocoder/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
 	docker logs -f geko-dev
 
