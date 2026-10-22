@@ -52,7 +52,7 @@ accept_licenses = true    # you accept the licenses of the sources: ODbL (OSM), 
 
 Every section and option of geko itself is in [Configuration reference](#configuration-reference-gekotoml), below, with its default value and what it does. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
 
-Without a mounted `geko.toml`, the image uses its sample one: Luxembourg, with the licenses not accepted, so it stops right away asking you to accept them. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
+The image carries no configuration: without a mounted `geko.toml`, it stops right away asking for one. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
 
 **2. Start it:**
 

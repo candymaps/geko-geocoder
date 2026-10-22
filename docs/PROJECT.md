@@ -1271,7 +1271,7 @@ geko-eval load --url http://127.0.0.1:8080 --cases countries/es/golden/spain-gen
 
 ### 21.1 Con Docker
 
-La imagen, `ghcr.io/candymaps/geko`, lleva el binario y una configuración de ejemplo (`develop/geko.toml`), y ningún pack de país: al generar, `geko` baja los de su ámbito al volumen. Sirve igual para un país que para varios. Se monta la propia en `/etc/geko/geko.toml` (con `accept_licenses = true`; escucha siempre en `0.0.0.0:8080`) y un volumen en `/var/lib/geko`, donde quedan las descargas y los bundles:
+La imagen, `ghcr.io/candymaps/geko`, lleva el binario, ninguna configuración (sin un `geko.toml` montado se para al arrancar y lo pide) y ningún pack de país: al generar, `geko` baja los de su ámbito al volumen. Sirve igual para un país que para varios. Se monta la propia en `/etc/geko/geko.toml` (con `accept_licenses = true`; escucha siempre en `0.0.0.0:8080`) y un volumen en `/var/lib/geko`, donde quedan las descargas y los bundles:
 
 ```bash
 docker build -t geko .
@@ -1296,7 +1296,7 @@ En Linux y macOS, `make <objetivo>` en la raíz del repositorio. En Windows, `ma
 - **Publicación automática:** el trabajo `publish` de `ci.yml`, tras pasar las comprobaciones en `main`, publica los packs que cambian y, si el push toca algo que entra en ella (no solo documentación o packs), la imagen, etiquetados `<versión>-<commit>` con la versión del `Cargo.toml`. Para sacar una versión basta subirla en `[workspace.package]`: el workflow añade `<versión>` a packs e imagen, `latest` a la imagen y crea la etiqueta de git `v<versión>` en el commit subido, con su release de GitHub. Necesita el secreto `GEKO_PACK_SIGNING_KEY`.
 - `make release`: compila, hace la imagen y la sube a `ghcr.io/candymaps/geko` con tres etiquetas: la versión y el commit (`0.1.0-6fb024c`), la versión y `latest`. Solo con todo en commit, para que la imagen sea la de ese commit, y tras `docker login ghcr.io` con un token con permiso `write:packages`.
 
-Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, con `sudo`): el binario en `/usr/local/bin/geko`, el `geko.toml` de muestra (`develop/geko.toml`) en `/etc/geko/geko.toml` si aún no hay ninguno, y `/var/lib/geko` a nombre del usuario. El `/etc/geko/geko.toml` es el que se edita (ámbito, `accept_licenses = true`…); la muestra se queda con `accept_licenses = false`. El puerto se cambia con `LISTEN=…`.
+Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, con `sudo`): el binario en `/usr/local/bin/geko`, el `geko.toml` de desarrollo (`develop/geko.toml`, el de `make start-dev`) en `/etc/geko/geko.toml` si aún no hay ninguno, y `/var/lib/geko` a nombre del usuario. El `/etc/geko/geko.toml` es el que se edita (ámbito, `accept_licenses = true`…); El puerto se cambia con `LISTEN=…`.
 
 ### 21.3 Prueba local (Islas Baleares), desde PowerShell
 
