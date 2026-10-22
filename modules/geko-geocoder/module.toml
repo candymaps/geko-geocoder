@@ -1,0 +1,5 @@
+# The package of the geocoder (docs/MODULES_PLAN.md): `make modules` puts it, with the executable
+# and the library, in a directory of GEKO_MODULES. `kind = "dylib"`, with
+# `entry = "libgeko_geocoder.so"`, loads it into the process of geko instead.
+kind = "process"
+entry = "geko-geocoder"

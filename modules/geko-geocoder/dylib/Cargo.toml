@@ -1,0 +1,18 @@
+[package]
+name = "geko-module-geocoder-dylib"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+# The geocoder as a library that geko loads (`DylibModule`, docs/MODULES_PLAN.md): a crate of its
+# own, so that linking the geocoder into the host never builds the `cdylib` too.
+[lib]
+name = "geko_geocoder"
+crate-type = ["cdylib"]
+
+[dependencies]
+geko-module-geocoder.workspace = true
+geko-module-sdk.workspace = true
+mimalloc = { version = "0.1", default-features = false }
+tracing-subscriber.workspace = true

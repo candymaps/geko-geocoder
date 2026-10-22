@@ -732,6 +732,7 @@ dependencies = [
  "geko-module-tiles",
  "geko-server",
  "hex",
+ "libloading",
  "mimalloc",
  "serde",
  "serde_json",
@@ -870,6 +871,7 @@ dependencies = [
  "geko-geom",
  "geko-module-sdk",
  "geocode-fst",
+ "mimalloc",
  "reverse-rstar",
  "serde",
  "serde_json",
@@ -879,6 +881,17 @@ dependencies = [
  "source-overture",
  "toml",
  "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "geko-module-geocoder-dylib"
+version = "0.1.0"
+dependencies = [
+ "geko-module-geocoder",
+ "geko-module-sdk",
+ "mimalloc",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -1394,6 +1407,16 @@ name = "libc"
 version = "0.2.190"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
+
+[[package]]
+name = "libloading"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7c4b02199fee7c5d21a5ae7d8cfa79a6ef5bb2fc834d6e9058e89c825efdc55"
+dependencies = [
+ "cfg-if",
+ "windows-link",
+]
 
 [[package]]
 name = "libm"
@@ -2275,7 +2298,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "once_cell",
  "rustix 1.1.5",
  "windows-sys 0.61.2",

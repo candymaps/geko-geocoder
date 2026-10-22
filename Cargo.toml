@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "modules/*", "providers/*", "countries/*"]
+members = ["crates/*", "modules/*", "modules/geko-geocoder/dylib", "providers/*", "countries/*"]
 
 [workspace.package]
 version = "0.1.0"

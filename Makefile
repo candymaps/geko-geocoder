@@ -13,6 +13,10 @@ export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER := $(HOME)/.local/bin/zigcc
 endif
 endif
 BIN    := $(CARGO_TARGET_DIR)/release/geko
+# `make modules`: the modules that run as processes of their own, one directory each, as
+# GEKO_MODULES reads them.
+MODULES ?= $(CARGO_TARGET_DIR)/modules
+MODULE_KIND ?= process
 # geko lives in /usr/local/bin, reads /etc/geko/geko.toml and keeps its data in /var/lib/geko.
 LISTEN ?= 0.0.0.0:8080
 GEKO   := /usr/local/bin/geko
@@ -37,7 +41,7 @@ IMAGE_GLIBC := 2.36
 DEV_PORT   ?= 8080
 DEV_CONFIG ?= docker/dev.toml
 
-.PHONY: help bin install serve up data query parse reverse image dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
+.PHONY: help bin modules install serve up data query parse reverse image dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
 
 help: ## This list
 	@grep -E "^[a-z-]+:.*## " $(MAKEFILE_LIST) | awk -F ":.*## " '{ printf "  make %-10s %s\n", $$1, $$2 }'
@@ -45,6 +49,17 @@ help: ## This list
 
 bin: ## Compile geko in release
 	cargo build --release -p geko-app
+
+modules: ## Compile the geocoder as a module in MODULES, run as MODULE_KIND (process or dylib): GEKO_MODULES=MODULES geko … uses it
+	cargo build --release -p geko-module-geocoder --bin geko-geocoder
+	cargo build --release -p geko-module-geocoder-dylib
+	install -D -m 755 $(CARGO_TARGET_DIR)/release/geko-geocoder $(MODULES)/geocoder/geko-geocoder
+	install -m 755 $(CARGO_TARGET_DIR)/release/libgeko_geocoder.so $(MODULES)/geocoder/libgeko_geocoder.so
+ifeq ($(MODULE_KIND),dylib)
+	printf 'kind = "dylib"\nentry = "libgeko_geocoder.so"\n' > $(MODULES)/geocoder/module.toml
+else
+	install -m 644 modules/geko-geocoder/module.toml $(MODULES)/geocoder/module.toml
+endif
 
 install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the repository's, if they are not) and /var/lib/geko
 	cmp -s $(BIN) /usr/local/bin/geko || sudo install -m 755 $(BIN) /usr/local/bin/geko
