@@ -14,13 +14,16 @@ fn main() {
     let root = Path::new(&std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("../..").canonicalize().unwrap();
     let manifest = |dir: &Path| -> toml::Table { fs::read_to_string(dir.join("Cargo.toml")).unwrap().parse().unwrap() };
 
-    // Workspace crates by name, with the workspace crates each one depends on.
+    // Workspace crates by name, with the workspace crates each one depends on. A path dependency
+    // outside the workspace (the SDK of a tree of the host, as `make start-dev` of the host builds
+    // it) is an external crate, as when it comes from git.
     let workspace = manifest(&root);
     let paths: BTreeMap<String, PathBuf> = workspace["workspace"]["dependencies"]
         .as_table()
         .unwrap()
         .iter()
         .filter_map(|(name, dep)| Some((name.clone(), root.join(dep.get("path")?.as_str()?))))
+        .filter(|(_, dir)| dir.starts_with(&root))
         .collect();
     // Normal and build dependencies only: tests and benchmarks do not produce stage outputs.
     let mut external: BTreeMap<&str, Vec<String>> = BTreeMap::new();
