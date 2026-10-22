@@ -56,7 +56,6 @@ pub fn fetch_all(
                     let Some(source) = next else { break };
                     let id = source.provider.id();
                     let raw = raw_dir(data_dir, &id);
-                    let _on = progress::working_on(source.provider.name());
                     let result = std::fs::create_dir_all(&raw.path)
                         .map_err(GekoError::from)
                         .and_then(|_| source.provider.fetch(scope, dl, &raw));
@@ -159,7 +158,6 @@ pub fn stage_all(
         // the source as every download.
         let restored = restore_scope(scope, &stale).and_then(|sub| {
             progress::expect(provider.plan(&sub, restore, &raw).map_or(1, |p| p.len().max(1) as u64));
-            let _on = progress::working_on(format!("{} (again)", provider.name()));
             provider.fetch(&sub, restore, &raw)
         });
         match restored {
