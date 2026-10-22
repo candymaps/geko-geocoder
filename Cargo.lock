@@ -726,6 +726,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "geko-artifact",
  "geko-fetch",
  "geko-module-geocoder",
  "geko-module-sdk",
@@ -742,6 +743,21 @@ dependencies = [
  "toml",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "geko-artifact"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "geko-fetch",
+ "geko-module-sdk",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "tracing",
 ]
 
 [[package]]
@@ -803,6 +819,7 @@ name = "geko-country-pack"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
+ "geko-artifact",
  "geko-core",
  "geko-fetch",
  "hex",

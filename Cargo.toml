@@ -14,6 +14,7 @@ geko-module-sdk = { path = "crates/geko-module-sdk" }
 geko-server = { path = "crates/geko-server" }
 geko-build = { path = "crates/geko-build" }
 geko-fetch = { path = "crates/geko-fetch" }
+geko-artifact = { path = "crates/geko-artifact" }
 geko-geom = { path = "crates/geko-geom" }
 source-osm = { path = "providers/source-osm" }
 source-overture = { path = "providers/source-overture" }
