@@ -49,7 +49,7 @@ endef
 
 # `make dev`: the container, its port, its configuration and its volume.
 DEV_PORT   ?= 8080
-DEV_CONFIG ?= docker/dev.toml
+DEV_CONFIG ?= develop/geko.toml
 
 .PHONY: help bin modules install serve up data query parse reverse image dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
 
@@ -73,9 +73,9 @@ modules: ## Compile every module (geocoder, tiles) in MODULES, run as MODULE_KIN
 	  fi; \
 	done
 
-install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the repository's, if they are not) and /var/lib/geko
+install: bin ## Install geko, /etc/geko/geko.toml and geko-geocoder.toml (the samples, if they are not) and /var/lib/geko
 	cmp -s $(BIN) /usr/local/bin/geko || sudo install -m 755 $(BIN) /usr/local/bin/geko
-	[ -f /etc/geko/geko.toml ] || sudo install -D -m 644 geko.toml /etc/geko/geko.toml
+	[ -f /etc/geko/geko.toml ] || sudo install -D -m 644 develop/geko.toml /etc/geko/geko.toml
 	[ -f /etc/geko/geko-geocoder.toml ] || sudo install -D -m 644 modules/geko-geocoder/geko-geocoder.toml /etc/geko/geko-geocoder.toml
 	[ -d /var/lib/geko ] || sudo install -d -o $$(id -un) -g $$(id -gn) /var/lib/geko
 

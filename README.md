@@ -50,7 +50,7 @@ country = "ES"            # ISO 3166-1; one [[scope]] per country (LU…)
 accept_licenses = true    # you accept the licenses of the sources: ODbL (OSM), CDLA (Overture), CC BY (CartoCiudad)
 ```
 
-Every section and option of geko itself is in [geko.toml](geko.toml), at the root of the repository, with its default value and what it does: use it as the reference to configure geko. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
+Every section and option of geko itself is in [Configuration reference](#configuration-reference-gekotoml), below, with its default value and what it does. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
 
 Without a mounted `geko.toml`, the image uses its sample one: Luxembourg, with the licenses not accepted, so it stops right away asking you to accept them. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
 
@@ -68,6 +68,50 @@ The first time, it downloads the data for those countries, builds the indexes an
 **3. Use it.** Each module serves its routes under its name: the geocoder at <http://localhost:8080/geocoder/> (its test page, with a map; `/` leads there), with its API in [its README](modules/geko-geocoder/README.md#usage). Common to all of them: `/health`, `/metrics`, the licenses and attribution of the served data at `/v1/attribution`, and the API of the host and of every active module, browsable with Swagger UI, at `/docs` (the host's, [openapi.yaml](openapi.yaml), also at `/openapi.yaml`).
 
 To update: `docker pull ghcr.io/candymaps/geko`, remove the container and start it again with the same command; the data stays in the volume.
+
+## Configuration reference (`geko.toml`)
+
+Every section and option of geko itself (the host), with its default value unless a comment says otherwise. geko reads `/etc/geko/geko.toml` (or `GEKO_CONFIG`), and each module its `geko-<module>.toml` beside it: the geocoder's options are in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml).
+
+```toml
+# Every module, enabled or not (`true`, `false`, or a table with `enabled` and `config`, the file
+# it reads, by default geko-<module>.toml beside this one). A module linked into geko is used as it
+# is; otherwise geko downloads it into /var/lib/geko/modules: the newest version of the contract it
+# speaks, or the one fixed with `version` (geko plan shows which). `geko serve` uses the version that
+# built the bundle it serves, and downloads it if missing.
+[modules]
+geocoder = true
+tiles    = true                     # still a skeleton: it serves nothing yet
+
+# [modules.geocoder]                # instead of `geocoder = true` above
+# version  = "1.4.2"                # default: the newest of the contract of this geko
+# registry = "ghcr.io/candymaps/geko-geocoder"   # default: ghcr.io/candymaps/geko-<module>
+
+[[scope]]                           # one per country; no default
+country = "ES"                      # ISO 3166-1
+regions = ["ES-PM"]                 # ISO 3166-2, from the regions of the country pack; empty: the whole country
+
+[data]
+refresh            = "if-changed"   # never | if-changed | always
+max_age_days       = 30             # days between two checks of every source (geko build --refresh: now)
+keep_downloads     = false          # true keeps the downloads after publishing (handy in development)
+offline            = false          # never contact the sources; keeps the downloads
+accept_licenses    = false          # required to download: review the licenses listed by geko plan
+parallel_downloads = 4              # downloads at the same time
+
+[build]
+keep = 1                            # published versions kept (2 to be able to roll back)
+
+[serve]
+listen                 = "127.0.0.1:8080"   # in Docker, always 0.0.0.0:8080
+reload_secs            = 30         # check for a new bundle version this often
+cors_origins           = []         # origins a browser page may call the API from ("*": any)
+api_keys               = []         # keys a request must carry (Authorization: Bearer, X-Api-Key or api_key=); empty: open
+rate_limit_per_s       = 0          # requests per second from one client address (0: none)
+rate_limit_burst       = 0          # burst above that rate (0: twice the rate)
+bundles_url            = ""         # HTTP address of bundles published on another machine; each reload pulls only what changed
+attribution_contact    = ""         # where to ask for the code of the derivative database (ODbL 4.6), in /v1/attribution
+```
 
 ## License
 

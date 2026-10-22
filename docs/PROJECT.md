@@ -266,7 +266,7 @@ pub trait TileSource: Send + Sync {
 La configuración está siempre en `/etc/geko/geko.toml`, con la de cada módulo a su lado (`geko-geocoder.toml`, o el fichero que diga `[modules.<módulo>] config`), y los datos siempre en `/var/lib/geko`; ninguna de las dos rutas se cambia desde el fichero ni desde la línea de órdenes. Las variables `GEKO_CONFIG` y `GEKO_DATA` las cambian para las comprobaciones y la CI. `geko build --purge` borra antes de generar las descargas y los ficheros de trabajo de los países, regiones y fuentes que la configuración ya no pide.
 
 ```toml
-# geko.toml (todas las opciones, con sus valores por defecto, en el geko.toml del repositorio)
+# geko.toml (todas las opciones, con sus valores por defecto, en el README, «Configuration reference»)
 
 [modules]
 geocoder = true                 # o una tabla: { enabled = true, config = "geko-geocoder.toml" }
@@ -1053,9 +1053,8 @@ Si las tasas de duplicados superan su objetivo, el build falla. Los ejemplos de 
 ```
 geko/
   Cargo.toml                 # workspace
-  geko.toml                  # configuración de ejemplo del host, con todas las opciones
   openapi.yaml               # rutas del host
-  Dockerfile, docker/        # imagen ghcr.io/candymaps/geko, sin packs
+  Dockerfile, develop/       # imagen ghcr.io/candymaps/geko, sin packs; geko.toml de muestra
   ci/                        # test.sh (comprobaciones), golden-snapshot.sh (datos del golden), packs.sh (publicar packs), oras.sh
   schemas/                   # esquemas de staging (staging/*.md) y del canónico (canonical.md), versionados
   crates/
@@ -1273,7 +1272,7 @@ geko-eval load --url http://127.0.0.1:8080 --cases countries/es/golden/spain-gen
 
 ### 21.1 Con Docker
 
-La imagen, `ghcr.io/candymaps/geko`, lleva el binario y una configuración de ejemplo (`docker/geko.toml`), y ningún pack de país: al generar, `geko` baja los de su ámbito al volumen. Sirve igual para un país que para varios. Se monta la propia en `/etc/geko/geko.toml` (con `accept_licenses = true`; escucha siempre en `0.0.0.0:8080`) y un volumen en `/var/lib/geko`, donde quedan las descargas y los bundles:
+La imagen, `ghcr.io/candymaps/geko`, lleva el binario y una configuración de ejemplo (`develop/geko.toml`), y ningún pack de país: al generar, `geko` baja los de su ámbito al volumen. Sirve igual para un país que para varios. Se monta la propia en `/etc/geko/geko.toml` (con `accept_licenses = true`; escucha siempre en `0.0.0.0:8080`) y un volumen en `/var/lib/geko`, donde quedan las descargas y los bundles:
 
 ```bash
 docker build -t geko .
@@ -1290,15 +1289,15 @@ En Linux y macOS, `make <objetivo>` en la raíz del repositorio. En Windows, `ma
 - `make query Q="gran via 1, madrid"`, `make parse Q="…"` y `make reverse LAT=40.4168 LON=-3.7038`.
 - `make test`, `make test-golden-es`, `make test-golden-lu` y `make test-regression`: las comprobaciones de `ci/test.sh`.
 - `make image`: la imagen de Docker con el binario de la última compilación, sin compilar dentro de Docker. Se niega si el binario pide una glibc más nueva que la de la imagen (2.36), porque no arrancaría.
-- `make dev`: compila el código tal como está en la rama, cambios sin commit incluidos, construye la imagen `geko:dev` y vuelve a crear el contenedor `geko-dev`. Este sirve en `http://localhost:8080` (`DEV_PORT=` lo cambia): la demo en `/` y la API en `/docs`. Usa la configuración de prueba `docker/dev.toml` (Baleares, con `keep_downloads = true`; `DEV_CONFIG=` usa otra) y los packs del repositorio, sin publicar. Sus datos van al volumen `geko-dev-data`, que se conserva entre ejecuciones; `docker volume rm geko-dev-data`, con el contenedor parado, lo borra todo. Desde WSL necesita la integración de Docker Desktop con la distribución (Settings → Resources → WSL integration).
+- `make dev`: compila el código tal como está en la rama, cambios sin commit incluidos, construye la imagen `geko:dev` y vuelve a crear el contenedor `geko-dev`. Este sirve en `http://localhost:8080` (`DEV_PORT=` lo cambia): la demo en `/` y la API en `/docs`. Usa la configuración de muestra de la imagen, `develop/geko.toml` (`DEV_CONFIG=` usa otra) y los packs del repositorio, sin publicar. Sus datos van al volumen `geko-dev-data`, que se conserva entre ejecuciones; `docker volume rm geko-dev-data`, con el contenedor parado, lo borra todo. Desde WSL necesita la integración de Docker Desktop con la distribución (Settings → Resources → WSL integration).
   - Volver a lanzarlo con el código cambiado recompila solo lo que cambió y sustituye el contenedor por uno con la imagen nueva, unos segundos sin servicio. El contenedor nuevo sirve enseguida el bundle que ya había en el volumen, salvo que el cambio altere su formato: entonces responde 503 hasta publicar el nuevo.
-  - En segundo plano rehace solo las etapas cuyo código o entradas cambiaron, sin volver a bajar nada, y recoge el bundle nuevo sin reiniciar. Un cambio de ranking o de búsqueda no rehace ningún dato; uno en el staging de una fuente rehace ese staging y lo que depende de él. Los cambios de los packs y de `docker/dev.toml` también entran, porque van montados.
+  - En segundo plano rehace solo las etapas cuyo código o entradas cambiaron, sin volver a bajar nada, y recoge el bundle nuevo sin reiniciar. Un cambio de ranking o de búsqueda no rehace ningún dato; uno en el staging de una fuente rehace ese staging y lo que depende de él. Los cambios de los packs y de la configuración también entran, porque van montados.
   - Solo toca el contenedor `geko-dev`. El de «Instalación y uso» del README (`geko`) usa el mismo puerto: para tener los dos a la vez, `make dev DEV_PORT=8081`.
 - `make release-packs`: firma los packs de país con `~/.config/geko/pack-signing.key` y sube los que cambiaron a `ghcr.io/candymaps/geko/countries/<país>` (`ci/packs.sh publish`, con `oras`, o con su imagen si no está instalado).
 - **Publicación automática:** el trabajo `publish` de `ci.yml`, tras pasar las comprobaciones en `main`, publica los packs que cambian y, si el push toca algo que entra en ella (no solo documentación o packs), la imagen, etiquetados `<versión>-<commit>` con la versión del `Cargo.toml`. Para sacar una versión basta subirla en `[workspace.package]`: el workflow añade `<versión>` a packs e imagen, `latest` a la imagen y crea la etiqueta de git `v<versión>` en el commit subido, con su release de GitHub. Necesita el secreto `GEKO_PACK_SIGNING_KEY`.
 - `make release`: compila, hace la imagen y la sube a `ghcr.io/candymaps/geko` con tres etiquetas: la versión y el commit (`0.1.0-6fb024c`), la versión y `latest`. Solo con todo en commit, para que la imagen sea la de ese commit, y tras `docker login ghcr.io` con un token con permiso `write:packages`.
 
-Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, con `sudo`): el binario en `/usr/local/bin/geko`, el `geko.toml` del repositorio en `/etc/geko/geko.toml` si aún no hay ninguno, y `/var/lib/geko` a nombre del usuario. El `/etc/geko/geko.toml` es el que se edita (ámbito, `accept_licenses = true`…); el del repositorio se queda con `accept_licenses = false`. El puerto se cambia con `LISTEN=…`.
+Compilan `geko` en `--release` y lo instalan antes de usarlo (`make install`, con `sudo`): el binario en `/usr/local/bin/geko`, el `geko.toml` de muestra (`develop/geko.toml`) en `/etc/geko/geko.toml` si aún no hay ninguno, y `/var/lib/geko` a nombre del usuario. El `/etc/geko/geko.toml` es el que se edita (ámbito, `accept_licenses = true`…); la muestra se queda con `accept_licenses = false`. El puerto se cambia con `LISTEN=…`.
 
 ### 21.3 Prueba local (Islas Baleares), desde PowerShell
 
