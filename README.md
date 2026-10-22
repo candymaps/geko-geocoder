@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://placehold.co/300x100?text=geko" alt="geko">
+  <img height="100" src="https://placehold.co/100x30/transparent/A4CC47?text=Geko&font=raleway" alt="geko">
 </p>
 <h3 align="center">A modular, multi-country geospatial engine that is easy to configure.</h3>
 <p align="center">geko automatically downloads the data for each configured scope and serves it with outstanding efficiency.</p>
