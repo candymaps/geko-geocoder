@@ -1,4 +1,4 @@
-//! The domain of the geocoder: its types and its ports (PROJECT.md §4). What it shares with the
+//! The domain of the geocoder: its types and its ports. What it shares with the
 //! host (errors, country codes, scope, bundle manifest, downloads) comes from the SDK of the
 //! modules and is re-exported here, so that the geocoder names everything from one place.
 

@@ -1,4 +1,4 @@
-//! Staging tables in Parquet (PROJECT.md §5.2). Schemas are explicit so that every
+//! Staging tables in Parquet. Schemas are explicit so that every
 //! partition has exactly the same contract, documented in `schemas/staging/osm.md`.
 
 use std::fs::{self, File};

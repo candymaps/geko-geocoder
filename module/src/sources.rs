@@ -17,7 +17,7 @@ macro_rules! code {
     };
 }
 
-/// The packs of the countries of the scope (PROJECT.md §2.4).
+/// The packs of the countries of the scope.
 pub type Packs = BTreeMap<CountryCode, &'static geko_country_pack::CountryPack>;
 
 /// The packs of the countries of `scope`, read from the folder of the packs.
@@ -29,7 +29,7 @@ pub struct Factory {
     /// Creates the provider from its `[sources.<name>]` section and what the packs of the scope
     /// tell it about their countries.
     pub create: fn(&toml::Table, &Packs) -> Result<Arc<dyn SourceProvider>>,
-    /// Code version of the provider: its staging reruns when it changes (PROJECT.md §8.3).
+    /// Code version of the provider: its staging reruns when it changes.
     pub code: &'static str,
     /// The base of every country (OSM): always used, and `enabled = false` is an error.
     pub required: bool,
@@ -98,7 +98,7 @@ pub fn kinds() -> BTreeMap<&'static str, Kind> {
     kinds
 }
 
-/// The scope with every country split into its fusion partitions (PROJECT.md §6.5.8): the
+/// The scope with every country split into its fusion partitions: the
 /// regions of its pack that contain no other (the provinces of Spain), so that staging and fusion
 /// hold one at a time whatever the size of the country. A country whose pack lists no regions
 /// stays as configured.
@@ -122,7 +122,7 @@ pub fn partitioned(scope: &Scope, packs: &Packs) -> Result<Scope> {
     Ok(out)
 }
 
-/// Text rules of a country, from its pack (PROJECT.md §2.4).
+/// Text rules of a country, from its pack.
 pub fn normalizer(country: CountryCode) -> Result<Box<dyn geko_core::ports::TextNormalizer>> {
     Ok(Box::new(geko_country_pack::get(country)?.normalizer()))
 }

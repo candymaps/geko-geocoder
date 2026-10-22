@@ -1,4 +1,4 @@
-//! Rule-based query parser (PROJECT.md §9.2): turns a query into scored interpretations, with the
+//! Rule-based query parser: turns a query into scored interpretations, with the
 //! words and formats of a country pack. The engine checks each one against the index, so
 //! ambiguity is resolved there; the parser only proposes plausible readings, most likely first.
 

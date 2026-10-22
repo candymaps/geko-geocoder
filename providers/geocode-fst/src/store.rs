@@ -26,7 +26,7 @@ impl Bytes {
         if preload {
             options.populate();
         }
-        // SAFETY: segment files are immutable once written (PROJECT.md §12); nothing truncates
+        // SAFETY: segment files are immutable once written; nothing truncates
         // or rewrites them while mapped.
         let map = unsafe { options.map(&file) }.map_err(|e| GekoError::Data(format!("{}: {e}", path.display())))?;
         Ok(Bytes::Mapped(map))

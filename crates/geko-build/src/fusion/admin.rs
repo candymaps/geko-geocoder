@@ -1,4 +1,4 @@
-//! Administrative assignment by coordinates (PROJECT.md §6.5.4): never by the municipality
+//! Administrative assignment by coordinates: never by the municipality
 //! name a source carries.
 
 use geko_core::model::{AdminLevels, PlaceKind};

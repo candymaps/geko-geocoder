@@ -5,7 +5,7 @@ edition.workspace = true
 publish.workspace = true
 license.workspace = true
 
-# The geocoder module (docs/MODULES_PLAN.md). Its providers are chosen here, by feature.
+# The geocoder module. Its providers are chosen here, by feature.
 [features]
 default = ["source-osm", "source-overture", "source-ogc-features", "geocode-fst", "reverse-rstar"]
 geocode-fst = ["dep:geocode-fst"]

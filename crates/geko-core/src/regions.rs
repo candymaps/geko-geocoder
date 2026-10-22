@@ -1,4 +1,4 @@
-//! The regions of a country, from its pack (PROJECT.md §2.4): the partitions of a build and the
+//! The regions of a country, from its pack: the partitions of a build and the
 //! larger regions that group them.
 
 use std::collections::BTreeMap;

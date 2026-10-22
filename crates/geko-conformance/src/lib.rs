@@ -1,4 +1,4 @@
-//! Conformance suites, one per port (PROJECT.md §2.1 rule 5, §13.5). Every implementation of a
+//! Conformance suites, one per port. Every implementation of a
 //! port runs the suite of its port from its own tests:
 //!
 //! ```ignore

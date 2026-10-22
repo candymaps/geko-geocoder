@@ -38,7 +38,7 @@ code=0 results=0 robustness=0 instructions=0 all_countries=0
 countries=()
 while IFS= read -r file; do
     case $file in
-        *.md | docs/* | develop/* | LICENSE | .github/* | Makefile | make.cmd | ci/affected.sh) continue ;;
+        *.md | develop/* | LICENSE | .github/* | Makefile | make.cmd | ci/affected.sh) continue ;;
     esac
     code=1
     only_quiet "$file" && continue
@@ -49,7 +49,7 @@ while IFS= read -r file; do
             results=1 instructions=1 ;;
         languages/* | Cargo.lock | rust-toolchain.toml | ci/golden.sh | ci/test.sh | crates/geko-eval/* | crates/geko-bench/*)
             results=1 all_countries=1 robustness=1 instructions=1 ;;
-        providers/geocode-fst/* | providers/reverse-rstar/* | providers/text-rules/* | module/* | crates/geko-core/* | crates/geko-geom/*)
+        providers/geocode-fst/* | providers/reverse-rstar/* | providers/text-rules/* | module/* | openapi.yaml | crates/geko-core/* | crates/geko-geom/*)
             results=1 all_countries=1 robustness=1 instructions=1 ;;
         providers/* | crates/geko-build/* | crates/geko-country-pack/*)
             results=1 all_countries=1 ;;

@@ -1,5 +1,5 @@
 //! Download of the packs of the scope from the registry where they are published, by default
-//! `ghcr.io/candymaps/geko/countries/<country>` (PROJECT.md §2.4), with `geko_artifact::registry`.
+//! `ghcr.io/candymaps/geko/countries/<country>`, with `geko_artifact::registry`.
 //! The tag is the format this binary reads (`format-2`), so that each geko gets the newest pack it
 //! understands.
 //!

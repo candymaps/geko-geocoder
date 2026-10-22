@@ -1,4 +1,4 @@
-//! Reference queries (PROJECT.md §13.1), generated from real canonical entities with the
+//! Reference queries, generated from real canonical entities with the
 //! deformations people actually type.
 
 use std::fs::File;
@@ -296,7 +296,7 @@ fn has_english_word(words: &EnglishWords, name: &str) -> bool {
     folded.split(' ').any(|t| english.iter().any(|w| w == t))
 }
 
-/// Reference queries in English (PROJECT.md §13.1), as a visitor types them: street types in
+/// Reference queries in English, as a visitor types them: street types in
 /// English before or after the name, and the English names of places. Last, the entities whose
 /// own name holds an English street word, which reading those words as a type must not lose.
 pub fn english(canonical: &Path, words: &EnglishWords, per_category: usize, seed: u64) -> Result<Vec<Case>> {
@@ -456,7 +456,7 @@ pub fn generate(canonical: &Path, per_category: usize, seed: u64, only_source: O
     Ok(out)
 }
 
-/// Reverse queries (PROJECT.md §13.1) from a point two metres from a real address: the address
+/// Reverse queries from a point two metres from a real address: the address
 /// itself among the addresses, its street among the streets, and its municipality among the
 /// administrative units.
 pub fn reverse(canonical: &Path, per_category: usize, seed: u64) -> Result<Vec<Case>> {

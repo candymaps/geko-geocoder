@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The country packs of this repository, with only what geko reads at run time (PROJECT.md §2.4):
+# The country packs of this repository, with only what geko reads at run time:
 # pack.toml, data/ and the sources/*.toml declarations. The tests, the reference queries and the
 # Rust crates of a pack stay behind.
 #

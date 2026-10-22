@@ -1,4 +1,4 @@
-//! The geocoder as a library that geko loads (docs/MODULES_PLAN.md, `DylibModule`).
+//! The geocoder as a library that geko loads (`DylibModule`).
 
 use geko_module_sdk::Result;
 use geko_module_sdk::module::{Context, Module};

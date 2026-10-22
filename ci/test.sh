@@ -30,7 +30,7 @@
 # any query set of the country pack (countries/<country>/golden/) is worse than its baseline
 # (golden/baseline/). Its data are the frozen downloads named in golden/snapshot, so that only a
 # change in the code can change the results: the baseline is measured on them. Without a
-# snapshot, or with GEKO_GOLDEN_FRESH=1, it downloads the sources (PROJECT.md §7, accepting
+# snapshot, or with GEKO_GOLDEN_FRESH=1, it downloads the sources (accepting
 # their licenses) instead; CartoCiudad is a public service, so do that on a schedule or by hand.
 # A snapshot not in $GEKO_GOLDEN_DIR/snapshots is pulled from
 # ghcr.io/candymaps/geko/countries/<country>/golden:<snapshot>, a private package that the CI reads
@@ -108,7 +108,7 @@ architecture() {
     local failed=0
     only "geko-core depends on" "geko-module-sdk serde serde_json" "$(direct_dependencies geko-core)" || failed=1
     # The host (candymaps/geko) is only the binary of the checks, geko-host: the geocoder speaks to
-    # it through the contract of the SDK alone (docs/MODULES_PLAN.md).
+    # it through the contract of the SDK alone.
     only "geko-app is used by" "geko-host" "$(direct_dependents geko-app)" || failed=1
     only "geko-host depends on" "anyhow geko-app geko-module-geocoder geko-module-sdk mimalloc" "$(direct_dependencies geko-host)" || failed=1
     only "fst is used by" "geocode-fst" "$(direct_dependents fst)" || failed=1
@@ -153,9 +153,9 @@ snapshot_age() {
     [ -n "$day" ] || return 0
     age=$((($(date -u +%s) - $(date -u -d "$day" +%s)) / 86400))
     [ "$age" -gt "$max" ] || return 0
-    echo "warning: the snapshot of $country is $age days old ($file): renew it (docs/PROJECT.md §20.1)" >&2
+    echo "warning: the snapshot of $country is $age days old ($file): renew it" >&2
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
-        echo "::warning::the snapshot of $country is $age days old: renew it (docs/PROJECT.md §20.1)"
+        echo "::warning::the snapshot of $country is $age days old: renew it"
     fi
 }
 
@@ -220,7 +220,7 @@ base_binaries() {
 }
 
 # The layout of the configuration that the binaries of `commit` read: `modules` (the geocoder
-# behind the host, docs/MODULES_PLAN.md, with its own file and its routes under /geocoder) or
+# behind the host, with its own file and its routes under /geocoder) or
 # `legacy` (before them: everything in geko.toml, the routes at the root).
 config_format() {
     if git cat-file -e "$1:module/Cargo.toml" 2> /dev/null || git cat-file -e "$1:modules/geko-geocoder/Cargo.toml" 2> /dev/null; then
@@ -333,7 +333,7 @@ build_digest() {
 }
 
 # A second build of the same inputs must reuse every stage, and a forced one must write the same
-# bytes (PROJECT.md §8.3): the incremental cut depends on both.
+# bytes: the incremental cut depends on both.
 determinism() {
     local bin=$1 dir=$2 failed=0 out
     build_digest "$dir" > "$dir/reports/digest-before.txt"
@@ -454,9 +454,9 @@ golden() {
     return $failed
 }
 
-# geko against an instance of Pelias (PROJECT.md §13.2) on the golden regions, with
+# geko against an instance of Pelias on the golden regions, with
 # the queries of entities that Pelias has too: geko must not be worse in any category, and must
-# lead by 10 points in all (PROJECT.md §1.1). Pelias is a shared service: its answers are asked
+# lead by 10 points in all. Pelias is a shared service: its answers are asked
 # with a pause between requests and kept for GEKO_PELIAS_MAX_AGE_DAYS (default 30), since its
 # data change little. Environment: GEKO_PELIAS_URL, the address of the instance of Pelias
 # (required), with the OSM data of the golden regions.
@@ -615,8 +615,8 @@ golden_base_bundle() {
 #   GEKO_SPAIN_LOADED_TOLERANCE  allowed drop of the hit rate under load, in percentage points
 #                          (default 1): under load, the time budget cuts wherever the machine is
 #                          slowest, which varies between runs
-#   GEKO_REFERENCE_MACHINE=1  also check the latency and throughput objectives of PROJECT.md
-#                          §1.1, only meaningful on the reference hardware
+#   GEKO_REFERENCE_MACHINE=1  also check the latency and throughput objectives, only meaningful
+#                          on the reference hardware
 spain() {
     local dir="${GEKO_SPAIN_DIR:-/var/lib/geko}" port="${GEKO_SPAIN_PORT:-18081}" base_port
     local golden=countries/es/golden baseline reports offline=true
@@ -639,8 +639,8 @@ spain() {
     base_format=$(config_format "$base")
     spain_config "$dir/check-spain.toml" "$dir" "$port" "$offline" modules
     spain_config "$dir/check-spain-base.toml" "$dir" "$port" "$offline" "$base_format"
-    # On 8 cores or more, the servers run on the first 4, as the reference hardware (PROJECT.md
-    # §1.1), and the client on the others.
+    # On 8 cores or more, the servers run on the first 4, as the reference hardware, and the
+    # client on the others.
     local pin_server="" pin_client=""
     if [ "$(nproc)" -ge 8 ]; then
         pin_server="taskset -c 0-3" pin_client="taskset -c 4-$(($(nproc) - 1))"
@@ -759,8 +759,7 @@ data_hashes() {
 }
 
 # The load of the geocoder linked into geko against the same geocoder as a library, in turns, on
-# the new bundle: what crossing the library costs. Only shown, never failed (docs/MODULES_PLAN.md,
-# step 2).
+# the new bundle: what crossing the library costs. Only shown, never failed (# step 2).
 spain_adapters() {
     local bin=$1 dir=$2 port=$3 reports=$4 pin_server=$5 pin_client=$6 golden=countries/es/golden
     local modules="$AB_DIR/adapters" kind server opened_ms linked route cases

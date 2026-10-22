@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The module of this repository as the package geko downloads (docs/MODULES_PLAN.md): module/, with
+# The module of this repository as the package geko downloads: module/, with
 # its library (the crate geko-module-<module>-dylib) compiled in release, and its module.toml
 # completed (version, contract, platform) and signed.
 #

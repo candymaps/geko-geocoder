@@ -1,4 +1,4 @@
-//! Overture Maps places as POIs, for any country (PROJECT.md §7, sources table).
+//! Overture Maps places as POIs, for any country (sources table).
 //!
 //! The places of a release are a few world files sorted by place. Of each, only the footer and
 //! the row groups whose box meets a partition of the scope are downloaded, into a sparse local

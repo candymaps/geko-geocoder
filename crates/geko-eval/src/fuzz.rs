@@ -1,5 +1,5 @@
 //! Random and mutated requests against a running server: any 5xx or dropped connection is a
-//! bug, and the slowest queries are the candidates for the latency work (PROJECT.md §11).
+//! bug, and the slowest queries are the candidates for the latency work.
 
 use std::time::{Duration, Instant};
 

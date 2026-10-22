@@ -1,7 +1,7 @@
 //! Words that are the same in the languages of a country ("major" and "mayor", "sant" and "san"),
 //! learned from the entities named in several of them (`name:ca`, `name:es`…) when the segment
 //! is built. A query that finds nothing in the place it names is retried translated word by word,
-//! so a query in one language finds names written only in another (PROJECT.md §6.5.1). The index
+//! so a query in one language finds names written only in another. The index
 //! stays literal: indexing the equivalents too made the lists of common words ("sant" with every
 //! "san") so long that the right street fell out of the candidates.
 //!

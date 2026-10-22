@@ -27,6 +27,6 @@ preload                = true       # load the hot index files into RAM at start
 search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
 autocomplete_budget_ms = 5          # and of an autocomplete request
 slow_query_ms          = 50         # requests slower than this are logged with their query (0: none)
-same_entity_m          = 100        # results with the same name closer than this are merged (PROJECT.md 6.5.6)
+same_entity_m          = 100        # results with the same name closer than this are merged
 batch_max              = 100        # most requests in one /geocoder/v1/batch
 cache_entries          = 50000      # default 0 (none); search and autocomplete answers kept for repeated queries, about 2.5 KB each

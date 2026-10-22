@@ -1,4 +1,4 @@
-//! The hot paths of the engine (PROJECT.md §13.3) over the reference queries of a bundle, for
+//! The hot paths of the engine over the reference queries of a bundle, for
 //! `ci/test.sh bench`: each path runs in its own `bench_*` function, so that callgrind counts
 //! the instructions of that function alone (`--toggle-collect=*bench_search*`). Instructions,
 //! unlike time, are the same from one run to the next and from one machine to another, so they
