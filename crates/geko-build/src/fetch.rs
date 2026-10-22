@@ -46,7 +46,10 @@ pub fn fetch_all(
     std::thread::scope(|threads| {
         for _ in 0..parallelism.clamp(1, selected.len().max(1)) {
             threads.spawn(|| {
-                while let Some(source) = queue.lock().unwrap().pop() {
+                loop {
+                    // Apart: in the `while let`, the lock would last the whole download, one source at a time.
+                    let next = queue.lock().unwrap().pop();
+                    let Some(source) = next else { break };
                     let id = source.provider.id();
                     let raw = raw_dir(data_dir, &id);
                     let result = std::fs::create_dir_all(&raw.path)
