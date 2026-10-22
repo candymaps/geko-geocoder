@@ -15,6 +15,7 @@ use geko_core::segment::{Meta, Segment};
 use geko_core::{GekoError, Result};
 use geko_fetch::{HttpDownloader, HttpDownloaderConfig, RefreshPolicy};
 use geko_module_sdk::module::{BundlePart, Built, DataPolicy, Refresh};
+use geko_module_sdk::progress;
 use geko_module_sdk::stages::StageLog;
 
 use crate::config::Config;
@@ -42,10 +43,10 @@ pub fn prepare(setup: &Setup, registry: &BTreeMap<&'static str, Factory>) -> Res
     if scope.is_empty() {
         return Err(GekoError::Config("the scope is empty: add at least one [[scope]] entry".into()));
     }
-    let packs = sources::packs(&scope)?;
     if registry.is_empty() {
         return Err(GekoError::Config("this geocoder was built without any source (its features source-*, on by default): it could build nothing".into()));
     }
+    let packs = sources::packs(&scope)?;
     let scope = sources::partitioned(&scope, &packs)?;
     let sources::Instantiated { enabled, mut skipped, codes } = sources::instantiate(&setup.config, registry, &packs)?;
     let selection = select_sources(&scope, enabled);
@@ -383,7 +384,10 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
     }
     let (mut meta, mut parts) = (Meta::default(), Vec::new());
     let (geocode_format, reverse_format) = crate::sources::index_formats();
-    for country in prepared.scope.countries() {
+    let countries = prepared.scope.countries().count() as f32;
+    for (k, country) in prepared.scope.countries().enumerate() {
+        // Each country takes an equal share of what is left after downloading and staging.
+        let share = |from: f32, to: f32| (0.55 + 0.45 * (k as f32 + from) / countries, 0.55 + 0.45 * (k as f32 + to) / countries);
         let dir = format!("segments/{}", country.lowercase());
         let segment = Segment { country: country.to_string(), dir: dir.clone(), geocode: geocode_format.clone(), reverse: reverse_format.clone() };
         meta.segments.push(segment);
@@ -400,6 +404,8 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
             admin_levels: &admin_levels,
             thresholds: &thresholds,
         };
+        let (from, to) = share(0.0, 0.05);
+        progress::step(format!("relocating {country}"), from, to);
         let (relocated, relocated_reused) = geko_build::fusion::relocate::relocate_incremental(
             &setup.data_dir,
             country,
@@ -418,6 +424,9 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         )
         .unwrap();
         log.done(format!("relocate {country}"), relocated_reused);
+        let (from, to) = share(0.05, 0.5);
+        progress::step(format!("fusing {country}"), from, to);
+        progress::expect(partitions.len() as u64);
         let started = std::time::Instant::now();
         let mut reports = Vec::new();
         let mut reused = 0;
@@ -440,6 +449,7 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
                 reused = was_reused,
                 "partition fused"
             );
+            progress::advance(1);
             reused += usize::from(was_reused);
             reports.push(report);
         }
@@ -453,6 +463,8 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         }
         let worst = |rate: fn(&geko_build::fusion::FusionReport) -> f64| reports.iter().map(rate).fold(0.0, f64::max);
         let (address_dups, street_dups) = (worst(|r| r.metrics.address_duplicate_rate), worst(|r| r.metrics.street_duplicate_rate));
+        let (from, to) = share(0.5, 0.6);
+        progress::step(format!("merging {country}"), from, to);
         let (report, merge_reused) =
             geko_build::fusion::merge::merge_incremental(&setup.data_dir, country, &partitions, reports, sources::FUSION_CODE, force)?;
         let e = &report.entities;
@@ -476,6 +488,8 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         let canonical = geko_build::fusion::merge::country_dir(&setup.data_dir, country);
         let canonical_digest = incremental::output_of(&canonical, geko_build::fusion::merge::NOT_CANONICAL)?;
         let started = std::time::Instant::now();
+        let (from, to) = share(0.6, 0.9);
+        progress::step(format!("indexing {country}"), from, to);
         let key = Key::new("geocode")
             .add("code", &format!("{} {}", sources::geocode_code(), sources::normalizer_code(country)?))
             .add("canonical", &canonical_digest)
@@ -500,6 +514,8 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         .unwrap();
         log.done(format!("index {country}"), reused);
         let started = std::time::Instant::now();
+        let (from, to) = share(0.9, 1.0);
+        progress::step(format!("reverse index of {country}"), from, to);
         let key = Key::new("reverse").add("code", sources::reverse_code()).add("canonical", &canonical_digest).finish();
         let (info, reused) = segment_stage(&segment_dir(&setup.data_dir, country).join("reverse"), key, force, |dir| {
             Ok(serde_json::json!({ "points": crate::sources::build_reverse(&canonical, country, dir)? }))
@@ -575,9 +591,11 @@ fn fresh_dir(dir: &std::path::Path) -> Result<std::path::PathBuf> {
 }
 
 fn stage(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: bool) -> Result<String> {
+    progress::step_in_bytes("downloading", 0.0, 0.35);
     let (mut out, identities) = fetched(setup, prepared, dl)?;
     let mut failed = Vec::new();
     let code = |id: &geko_core::model::SourceId| prepared.codes.get(&id.0).cloned().unwrap_or_default();
+    progress::step("staging", 0.35, 0.55);
     let restore = restorer(setup);
     let staged = stage_all(&prepared.selected, &prepared.scope, &setup.data_dir, &code, force, &identities, &restore);
     for (id, partition, result) in staged {
@@ -683,6 +701,12 @@ mod tests {
     }
 
     #[test]
+    fn a_geocoder_without_sources_is_an_error() {
+        let err = prepare(&setup(DataPolicy::default()), &BTreeMap::new()).err().unwrap();
+        assert!(err.to_string().contains("without any source"), "{err}");
+    }
+
+    #[test]
     fn plan_lists_sources_datasets_and_license_warning() {
         let setup = setup(DataPolicy::default());
         let prepared = prepare(&setup, &registry()).unwrap();
@@ -699,12 +723,6 @@ mod tests {
         let prepared = prepare(&setup_, &registry()).unwrap();
         let err = fetch(&setup_, &prepared, &NoNetwork).unwrap_err();
         assert!(err.to_string().contains("fake (Fake License)"), "{err}");
-
-    #[test]
-    fn a_geocoder_without_sources_is_an_error() {
-        let err = prepare(&setup(DataPolicy::default()), &BTreeMap::new()).err().unwrap();
-        assert!(err.to_string().contains("without any source"), "{err}");
-    }
 
         let accepted = setup(DataPolicy { accept_licenses: true, ..DataPolicy::default() });
         let prepared = prepare(&accepted, &registry()).unwrap();

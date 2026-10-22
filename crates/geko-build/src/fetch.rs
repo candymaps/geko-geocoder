@@ -140,6 +140,7 @@ pub fn stage_all(
         if stale.is_empty() {
             continue;
         }
+        geko_module_sdk::progress::expect(stale.len() as u64);
         let restored = restore_scope(scope, &stale).and_then(|sub| provider.fetch(&sub, restore, &raw));
         let restored = match restored {
             Ok(report) => report,
@@ -160,6 +161,7 @@ pub fn stage_all(
             let out = staging_dir(data_dir, &id, &partition);
             let result = key(&partition, &current).and_then(|key| stage_one(provider, &partition, &raw, &out, key, &code));
             results.push((id.clone(), partition, result));
+            geko_module_sdk::progress::advance(1);
         }
     }
     results
