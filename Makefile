@@ -26,7 +26,8 @@ IMAGE    ?= geko
 # Where `make release` publishes the image, and the tags it gives it: the version of geko and the
 # commit, besides `latest`.
 REGISTRY ?= ghcr.io/candymaps/geko
-VERSION  := $(shell sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+# Without the CR of a checkout made on Windows.
+VERSION  := $(shell tr -d '\r' < Cargo.toml | sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p')
 # The commit, read from .git where git is not installed (WSL compiles a checkout made on Windows).
 COMMIT   := $(shell git rev-parse --short HEAD 2>/dev/null || { \
               r=$$(sed -n 's|^ref: ||p' .git/HEAD 2>/dev/null); \
@@ -47,11 +48,15 @@ need=$$(grep -aoE 'GLIBC_[0-9]+\.[0-9]+' $(1) | sed 's/GLIBC_//' | sort -Vu | ta
   echo "Build it on an older system, with Zig (AGENTS.md), or let docker build compile it: docker build -t $(IMAGE) ." >&2; exit 1; };
 endef
 
-# `make dev`: the container, its port, its configuration and its volume.
-DEV_PORT   ?= 8080
-DEV_CONFIG ?= develop/geko.toml
+# `make start-dev` (develop/compose.yaml): its port, its configuration and the modules it builds, by
+# default those enabled with `<module> = true` in the [modules] of that configuration.
+DEV_PORT    ?= 8080
+DEV_CONFIG  ?= develop/geko.toml
+DEV_MODULES ?= $(shell awk '/^\[/ { on = ($$1 == "[modules]") } on && $$2 == "=" && $$3 == "true" { print $$1 }' $(DEV_CONFIG) | paste -sd, -)
+DEV_COMPOSE := GEKO_DEV_CONFIG="$(abspath $(DEV_CONFIG))" GEKO_DEV_PORT=$(DEV_PORT) GEKO_DEV_MODULES=$(DEV_MODULES) \
+               GEKO_DEV_VERSION=$(VERSION)-$(COMMIT)$(DIRTY) docker compose -f develop/compose.yaml
 
-.PHONY: help bin modules install serve up data query parse reverse image dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
+.PHONY: help bin modules install serve up data query parse reverse image start-dev stop-dev release release-packs test test-golden-es test-golden-lu test-regression golden-snapshot golden-snapshot-local
 
 help: ## This list
 	@grep -E "^[a-z-]+:.*## " $(MAKEFILE_LIST) | awk -F ":.*## " '{ printf "  make %-10s %s\n", $$1, $$2 }'
@@ -104,15 +109,15 @@ image: ## Docker image IMAGE with geko alone, from a local release build (docker
 	cp $(HOST_BIN) $(CARGO_TARGET_DIR)/image/geko
 	BUILDX_GIT_INFO=false docker build --build-context binary=$(CARGO_TARGET_DIR)/image --build-arg VERSION=$(VERSION) --build-arg REVISION=$(COMMIT)$(DIRTY) -t $(IMAGE) .
 
-dev: modules ## Compile the working tree and (re)create the container geko-dev with DEV_CONFIG, the modules and the packs of the repository
-	@$(foreach m,$(MODULE_NAMES),$(call glibc,$(MODULES)/$(m)/geko-$(m)))
-	$(MAKE) image IMAGE=geko:dev
-	docker rm -f geko-dev > /dev/null 2>&1 || true
-	docker run -d --name geko-dev -p $(DEV_PORT):8080 -v geko-dev-data:/var/lib/geko \
-	  -v "$(abspath $(DEV_CONFIG))":/etc/geko/geko.toml:ro -v "$(CURDIR)/countries":/packs:ro -e GEKO_PACKS=/packs \
-	  -v "$(MODULES)":/modules:ro -e GEKO_MODULES=/modules geko:dev
-	@echo "geko-dev builds, then serves http://localhost:$(DEV_PORT)/geocoder/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
-	docker logs -f geko-dev
+start-dev: ## Build geko and DEV_MODULES of the working tree inside Docker and (re)create the container of develop/compose.yaml with DEV_CONFIG and the packs of the repository
+	@[ -n "$(DEV_MODULES)" ] || { echo "no module enabled in $(DEV_CONFIG): DEV_MODULES=geocoder,…" >&2; exit 1; }
+	@docker rm -f geko-dev > /dev/null 2>&1 || true
+	$(DEV_COMPOSE) up -d --build
+	@echo "geko-dev ($(DEV_MODULES)) builds, then serves http://localhost:$(DEV_PORT)/geocoder/ (demo) and /docs (API). Its log follows; Ctrl-C leaves it running."
+	$(DEV_COMPOSE) logs -f
+
+stop-dev: ## Stop the container of make start-dev, keeping its volume (geko-dev_data)
+	$(DEV_COMPOSE) down
 
 release: ## Compile, make the image and push it to REGISTRY (needs a clean tree and docker login ghcr.io)
 	@git diff --quiet HEAD || { echo "uncommitted changes: the image would not be that of $(COMMIT)" >&2; exit 1; }
