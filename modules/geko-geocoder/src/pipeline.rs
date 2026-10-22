@@ -43,6 +43,9 @@ pub fn prepare(setup: &Setup, registry: &BTreeMap<&'static str, Factory>) -> Res
         return Err(GekoError::Config("the scope is empty: add at least one [[scope]] entry".into()));
     }
     let packs = sources::packs(&scope)?;
+    if registry.is_empty() {
+        return Err(GekoError::Config("this geocoder was built without any source (its features source-*, on by default): it could build nothing".into()));
+    }
     let scope = sources::partitioned(&scope, &packs)?;
     let sources::Instantiated { enabled, mut skipped, codes } = sources::instantiate(&setup.config, registry, &packs)?;
     let selection = select_sources(&scope, enabled);
@@ -696,6 +699,12 @@ mod tests {
         let prepared = prepare(&setup_, &registry()).unwrap();
         let err = fetch(&setup_, &prepared, &NoNetwork).unwrap_err();
         assert!(err.to_string().contains("fake (Fake License)"), "{err}");
+
+    #[test]
+    fn a_geocoder_without_sources_is_an_error() {
+        let err = prepare(&setup(DataPolicy::default()), &BTreeMap::new()).err().unwrap();
+        assert!(err.to_string().contains("without any source"), "{err}");
+    }
 
         let accepted = setup(DataPolicy { accept_licenses: true, ..DataPolicy::default() });
         let prepared = prepare(&accepted, &registry()).unwrap();
