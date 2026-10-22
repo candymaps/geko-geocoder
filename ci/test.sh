@@ -223,7 +223,11 @@ base_binaries() {
 # behind the host, docs/MODULES_PLAN.md, with its own file and its routes under /geocoder) or
 # `legacy` (before them: everything in geko.toml, the routes at the root).
 config_format() {
-    if git cat-file -e "$1:modules/geko-geocoder/Cargo.toml" 2> /dev/null; then echo modules; else echo legacy; fi
+    if git cat-file -e "$1:module/Cargo.toml" 2> /dev/null || git cat-file -e "$1:modules/geko-geocoder/Cargo.toml" 2> /dev/null; then
+        echo modules
+    else
+        echo legacy
+    fi
 }
 
 # Where the geocoder of a server on `port` answers, in the layout `format`.
@@ -762,7 +766,7 @@ spain_adapters() {
     local modules="$AB_DIR/adapters" kind server opened_ms linked route cases
     cargo build --release --locked -p geko-module-geocoder-dylib
     mkdir -p "$modules/dylib/geocoder"
-    cp "$bin/libgeko_geocoder.so" modules/geko-geocoder/module.toml "$modules/dylib/geocoder/"
+    cp "$bin/libgeko_geocoder.so" module/module.toml "$modules/dylib/geocoder/"
     # shellcheck disable=SC2086
     serve "$bin" "$dir/check-spain.toml" "$dir/check-serve.log" "$port" $pin_server
     linked=$server

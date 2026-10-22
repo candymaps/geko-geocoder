@@ -89,7 +89,7 @@ struct Shared {
 }
 
 /// The method of making the fused database, offered under ODbL 4.6 to whoever gets results.
-const FUSION_METHOD: &str = include_str!("../../../docs/FUSION_METHOD.md");
+const FUSION_METHOD: &str = include_str!("../../docs/FUSION_METHOD.md");
 /// The reference of the API of the geocoder, which the host lists at `/docs`.
 pub const OPENAPI: &str = include_str!("../openapi.yaml");
 const GEOJSON: &str = "application/geo+json; charset=utf-8";

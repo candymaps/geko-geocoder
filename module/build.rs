@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use sha2::{Digest, Sha256};
 
 fn main() {
-    let root = Path::new(&std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("../..").canonicalize().unwrap();
+    let root = Path::new(&std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("..").canonicalize().unwrap();
     let manifest = |dir: &Path| -> toml::Table { fs::read_to_string(dir.join("Cargo.toml")).unwrap().parse().unwrap() };
 
     // Workspace crates by name, with the workspace crates each one depends on. A path dependency

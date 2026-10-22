@@ -304,7 +304,7 @@ attribution_contact    = ""     # dónde pedir el código de la base derivada (O
 Las opciones del geocoder van en su fichero; si alguna sigue en `geko.toml`, el arranque falla diciendo que se mueva:
 
 ```toml
-# geko-geocoder.toml (todas, con sus valores por defecto, en modules/geko-geocoder/geko-geocoder.toml)
+# geko-geocoder.toml (todas, con sus valores por defecto, en develop/geko-geocoder.toml)
 
 # Fuentes: las compiladas y las que declaran los packs del ámbito se usan si cubren algún país
 # del ámbito; sus apartados son opcionales y solo cambian opciones o las desactivan. OSM es
@@ -792,7 +792,7 @@ Cada parte va en ficheros separados del segmento, para poder tratarlas distinto.
 
 ## 10. API
 
-La referencia de las rutas ya implementadas (parámetros, respuestas y errores) está en dos ficheros: las del host en [openapi.yaml](../openapi.yaml), en la raíz del repositorio, servida en `/openapi.yaml`, y las del geocoder en [modules/geko-geocoder/openapi.yaml](../modules/geko-geocoder/openapi.yaml), servida en `/geocoder/openapi.yaml`. `/docs` (Swagger UI) las muestra todas.
+La referencia de las rutas ya implementadas (parámetros, respuestas y errores) está en dos ficheros: las del host en [openapi.yaml](../openapi.yaml), en la raíz del repositorio, servida en `/openapi.yaml`, y las del geocoder en [module/openapi.yaml](../module/openapi.yaml), servida en `/geocoder/openapi.yaml`. `/docs` (Swagger UI) las muestra todas.
 
 Cada módulo sirve sus rutas bajo su nombre (`/geocoder/…`, `/tiles/…`; docs/MODULES_PLAN.md): dos módulos no pueden pisarse. `/` es la página de demostración del host: un mapa con lo que ofrecen los módulos activos (el buscador del geocodificador, por su API).
 
@@ -1069,9 +1069,9 @@ geko/
     geko-eval/               # consultas de referencia, comparación con Pelias, comprobaciones
     geko-bench/              # instrucciones de las piezas calientes (callgrind)
     geko-app/                # el host: binario, CLI, configuración, módulos enlazados, publicación del bundle
-  modules/
-    geko-geocoder/           # módulo geocoder (crate geko-module-geocoder, feature `geocoder`): fuentes, generación,
-                             # servicio, órdenes; README.md, geko-geocoder.toml (su configuración de ejemplo) y openapi.yaml
+  module/                    # el módulo geocoder (crate geko-module-geocoder): fuentes, generación, servicio,
+                             # órdenes; README.md, module.toml (su paquete), openapi.yaml y dylib/ (la biblioteca que carga geko)
+  develop/geko-geocoder.toml # su configuración de ejemplo, con todas las opciones
   providers/                 # genéricos, válidos para cualquier país
     source-osm/  source-overture/  source-ogc-features/
     text-rules/              # normalizador y analizador de reglas, que leen los datos del pack
@@ -1182,7 +1182,7 @@ Hecho tras la fase 1 (el detalle, en `git show 8679454:docs/BACKLOG.md`; lo pend
 
 - **Packs de país como datos:** leídos al arrancar, firmados y publicados en ghcr.io; `geko` baja los de su ámbito, y la imagen de Docker sirve para cualquier combinación de países sin llevar ninguno (§2.4).
 - **Segundo país:** Luxemburgo, con su pack (`countries/lu/`) y su golden, sin tocar el motor salvo arreglos genéricos ([countries/README.md](../countries/README.md)).
-- **Host y módulos** (2026-10-21/22, [MODULES_PLAN.md](MODULES_PLAN.md), pasos 1–5): el host (`geko-app`, `geko-server`) solo conoce los módulos por el contrato de `geko-module-sdk`. El geocoder vive en `modules/geko-geocoder/`, con su configuración (`geko-geocoder.toml`) y sus rutas bajo `/geocoder/`; `tiles`, en `modules/geko-tiles/`, aún un esqueleto. Cada módulo corre enlazado o como biblioteca cargada en el proceso de geko (`GEKO_MODULES`, o bajada firmada de ghcr.io); la imagen publicada no lleva ninguno. Con España (2026-10-22), el canonical y el bundle salen idénticos a los de antes de los módulos; como proceso propio se perdía del 19 al 55 % de caudal con 16 a la vez, y como biblioteca, nada fuera del ruido, así que `ProcessModule` se quitó (2026-10-23). Se quitaron los modos compatibles con Pelias y Photon.
+- **Host y módulos** (2026-10-21/22, [MODULES_PLAN.md](MODULES_PLAN.md), pasos 1–5): el host (`geko-app`, `geko-server`) solo conoce los módulos por el contrato de `geko-module-sdk`. El geocoder vive en `module/`, con su configuración (`geko-geocoder.toml`) y sus rutas bajo `/geocoder/`; `tiles`, en `modules/geko-tiles/`, aún un esqueleto. Cada módulo corre enlazado o como biblioteca cargada en el proceso de geko (`GEKO_MODULES`, o bajada firmada de ghcr.io); la imagen publicada no lleva ninguno. Con España (2026-10-22), el canonical y el bundle salen idénticos a los de antes de los módulos; como proceso propio se perdía del 19 al 55 % de caudal con 16 a la vez, y como biblioteca, nada fuera del ruido, así que `ProcessModule` se quitó (2026-10-23). Se quitaron los modos compatibles con Pelias y Photon.
 - **Servicio:** página de demostración en `/` (del host), `geko up` (generar y servir), `lang`, CORS, claves de API y límite de peticiones; red de seguridad contra duplicados con su contador en `/metrics`.
 - Las últimas medidas completas, del 2026-10-18, en [docs/2026-10-18_ANALYSIS_RESULTS.md](2026-10-18_ANALYSIS_RESULTS.md).
 

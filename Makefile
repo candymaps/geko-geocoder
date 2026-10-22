@@ -45,13 +45,13 @@ modules: ## Compile the geocoder, as the library geko loads, in MODULES: GEKO_MO
 	cargo build --release $(foreach m,$(MODULE_NAMES),-p geko-module-$(m)-dylib)
 	@for m in $(MODULE_NAMES); do \
 	  install -D -m 755 $(CARGO_TARGET_DIR)/release/libgeko_$$m.so $(MODULES)/$$m/libgeko_$$m.so; \
-	  install -m 644 modules/geko-$$m/module.toml $(MODULES)/$$m/module.toml; \
+	  install -m 644 module/module.toml $(MODULES)/$$m/module.toml; \
 	done
 
 install: bin ## Install geko, /etc/geko/geko.toml (that of HOST) and geko-geocoder.toml (the samples, if they are not) and /var/lib/geko
 	cmp -s $(BIN) /usr/local/bin/geko || sudo install -m 755 $(BIN) /usr/local/bin/geko
 	[ -f /etc/geko/geko.toml ] || sudo install -D -m 644 $(HOST)/develop/geko.toml /etc/geko/geko.toml
-	[ -f /etc/geko/geko-geocoder.toml ] || sudo install -D -m 644 modules/geko-geocoder/geko-geocoder.toml /etc/geko/geko-geocoder.toml
+	[ -f /etc/geko/geko-geocoder.toml ] || sudo install -D -m 644 develop/geko-geocoder.toml /etc/geko/geko-geocoder.toml
 	[ -d /var/lib/geko ] || sudo install -d -o $$(id -un) -g $$(id -gn) /var/lib/geko
 
 serve: install ## Serve the published bundle on LISTEN (the demo page is at /)

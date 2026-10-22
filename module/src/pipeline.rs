@@ -683,7 +683,7 @@ mod tests {
     }
 
     fn setup(data: DataPolicy) -> Setup {
-        geko_country_pack::init(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../countries"));
+        geko_country_pack::init(Path::new(env!("CARGO_MANIFEST_DIR")).join("../countries"));
         // The source that the pack of Spain declares is not what these tests are about.
         let config = Config::parse("[sources.fake]\n\n[sources.cartociudad]\nenabled = false\n", "").unwrap();
         let mut scope = Scope::default();

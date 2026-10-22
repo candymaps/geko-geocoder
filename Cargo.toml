@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "modules/*", "modules/geko-geocoder/dylib", "providers/*", "countries/*"]
+members = ["crates/*", "module", "module/dylib", "providers/*", "countries/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -30,7 +30,7 @@ geko-eval = { path = "crates/geko-eval" }
 geko-conformance = { path = "crates/geko-conformance" }
 reverse-rstar = { path = "providers/reverse-rstar" }
 source-ogc-features = { path = "providers/source-ogc-features" }
-geko-module-geocoder = { path = "modules/geko-geocoder" }
+geko-module-geocoder = { path = "module" }
 
 anyhow = "1"
 axum = "0.8"

@@ -1,6 +1,6 @@
 # geko-geocoder
 
-The geocoding module of [geko](../../README.md): it turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse). It downloads its sources and the country packs of the scope, merges them into one entity per street, address or place, builds an index per country and serves it under `/geocoder/`.
+The geocoding module of [geko](../README.md): it turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse). It downloads its sources and the country packs of the scope, merges them into one entity per street, address or place, builds an index per country and serves it under `/geocoder/`.
 
 ## Configuration: `geko-geocoder.toml`
 
@@ -30,7 +30,7 @@ autocomplete_budget_ms = 5          # and of an autocomplete request
 cache_entries          = 0          # answers kept for repeated queries, about 2.5 KB each (0: none)
 ```
 
-Every section and option of the geocoder is in [geko-geocoder.toml](geko-geocoder.toml), in this folder, with its default value and what it does: use it as the reference to configure the geocoder. An unknown option is an error that names the file and the key, and an option that used to be in `geko.toml` and is now here (`[sources.*]`, `[packs]`, `[serve] search_budget_ms`…) stops geko at startup, saying to move it here. Options that change what is built (those of the sources) are part of the stamps of the build stages: changing one rebuilds only what it affects.
+Every section and option of the geocoder is in [develop/geko-geocoder.toml](../develop/geko-geocoder.toml), with its default value and what it does: use it as the reference to configure the geocoder. An unknown option is an error that names the file and the key, and an option that used to be in `geko.toml` and is now here (`[sources.*]`, `[packs]`, `[serve] search_budget_ms`…) stops geko at startup, saying to move it here. Options that change what is built (those of the sources) are part of the stamps of the build stages: changing one rebuilds only what it affects.
 
 In Docker, mount it beside `geko.toml`:
 
@@ -55,9 +55,9 @@ Debugging commands, on the last bundle built: `geko geocoder parse "<query>"` (t
 
 ## Data sources
 
-By default, the data comes from OpenStreetMap and Overture Maps Places (POIs), for any country. Each country can also contribute its own sources in its pack (`countries/<country>/`), and the geocoder merges them all into a single source of truth, with no duplicates. Spain, for example, adds CartoCiudad ([countries/es/README.md](../../countries/es/README.md)).
+By default, the data comes from OpenStreetMap and Overture Maps Places (POIs), for any country. Each country can also contribute its own sources in its pack (`countries/<country>/`), and the geocoder merges them all into a single source of truth, with no duplicates. Spain, for example, adds CartoCiudad ([countries/es/README.md](../countries/es/README.md)).
 
-Downloading requires `accept_licenses = true` in the `[data]` of `geko.toml`, after reviewing the licenses listed by `geko plan`. How sources are merged is in [FUSION_METHOD.md](../../docs/FUSION_METHOD.md), and the rest of the design in [PROJECT.md](../../docs/PROJECT.md) (in Spanish), §5–§9.
+Downloading requires `accept_licenses = true` in the `[data]` of `geko.toml`, after reviewing the licenses listed by `geko plan`. How sources are merged is in [FUSION_METHOD.md](../docs/FUSION_METHOD.md), and the rest of the design in [PROJECT.md](../docs/PROJECT.md) (in Spanish), §5–§9.
 
 ## Technologies
 

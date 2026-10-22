@@ -20,7 +20,7 @@
 
 A modular, multi-country geospatial engine. Each service is a module, enabled in `geko.toml`, on top of the same data:
 
-- **Geocoding** (available, [modules/geko-geocoder](modules/geko-geocoder/README.md)): turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse).
+- **Geocoding** (available, [module](module/README.md)): turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse).
 - **Vector tiles, routing…** (planned): new modules that plug in without changing the others.
 
 They all share the same foundation:
@@ -50,7 +50,7 @@ country = "ES"            # ISO 3166-1; one [[scope]] per country (LU…)
 accept_licenses = true    # you accept the licenses of the sources: ODbL (OSM), CDLA (Overture), CC BY (CartoCiudad)
 ```
 
-Every section and option of geko itself is in [Configuration reference](#configuration-reference-gekotoml), below, with its default value and what it does. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
+Every section and option of geko itself is in [Configuration reference](#configuration-reference-gekotoml), below, with its default value and what it does. Each module has its own file beside it, `geko-<module>.toml`, documented in the README of the module: the geocoder's (its sources, time budgets, cache…) in [module](module/README.md#configuration-geko-geocodertoml). Without it, a module takes its defaults.
 
 The image carries no configuration: without a mounted `geko.toml`, it stops right away asking for one. Inside the container, geko always listens on `0.0.0.0:8080`, whatever `[serve] listen` says.
 
@@ -65,13 +65,13 @@ To change the options of a module, mount its file too, beside it (`-v "$PWD/geko
 
 The first time, it downloads the data for those countries, builds the indexes and serves them (it answers 503 until then): about 2 minutes for Luxembourg, around an hour for all of Spain (about 8 GB of disk while building and 5 GB afterwards, and 3 GB of memory). Follow it with `docker logs -f geko`: while it builds, one line every 2 seconds with how far it has gone (with `GEKO_VERBOSE=1`, `-e GEKO_VERBOSE=1` in Docker, or `geko --verbose`, every step instead). Later starts reuse the `geko-data` volume and only rebuild what changed.
 
-**3. Use it.** The demo page, a map with the search of the geocoder, is at <http://localhost:8080/>. Each module serves its routes under its name: the geocoder under `/geocoder/`, with its API in [its README](modules/geko-geocoder/README.md#usage). Common to all of them: `/health`, `/metrics`, the licenses and attribution of the served data at `/v1/attribution`, and the API of the host and of every active module, browsable with Swagger UI, at `/docs` (the host's, [openapi.yaml](openapi.yaml), also at `/openapi.yaml`).
+**3. Use it.** The demo page, a map with the search of the geocoder, is at <http://localhost:8080/>. Each module serves its routes under its name: the geocoder under `/geocoder/`, with its API in [its README](module/README.md#usage). Common to all of them: `/health`, `/metrics`, the licenses and attribution of the served data at `/v1/attribution`, and the API of the host and of every active module, browsable with Swagger UI, at `/docs` (the host's, [openapi.yaml](openapi.yaml), also at `/openapi.yaml`).
 
 To update: `docker pull ghcr.io/candymaps/geko`, remove the container and start it again with the same command; the data stays in the volume.
 
 ## Configuration reference (`geko.toml`)
 
-Every section and option of geko itself (the host), with its default value unless a comment says otherwise. geko reads `/etc/geko/geko.toml` (or `GEKO_CONFIG`), and each module its `geko-<module>.toml` beside it: the geocoder's options are in [modules/geko-geocoder](modules/geko-geocoder/README.md#configuration-geko-geocodertoml).
+Every section and option of geko itself (the host), with its default value unless a comment says otherwise. geko reads `/etc/geko/geko.toml` (or `GEKO_CONFIG`), and each module its `geko-<module>.toml` beside it: the geocoder's options are in [module](module/README.md#configuration-geko-geocodertoml).
 
 ```toml
 # Every module, enabled or not (`true`, `false`, or a table with `enabled` and `config`, the file
