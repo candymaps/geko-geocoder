@@ -84,6 +84,10 @@ impl SourceProvider for OsmSource {
         SourceId(ID.into())
     }
 
+    fn name(&self) -> String {
+        "OSM".into()
+    }
+
     fn license(&self) -> License {
         License {
             name: "ODbL 1.0".into(),
@@ -129,6 +133,7 @@ impl SourceProvider for OsmSource {
                 .map_err(|e| GekoError::Data(format!("{e} (if Geofabrik published a new extract meanwhile, run again)")))?;
             report.identities.push((path, format!("sha256 {}", outcome.sha256)));
             if outcome.downloaded { report.downloaded.push(file) } else { report.not_modified.push(file) }
+            geko_core::progress::advance(1);
         }
         Ok(report)
     }

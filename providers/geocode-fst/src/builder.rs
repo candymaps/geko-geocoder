@@ -183,6 +183,8 @@ impl GeocodeIndexBuilder for FstIndexBuilder {
 
 fn build_segment(c: &Canonical, data: &CanonicalPartition, normalizer: &dyn TextNormalizer, dir: &Path) -> Result<IndexManifest> {
     let docs = c.docs.len();
+    // Two passes over the entities: the text index, then the cold part.
+    geko_core::progress::expect(2 * docs as u64);
     if c.docs.iter().enumerate().any(|(i, d)| d.local as usize != i) {
         return Err(GekoError::Data("canonical local ids are not dense: docs first, then addresses".into()));
     }
@@ -209,6 +211,7 @@ fn build_segment(c: &Canonical, data: &CanonicalPartition, normalizer: &dyn Text
     let mut id = 0u32;
     for chunk in c.docs.chunks(CHUNK) {
         let analysed: Vec<Analysed> = chunk.par_iter().map(|d| analyse(d, normalizer)).collect();
+        geko_core::progress::advance(chunk.len() as u64);
         for a in analysed {
             ntok[id as usize] = a.ntok;
             ltok[id as usize] = a.ltok;
@@ -389,6 +392,7 @@ fn build_segment(c: &Canonical, data: &CanonicalPartition, normalizer: &dyn Text
     };
     for chunk in c.docs.chunks(CHUNK) {
         let fragments: Vec<Vec<u8>> = chunk.par_iter().map(properties).collect();
+        geko_core::progress::advance(chunk.len() as u64);
         for (d, json) in chunk.iter().zip(fragments) {
             json_blobs.push(&json)?;
             pid_blobs.push(d.public_id.as_bytes())?;

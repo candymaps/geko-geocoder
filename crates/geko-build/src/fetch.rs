@@ -40,7 +40,11 @@ pub fn fetch_all(
     data_dir: &Path,
     parallelism: usize,
 ) -> Vec<(SourceId, Result<FetchReport>)> {
-    progress::expect(selected.len() as u64);
+    // What every source will download, as `geko plan` lists it: each one counts it off as it goes
+    // (`progress::advance`), whether it downloads it or finds it up to date.
+    for (_, planned) in plan_datasets(selected, scope, dl, data_dir) {
+        progress::expect(planned.map_or(1, |p| p.len().max(1) as u64));
+    }
     let queue = Mutex::new(selected.iter().collect::<Vec<_>>());
     let results = Mutex::new(Vec::with_capacity(selected.len()));
     std::thread::scope(|threads| {
@@ -52,11 +56,11 @@ pub fn fetch_all(
                     let Some(source) = next else { break };
                     let id = source.provider.id();
                     let raw = raw_dir(data_dir, &id);
+                    let _on = progress::working_on(source.provider.name());
                     let result = std::fs::create_dir_all(&raw.path)
                         .map_err(GekoError::from)
                         .and_then(|_| source.provider.fetch(scope, dl, &raw));
                     results.lock().unwrap().push((id, result));
-                    progress::advance(1);
                 }
             });
         }
@@ -148,9 +152,9 @@ pub fn stage_all(
         }
         // Only what was removed after publishing ([data] keep_downloads = false), which can take
         // longer than the staging itself.
-        progress::doing(Some(format!("downloading {} again", id.0)));
+        let on = progress::working_on(format!("(downloading {} again)", provider.name()));
         let restored = restore_scope(scope, &stale).and_then(|sub| provider.fetch(&sub, restore, &raw));
-        progress::doing(None);
+        drop(on);
         let restored = match restored {
             Ok(report) => report,
             Err(e) => {

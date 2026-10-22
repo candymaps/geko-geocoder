@@ -147,6 +147,10 @@ impl SourceProvider for OvertureSource {
         SourceId(ID.into())
     }
 
+    fn name(&self) -> String {
+        "Overture".into()
+    }
+
     fn license(&self) -> License {
         License {
             name: "CDLA-Permissive-2.0".into(),
@@ -190,6 +194,7 @@ impl SourceProvider for OvertureSource {
             identity.push_str(&format!("; {} {} [{}]", file.name, file.size, groups.join(",")));
             let label = format!("places {release} {}", file.name);
             if bytes > 0 { report.downloaded.push(label) } else { report.not_modified.push(label) }
+            geko_core::progress::advance(1);
         }
         report.identities.push((raw.path.join("release"), format!("release {release}")));
         report.identities.push((dir.clone(), identity));

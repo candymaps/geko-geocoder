@@ -31,6 +31,9 @@ const ADDRESS_COLUMNS: [&str; 5] = ["street", "number", "number_extension", "pos
 pub struct OgcFeaturesConfig {
     /// `ogc-api-features`.
     pub kind: String,
+    /// How people know it ("CartoCiudad"), for the progress of a build; its id when missing.
+    #[serde(default)]
+    pub name: Option<String>,
     pub license: LicenseConfig,
     /// Base URL of the service.
     pub base: String,
@@ -201,6 +204,10 @@ impl SourceProvider for OgcFeaturesSource {
         SourceId(self.id.clone())
     }
 
+    fn name(&self) -> String {
+        self.config.name.clone().unwrap_or_else(|| self.id.clone())
+    }
+
     fn license(&self) -> License {
         let l = &self.config.license;
         License { name: l.name.clone(), attribution: l.attribution.clone(), url: l.url.clone() }
@@ -247,6 +254,8 @@ impl SourceProvider for OgcFeaturesSource {
         };
         let mut catalog_date: Option<Option<String>> = None;
         for unit in self.scope_units(scope)? {
+            // Counted off however it ends: up to date, downloaded or failed.
+            let _counted = Counted;
             let dir = api::unit_dir(&raw.path, &unit);
             let label = format!("{}-{}", self.config.collection, unit.prefix);
             if let Some(marker) = api::complete_marker(&dir) {
@@ -322,5 +331,14 @@ impl SourceProvider for OgcFeaturesSource {
             .map(|u| api::unit_dir(&raw.path, u))
             .filter(|dir| dir.exists())
             .collect())
+    }
+}
+
+/// Counts off one of the units `plan` listed in the progress of the build when it goes.
+struct Counted;
+
+impl Drop for Counted {
+    fn drop(&mut self) {
+        geko_core::progress::advance(1);
     }
 }

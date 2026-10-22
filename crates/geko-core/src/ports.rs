@@ -49,6 +49,10 @@ pub struct SourceStats {
 /// whether they take part in a run.
 pub trait SourceProvider: Send + Sync {
     fn id(&self) -> SourceId;
+    /// How people know it ("OSM", "CartoCiudad"), for the progress of a build; its id by default.
+    fn name(&self) -> String {
+        self.id().0
+    }
     fn license(&self) -> License;
     fn coverage(&self) -> Coverage;
     /// What `fetch` would download for `scope`. May download small catalog metadata
