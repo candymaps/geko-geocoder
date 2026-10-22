@@ -1223,6 +1223,7 @@ make test-golden-lu    # lo mismo con Luxemburgo entero
 make test-regression   # España completa, en local y a demanda, con la carga (--include-performance)
 GEKO_GOLDEN_UPDATE=1 make test-golden-es     # acepta los resultados como nueva línea base
 GEKO_SPAIN_BUILD_AB=1 make test-regression   # además, el tiempo del build: base, nuevo, base, nuevo
+GEKO_SPAIN_ADAPTERS=1 make test-regression   # además, la carga del geocoder enlazado frente a proceso y dylib
 GEKO_PELIAS_URL=<url> ci/test.sh --variant results --scope pelias   # frente a Pelias, en Baleares
 ```
 

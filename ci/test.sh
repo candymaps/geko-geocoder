@@ -606,6 +606,8 @@ golden_base_bundle() {
 #                          then measured again on the new data
 #   GEKO_SPAIN_FORCE=1     every build stage runs, base and new
 #   GEKO_SPAIN_BUILD_AB=1  also compare the time of the build: base, new, base, new
+#   GEKO_SPAIN_ADAPTERS=1  also measure the load of the geocoder linked in against the same as a
+#                          process and as a library (GEKO_MODULES), on the new bundle
 #   GEKO_SPAIN_LOAD_SECONDS  seconds each server is measured at each route and concurrency
 #                          (default 10), in five slices taken in turns with the other server
 #   GEKO_BENCH=0           skip the instruction counts (they need valgrind)
@@ -647,7 +649,7 @@ spain() {
     data=$(data_id "$dir")
     trap 'kill $server ${base_server:-} 2>/dev/null || true' RETURN
     if [ "$(cat "$baseline/commit" 2>/dev/null)" != "$base" ] || [ "$(cat "$baseline/data-id" 2>/dev/null)" != "$data" ] \
-        || [ ! -e "$dir/ab/base-data/bundles/current" ]; then
+        || [ ! -e "$dir/ab/base-data/bundles/current" ] || { wants results && [ ! -s "$baseline/keystrokes.json" ]; }; then
         echo "measuring the baseline of $base"
         spain_baseline "$bin" "$base_bin" "$dir" "$base_port" "$offline" "$baseline" "$reports" "$base_format" || return 1
         echo "$base" > "$baseline/commit" && echo "$data" > "$baseline/data-id"
@@ -660,6 +662,14 @@ spain() {
 
     run_geko "$bin" "$dir/check-spain.toml" build ${GEKO_SPAIN_FORCE:+--force}
     cp "$dir/build_report.json" "$reports/build.json"
+    # Byte for byte the same data and index as the base: the hits at rest cannot have changed.
+    data_hashes "$dir" > "$reports/hashes"
+    if cmp -s "$baseline/hashes" "$reports/hashes"; then
+        echo "canonical data and index: identical to those of $base"
+    else
+        echo "canonical data and index: they differ from those of $base:"
+        diff "$baseline/hashes" "$reports/hashes" | grep '^[<>]' | head -20 || true
+    fi
     if wants data; then
         "$bin/geko-eval" check-build --baseline "$baseline/build.json" --report "$reports/build.json" --max-hot-gb 4 --ignore-time || failed=1
         check_data "$bin" "$dir" es "$baseline/data.json" 0 "$reports" || failed=1
@@ -730,10 +740,64 @@ spain() {
     compare_values server "$reports/server-base.txt" "$reports/server.txt" open_ms 1.5 2000 || failed=1
     compare_values server "$reports/server-base.txt" "$reports/server.txt" rss_mb 1.2 200 || failed=1
 
+    if [ "${GEKO_SPAIN_ADAPTERS:-0}" = 1 ]; then
+        spain_adapters "$bin" "$dir" "$port" "$reports" "$pin_server" "$pin_client" || failed=1
+    fi
     if [ "${GEKO_SPAIN_BUILD_AB:-0}" = 1 ]; then
         spain_build_ab "$bin" "$base_bin" "$dir" "$reports" || failed=1
     fi
     return $failed
+}
+
+# The sha256 of every file of the canonical data and of the current bundle of `dir`, but those
+# that carry the time or the code of the build: the manifest, the stamps and the reports.
+data_hashes() {
+    local dir=$1 skip=(! -name manifest.json ! -name '*.stamp.json' ! -name '*report.json')
+    (cd "$dir/canonical" && find . -type f "${skip[@]}" -print0 | sort -z | xargs -0 sha256sum | sed 's|  \./|  canonical/|')
+    (cd -P "$dir/bundles/current" && find . -type f "${skip[@]}" -print0 | sort -z | xargs -0 sha256sum | sed 's|  \./|  bundle/|')
+}
+
+# The load of the geocoder linked into geko against the same geocoder as a process of its own and
+# as a library, in turns, on the new bundle: what crossing the socket or the library costs. Only
+# shown, never failed: the choice of the adapter weighs it (docs/MODULES_PLAN.md, step 2).
+spain_adapters() {
+    local bin=$1 dir=$2 port=$3 reports=$4 pin_server=$5 pin_client=$6 golden=countries/es/golden
+    local modules="$AB_DIR/adapters" kind server opened_ms linked route cases
+    cargo build --release --locked -p geko-module-geocoder --bin geko-geocoder -p geko-module-geocoder-dylib
+    for kind in process dylib; do
+        mkdir -p "$modules/$kind/geocoder"
+        cp "$bin/geko-geocoder" "$bin/libgeko_geocoder.so" "$modules/$kind/geocoder/"
+        if [ "$kind" = dylib ]; then
+            printf 'name = "geocoder"\nkind = "dylib"\nentry = "libgeko_geocoder.so"\n' > "$modules/$kind/geocoder/module.toml"
+        else
+            cp modules/geko-geocoder/module.toml "$modules/$kind/geocoder/"
+        fi
+    done
+    # shellcheck disable=SC2086
+    serve "$bin" "$dir/check-spain.toml" "$dir/check-serve.log" "$port" $pin_server
+    linked=$server
+    spain_config "$dir/check-spain-adapter.toml" "$dir" $((port + 2)) true modules
+    for kind in process dylib; do
+        # shellcheck disable=SC2086
+        serve "$bin" "$dir/check-spain-adapter.toml" "$dir/check-serve-$kind.log" $((port + 2)) \
+            env GEKO_MODULES="$modules/$kind" $pin_server
+        echo "linked in, then as a $kind (opened in $opened_ms ms):"
+        for route in search autocomplete reverse; do
+            case $route in
+                search) cases="$golden/spain-generated.jsonl" ;;
+                autocomplete) cases="$reports/keystrokes.jsonl" ;;
+                reverse) cases="$golden/spain-reverse.jsonl" ;;
+            esac
+            # shellcheck disable=SC2086
+            $pin_client "$bin/geko-eval" load-ab --base-url "$(geocoder_url "$port" modules)" --url "$(geocoder_url $((port + 2)) modules)" \
+                --cases "$cases" --route "$route" --concurrency 1,4,16 --seconds "${GEKO_SPAIN_LOAD_SECONDS:-10}" \
+                --out-base "$reports/adapter-$kind-$route-linked.json" --out "$reports/adapter-$kind-$route.json"
+        done
+        kill "$server" 2> /dev/null || true
+        wait "$server" 2> /dev/null || true
+    done
+    kill "$linked" 2> /dev/null || true
+    wait "$linked" 2> /dev/null || true
 }
 
 
@@ -783,13 +847,16 @@ spain_baseline() {
     rm -rf "$baseline" && mkdir -p "$baseline"
     cp "$dir/build_report.json" "$baseline/build.json"
     "$bin/geko-eval" data --canonical "$dir/canonical/ES" --out "$baseline/data.json"
+    data_hashes "$dir" > "$baseline/hashes"
     # The new build replaces the bundle: the base keeps its own, linked, not copied.
     current=$(readlink "$dir/bundles/current")
     rm -rf "$data" && mkdir -p "$data/bundles"
     cp -al "$dir/bundles/$current" "$data/bundles/$current"
     ln -s "$current" "$data/bundles/current"
     spain_config "$data/geko.toml" "$data" "$port" true "$format"
-    spain_hits "$base_bin" "$data/geko.toml" "$data" "$port" "$reports" "$baseline" "$format"
+    if wants results; then
+        spain_hits "$base_bin" "$data/geko.toml" "$data" "$port" "$reports" "$baseline" "$format"
+    fi
 }
 
 # The time of the build, base and new in turns twice, each run rebuilding what the other
