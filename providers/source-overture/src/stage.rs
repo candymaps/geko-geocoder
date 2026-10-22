@@ -161,6 +161,7 @@ pub fn stage(files: &[std::path::PathBuf], filter: &Filter, dir: &Path) -> Resul
     let mut columns = Columns::default();
     for f in files {
         read_file(f, filter, &mut columns)?;
+        geko_core::progress::advance(geko_core::progress::disk_bytes(f));
     }
     fs::create_dir_all(dir)?;
     let schema = Arc::new(Schema::new(vec![

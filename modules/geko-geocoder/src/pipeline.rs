@@ -591,7 +591,7 @@ fn fresh_dir(dir: &std::path::Path) -> Result<std::path::PathBuf> {
 }
 
 fn stage(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: bool) -> Result<String> {
-    progress::step_in_bytes("downloading", 0.0, 0.35);
+    progress::step("downloading", 0.0, 0.35);
     let (mut out, identities) = fetched(setup, prepared, dl)?;
     let mut failed = Vec::new();
     let code = |id: &geko_core::model::SourceId| prepared.codes.get(&id.0).cloned().unwrap_or_default();

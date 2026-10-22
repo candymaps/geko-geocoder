@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 use geko_core::model::SourceId;
+use geko_core::progress;
 use geko_core::ports::{DatasetRequest, Downloader, FetchReport, RawDir, SourceStats, StagingDir};
 use geko_core::scope::{Partition, Scope};
 use geko_core::{GekoError, Result};
@@ -39,6 +40,7 @@ pub fn fetch_all(
     data_dir: &Path,
     parallelism: usize,
 ) -> Vec<(SourceId, Result<FetchReport>)> {
+    progress::expect(selected.len() as u64);
     let queue = Mutex::new(selected.iter().collect::<Vec<_>>());
     let results = Mutex::new(Vec::with_capacity(selected.len()));
     std::thread::scope(|threads| {
@@ -51,6 +53,7 @@ pub fn fetch_all(
                         .map_err(GekoError::from)
                         .and_then(|_| source.provider.fetch(scope, dl, &raw));
                     results.lock().unwrap().push((id, result));
+                    progress::advance(1);
                 }
             });
         }
@@ -140,8 +143,11 @@ pub fn stage_all(
         if stale.is_empty() {
             continue;
         }
-        geko_module_sdk::progress::expect(stale.len() as u64);
+        // Only what was removed after publishing ([data] keep_downloads = false), which can take
+        // longer than the staging itself.
+        progress::doing(Some(format!("downloading {} again", id.0)));
         let restored = restore_scope(scope, &stale).and_then(|sub| provider.fetch(&sub, restore, &raw));
+        progress::doing(None);
         let restored = match restored {
             Ok(report) => report,
             Err(e) => {
@@ -157,14 +163,26 @@ pub fn stage_all(
         };
         let mut current = known.clone();
         current.extend(restored.identities);
-        for partition in stale {
+        // Each partition weighs what its inputs take on disk: a provider may count what it reads
+        // of them as it goes (`progress::Reading`), and the rest counts when it ends.
+        let weights: Vec<u64> = stale.iter().map(|p| input_bytes(provider, p, &raw)).collect();
+        progress::expect(weights.iter().sum());
+        let mut staged = progress::done();
+        for (partition, weight) in stale.into_iter().zip(weights) {
             let out = staging_dir(data_dir, &id, &partition);
             let result = key(&partition, &current).and_then(|key| stage_one(provider, &partition, &raw, &out, key, &code));
             results.push((id.clone(), partition, result));
-            geko_module_sdk::progress::advance(1);
+            staged += weight;
+            progress::reach(staged);
         }
     }
     results
+}
+
+/// What the inputs of a partition take on disk; 1 at least, so that a partition without inputs still
+/// counts.
+fn input_bytes(provider: &dyn geko_core::ports::SourceProvider, partition: &Partition, raw: &RawDir) -> u64 {
+    provider.stage_inputs(partition, raw).map_or(0, |inputs| inputs.iter().map(|p| progress::disk_bytes(p)).sum::<u64>()).max(1)
 }
 
 /// The scope of the partitions to stage again: a partition staged by country stands for every

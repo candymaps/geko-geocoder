@@ -208,10 +208,11 @@ enum NodeOut {
 /// Decodes blocks in parallel and maps each one with `f`, in file order. Per-block results
 /// avoid the cost of building and merging one result per element.
 fn par_blocks<T: Send>(path: &Path, f: impl Fn(&PrimitiveBlock) -> T + Sync + Send) -> Result<Vec<T>> {
+    // `read` makes three passes: together they count as the file, once, in the progress of the build.
+    let file = std::io::BufReader::new(std::fs::File::open(path)?);
     // `par_bridge` yields in completion order; the staged records, and every choice fusion
     // makes from their order, must be the same on every run.
-    let mut out: Vec<(usize, T)> = BlobReader::from_path(path)
-        .map_err(osm_err)?
+    let mut out: Vec<(usize, T)> = BlobReader::new(geko_core::progress::Reading::new(file, 3))
         .enumerate()
         .par_bridge()
         .map(|(i, blob)| match blob.map_err(osm_err)?.decode().map_err(osm_err)? {
