@@ -33,7 +33,8 @@ jobs:
             const texts = {
               'passed': '✅ The checks passed: those of `ci/test.sh` that this pull request can fail (`ci/affected.sh`), the golden of the countries it can change included.',
               'failure': '❌ The checks failed: see the run. It cannot be merged until they pass.',
-              'not-needed': 'ℹ️ The checks are not needed: this pull request only changes documentation or what `ci/test.sh` does not build (`ci/affected.sh`). It can be merged without them.',            };
+              'not-needed': 'ℹ️ The checks are not needed: this pull request only changes documentation or what `ci/test.sh` does not build (`ci/affected.sh`). It can be merged without them.',
+            };
             if (!Number.isInteger(pr.number) || !(pr.result in texts) || pr.head !== run.head_sha) {
               core.setFailed(`invalid pr.json: ${JSON.stringify(pr)}`);
               return;
