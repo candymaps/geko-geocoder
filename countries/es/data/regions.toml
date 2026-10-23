@@ -1,5 +1,5 @@
 # Regions of Spain (ISO 3166-2). The 50 provinces and the autonomous cities of Ceuta and Melilla
-# contain no other region: they are the partitions of a build (PROJECT.md §6.5.8). The autonomous
+# contain no other region: they are the partitions of a build. The autonomous
 # communities group them, so that a scope can name either. `postcode_prefix` is the INE code of
 # the province: the first two digits of its postcodes.
 

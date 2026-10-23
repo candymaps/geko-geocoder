@@ -1,5 +1,5 @@
 //! Fusion of every staged source into one canonical dataset per country: one entity per
-//! real-world thing, enriched by all sources (PROJECT.md §6.5).
+//! real-world thing, enriched by all sources.
 
 pub mod addresses;
 pub mod admin;
@@ -49,7 +49,7 @@ pub struct PostcodeEntity {
 }
 
 /// One postcode of an entity that spans several (a street, a municipality): which numbers it
-/// covers, how many addresses have it and where those come from (PROJECT.md §6.5.4).
+/// covers, how many addresses have it and where those come from.
 #[derive(Debug, Clone, Serialize)]
 pub struct PostcodeShare {
     pub postcode: String,
@@ -128,8 +128,8 @@ pub struct Inputs<'a> {
 }
 
 /// Fuses `partition` unless the fusion code (`code`), its `inputs`, the staged data of the
-/// partition and the records relocated into or out of it are unchanged since it was last fused
-/// (PROJECT.md §8.3). Returns the report and whether the earlier fusion was reused.
+/// partition and the records relocated into or out of it are unchanged since it was last fused.
+/// Returns the report and whether the earlier fusion was reused.
 pub fn fuse_partition_incremental(
     data_dir: &Path,
     partition: &geko_core::scope::Partition,

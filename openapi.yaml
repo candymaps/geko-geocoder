@@ -4,7 +4,7 @@ info:
   version: "1"
   summary: Geocoder with OSM and official national sources.
   description: |
-    Forward and reverse geocoding, autocomplete and lookup by id (PROJECT.md §10), under
+    Forward and reverse geocoding, autocomplete and lookup by id, under
     `/geocoder/`. The routes and parameters follow Pelias where they mean the same, so Pelias
     clients work with few changes: `focus.point.lat`, `point.lat`… are accepted beside geko's own
     names.

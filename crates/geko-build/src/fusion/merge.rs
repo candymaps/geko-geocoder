@@ -1,9 +1,9 @@
-//! Joins the canonical datasets fused partition by partition into the one of the country
-//! (PROJECT.md §6.5.8), reading a few columns at a time and writing batch by batch, so memory
+//! Joins the canonical datasets fused partition by partition into the one of the country,
+//! reading a few columns at a time and writing batch by batch, so memory
 //! does not grow with the country:
 //!
 //! - Local ids are renumbered over the whole country: searchable entities by importance, then
-//!   addresses grouped by street (PROJECT.md §5.5).
+//!   addresses grouped by street.
 //! - Boundaries above a partition (a region, the country) are fused by every partition they
 //!   contain: they are kept once.
 //! - A postcode that a partition border splits is combined into one.
@@ -89,7 +89,7 @@ pub fn country_dir(data_dir: &Path, country: CountryCode) -> PathBuf {
 pub const NOT_CANONICAL: &[&str] = &["parts", REPORT];
 
 /// Merges the partitions unless the merge code (`code`) and every fused partition are unchanged
-/// since the last merge (PROJECT.md §8.3). Returns the report and whether the merge was reused.
+/// since the last merge. Returns the report and whether the merge was reused.
 pub fn merge_incremental(
     data_dir: &Path,
     country: CountryCode,

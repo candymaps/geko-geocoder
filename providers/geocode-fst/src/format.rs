@@ -25,7 +25,7 @@ use serde_json::{Map, Value, json};
 pub const PROVIDER: &str = "geocode-fst";
 pub const VERSION: u32 = 4;
 pub const NO_MUNICIPALITY: u32 = u32::MAX;
-/// Prefixes up to this length use precomputed top results (PROJECT.md §9.8).
+/// Prefixes up to this length use precomputed top results.
 pub const PREFIX_LEN: usize = 4;
 pub const PREFIX_TOP_K: usize = 64;
 

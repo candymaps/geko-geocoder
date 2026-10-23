@@ -77,7 +77,7 @@ pub fn staging_dir(data_dir: &Path, source: &SourceId, partition: &Partition) ->
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StageOutcome {
     pub records: u64,
-    /// The staging of an earlier build was up to date (PROJECT.md §8.3).
+    /// The staging of an earlier build was up to date.
     pub reused: bool,
 }
 

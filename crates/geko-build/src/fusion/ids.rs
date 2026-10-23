@@ -1,4 +1,4 @@
-//! Stable public ids (PROJECT.md §5.5) and static importance (§6.3).
+//! Stable public ids and static importance.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -108,7 +108,7 @@ pub fn assign(f: &Fused, partition: &geko_core::scope::Partition) -> Ids {
     Ids { places, streets, addresses, pois }
 }
 
-/// Dense per-segment ids (PROJECT.md §5.5). Searchable entities come first, in descending order
+/// Dense per-segment ids. Searchable entities come first, in descending order
 /// of importance, so that index postings in ascending id order visit the most important first.
 /// Addresses follow, grouped by street and sorted by number, so each street's addresses form one
 /// contiguous block.
@@ -175,7 +175,7 @@ pub fn local_ids(f: &Fused, ids: &Ids, imp: &Importance) -> LocalIds {
 }
 
 /// Fixed reference scales, not the maxima of the data: importance must not depend on which
-/// regions are in scope, nor differ between the partitions fused separately (PROJECT.md §6.5.8).
+/// regions are in scope, nor differ between the partitions fused separately.
 /// About the largest municipality of western Europe (Madrid); larger values saturate.
 const REFERENCE_POPULATION: f64 = 3_500_000.0;
 /// Addresses of a long avenue of a large city (Gran Via de les Corts Catalanes has 1,010).
@@ -215,7 +215,7 @@ pub struct Importance {
 }
 
 pub fn importance(f: &Fused, languages: &[String]) -> Importance {
-    // Entities inherit part of their municipality's weight (PROJECT.md §6.3): a neighbourhood
+    // Entities inherit part of their municipality's weight: a neighbourhood
     // or street of a city ranks above a homonym in a small town.
     let municipality_pop: rustc_hash::FxHashMap<usize, i64> = f
         .places

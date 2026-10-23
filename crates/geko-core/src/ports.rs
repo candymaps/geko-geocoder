@@ -1,4 +1,4 @@
-//! Architecture ports (PROJECT.md §4). Only domain types cross these boundaries.
+//! Architecture ports. Only domain types cross these boundaries.
 
 use std::path::{Path, PathBuf};
 
@@ -63,12 +63,12 @@ pub trait SourceProvider: Send + Sync {
     /// Whether the source is staged once per country, in its `_all` partition, rather than once
     /// per region: a source not published by region (a world file sorted by place) cannot tell
     /// a region's records from its neighbour's. Relocation then gives every record to the region
-    /// that contains it (PROJECT.md §6.5.8).
+    /// that contains it.
     fn stage_by_country(&self) -> bool {
         false
     }
     /// Files and directories under `raw` that `stage` reads for `partition`, so that a build
-    /// restages a partition only when they change (PROJECT.md §8.3). By default, all of `raw`.
+    /// restages a partition only when they change. By default, all of `raw`.
     fn stage_inputs(&self, partition: &Partition, raw: &RawDir) -> Result<Vec<PathBuf>> {
         let _ = partition;
         Ok(vec![raw.path.clone()])
@@ -102,7 +102,7 @@ pub trait TextNormalizer: Send + Sync {
     /// Index-time expansion: every normalized variant under which a name must be findable.
     fn variants(&self, name: &str, out: &mut Vec<String>);
     /// Splits a street name into its type code and normalized core, for comparing names
-    /// across sources and languages (PROJECT.md §6.5.1).
+    /// across sources and languages.
     fn street_parts(&self, name: &str) -> StreetParts;
     /// Splits a street name typed in a query: like `street_parts`, but a country may recognise
     /// its street type despite a typo ("crarer" for "carrer"), so that the type is not searched

@@ -1,4 +1,4 @@
-//! Query side of a segment (PROJECT.md §9.5): cascade (exact, prefix, typos), single-pass
+//! Query side of a segment: cascade (exact, prefix, typos), single-pass
 //! ranking with early termination, and addresses resolved inside their street's block.
 
 use std::borrow::Cow;
@@ -537,7 +537,7 @@ impl FstEngine {
         out
     }
 
-    /// Posting lists for the query words, following the cascade of PROJECT.md §9.5: exact, then
+    /// Posting lists for the query words, following the cascade: exact, then
     /// prefix for the word being typed, then typos for words of 4+ letters. Words that match
     /// nothing are dropped. Returns the lists and whether a typo was needed.
     fn word_lists(&self, words: &[String], prefix_last: bool) -> (Vec<Cow<'_, [u32]>>, bool) {
@@ -854,7 +854,7 @@ impl FstEngine {
         // Relaxation: a long query with no full match is retried without each word in turn
         // ("basilica sagrada familia" when the name is "Sagrada Família"), scored on coverage.
         // Relaxation rescues a query that found nothing; it is not run to fill a top that already
-        // has answers from a likelier reading (PROJECT.md §9.5).
+        // has answers from a likelier reading.
         if found == 0 && words.len() >= 3 && !top.matched() && !top.translating {
             top.relaxing = true;
             for skip in 0..words.len() {
@@ -1325,7 +1325,7 @@ impl FstEngine {
         }
     }
 
-    /// Safety net (PROJECT.md §6.5.6): two results with the same kind, name and municipality
+    /// Safety net: two results with the same kind, name and municipality
     /// a few metres apart are one entity that fusion failed to merge.
     fn same_entity(&self, a: u32, b: u32) -> bool {
         let docs = self.manifest.docs;

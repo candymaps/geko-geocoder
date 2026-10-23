@@ -1,6 +1,6 @@
 # Pack de España (`es`)
 
-Todo lo propio de España (PROJECT.md §2.4). El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí.
+Todo lo propio de España. El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí.
 
 | Contenido | Qué es |
 |---|---|
@@ -8,7 +8,7 @@ Todo lo propio de España (PROJECT.md §2.4). El motor y los providers de `provi
 | `sources/osm.toml` | Los extractos de Geofabrik de cada comunidad y de España entera: el índice no da códigos ISO a sus regiones, y Canarias está en África |
 | `pack.toml`, `data/` | Datos de texto, leídos por el normalizador y el analizador genéricos (`providers/text-rules`): lenguas y formato de CP (`pack.toml`), tipos de vía en castellano, catalán, gallego y euskera (`data/street-types.toml`), conectores, marcas de número, palabras de piso y puerta, «s/n» y sufijos de portal (`data/words.toml`) |
 | `src/`, `tests/` | Crate `country-pack-es`, solo para los tests: lee el pack del repositorio; sus tests comprueban la normalización y el análisis de consultas de España |
-| `sources/cartociudad.toml` | Direcciones de CartoCiudad, por la OGC API Features del IDEE (PROJECT.md §7.6): la declaración que lee el provider genérico `source-ogc-features` (servicio, colección, recorrido por CP y columnas del staging) |
+| `sources/cartociudad.toml` | Direcciones de CartoCiudad, por la OGC API Features del IDEE: la declaración que lee el provider genérico `source-ogc-features` (servicio, colección, recorrido por CP y columnas del staging) |
 | `golden/` | Consultas de referencia: Baleares (`generated`, `holdout`, `manual`, `focus`) y España completa (`spain-*`) |
 | `golden/baseline/` | Línea base de Baleares que compara `ci/test.sh --scope es` |
 
@@ -36,7 +36,7 @@ Otro país solo tiene que escribir sus propios `pack.toml` y `data/*.toml`: el m
 
 ## Pendiente y decisiones
 
-Lo que solo tiene sentido en España. Lo del motor está en [PROJECT.md](../../docs/PROJECT.md), sección 17; el historial, en `git show 8679454:docs/BACKLOG_ES.md`.
+Lo que solo tiene sentido en España. El historial, en `git show 8679454:docs/BACKLOG_ES.md`.
 
 - **⬜ CartoCiudad desde el GeoPackage del CNIG, descargado a mano** (bloqueado). La descarga del CNIG exige reCAPTCHA y no se automatiza; sin una muestra no se conoce su esquema. Con una, sería otra declaración en `sources/` para un provider genérico de GeoPackage, que habría que añadir al motor.
 - **⬜ «calle olmos» → «Carrer dels Oms».** El par oms/olmos no aparece en bastantes nombres de OSM para aprenderlo. Se puede añadir a mano a `data/equivalences.txt`.

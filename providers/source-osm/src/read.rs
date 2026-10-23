@@ -1,5 +1,5 @@
 //! Reads a `.pbf` in three parallel passes (relations, ways, nodes) so that only the
-//! coordinates of nodes actually used are kept in memory (PROJECT.md §8.1).
+//! coordinates of nodes actually used are kept in memory.
 
 use std::collections::BTreeMap;
 use std::path::Path;

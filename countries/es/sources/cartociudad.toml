@@ -1,4 +1,4 @@
-# CartoCiudad (PROJECT.md §6.1, §7.6): the addresses of Spain, from the OGC API Features of the
+# CartoCiudad: the addresses of Spain, from the OGC API Features of the
 # IDEE, collection `address`. The WFS INSPIRE was analysed and ruled out.
 #
 # The API has no sorting and deep `offset` pages are slow (76 s at offset 1.15 M), but the

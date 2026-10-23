@@ -5,7 +5,7 @@ edition.workspace = true
 publish.workspace = true
 license.workspace = true
 
-# The geocoder as a library that geko loads (`DylibModule`, docs/MODULES_PLAN.md): a crate of its
+# The geocoder as a library that geko loads (`DylibModule`): a crate of its
 # own, so that linking the geocoder into the host never builds the `cdylib` too.
 [lib]
 name = "geko_geocoder"

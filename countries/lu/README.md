@@ -1,6 +1,6 @@
 # Pack de Luxemburgo (`lu`)
 
-Todo lo propio de Luxemburgo (PROJECT.md §2.4). El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí. Es el segundo país del golden: pequeño, solo con fuentes genéricas y con otras lenguas, para comprobar en cada cambio que el motor no depende de España.
+Todo lo propio de Luxemburgo. El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí. Es el segundo país del golden: pequeño, solo con fuentes genéricas y con otras lenguas, para comprobar en cada cambio que el motor no depende de España.
 
 | Contenido | Qué es |
 |---|---|

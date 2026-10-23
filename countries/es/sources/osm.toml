@@ -1,4 +1,4 @@
-# What the OSM source needs to know about Spain (PROJECT.md §7.4). Its regions carry no ISO 3166-2
+# What the OSM source needs to know about Spain. Its regions carry no ISO 3166-2
 # code in the Geofabrik index, and the Canary Islands are an extract of Africa, not of Spain.
 
 # The extracts whose union is the whole country.

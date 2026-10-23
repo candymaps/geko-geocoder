@@ -1,78 +1,91 @@
-# The checks of what a merge to main changed, and its publication. On every push to main (or by
-# hand): `changes` finds what changed since the commit before; `check` and `golden` run the
-# deterministic checks of ci/test.sh on it; and when they pass, `publish` publishes the country
-# packs that changed and, if what goes into it changed, the image, with the version of
-# Cargo.toml. Other branches are checked locally: .githooks/pre-push runs `make test`.
+# The checks of every pull request, in two jobs side by side. On a pull request (or by hand), `test`
+# finds whether it changes what the checks build (ci/affected.sh) and, if it does, runs the code and
+# the contracts; `golden`, one job per country with a golden, runs it on its frozen data if the pull
+# request can change that country, with the instructions counted against the base branch on the
+# same runner, and passes at once if it cannot. Latencies and all of Spain are not checked here: they
+# are only compared on one machine in one batch (`make test-regression`, local and on demand). `test`
+# and every `golden (<country>)` are the statuses that the protection of main and dev requires: they
+# always run, and pass when their checks passed or were not needed. pr-comment.yml says on the pull
+# request which of the two it was. What reaches main, already checked, is published by publish.yml.
 name: ci
 
 on:
-  push:
-    branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
-  # A publication cut halfway would leave a release without its tag.
-  cancel-in-progress: false
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  # A new push to a pull request supersedes its checks.
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  # What changed since the commit before the push: the engine (what goes into the binary, or the
-  # checks), the country packs, and the countries whose golden must run: every one with a golden
-  # when the engine changed, those whose pack changed otherwise. Without the commit before (a new
-  # branch, a forced push, a run by hand), everything.
-  changes:
+  # The checks are skipped step by step, never the job: a required job that GitHub skips counts as
+  # passed. It leaves its result in the artifact `pr` for pr-comment.yml, which may write on the pull
+  # request (this run, from a fork, may not).
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      engine: ${{ steps.diff.outputs.engine }}
-      packs: ${{ steps.diff.outputs.packs }}
-      countries: ${{ steps.diff.outputs.countries }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - id: diff
+          fetch-depth: 2
+      # Every country with a golden has its job in the matrix of `golden`, which GitHub needs before
+      # the job starts, and which the protection requires by name.
+      - run: |
+          want=$(for d in countries/*/golden; do basename "$(dirname "$d")"; done | paste -sd, -)
+          have=$(sed -n 's/^ *country: \[\(.*\)\]$/\1/p' .github/workflows/ci.yml | tr -d ' ')
+          [ "$want" = "$have" ] || { echo "::error::the matrix of golden is [$have], the countries with a golden are [$want]: add it there and to the protection of main and dev (golden (<country>))"; exit 1; }
+      # Whether the pull request changes what the checks build: the diff of its merge commit with
+      # the base branch (its first parent). A run by hand checks everything.
+      - id: affected
         run: |
-          before="${{ github.event.before }}"
-          all=$(for d in countries/*/golden; do basename "$(dirname "$d")"; done)
-          engine=1 packs=1 countries=$all
-          if git cat-file -e "$before^{commit}" 2> /dev/null; then
-            git diff --quiet "$before" HEAD -- crates modules providers languages ci Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile develop && engine=0
-            git diff --quiet "$before" HEAD -- countries && packs=0
-            if [ "$engine" = 0 ]; then
-              countries=$(for c in $all; do git diff --quiet "$before" HEAD -- "countries/$c" || echo "$c"; done)
-            fi
+          code=1
+          if [ "${{ github.event_name }}" = pull_request ] && [ -z "$(ci/affected.sh HEAD^1 HEAD)" ]; then
+            code=0
           fi
-          echo "engine=$engine" >> "$GITHUB_OUTPUT"
-          echo "packs=$packs" >> "$GITHUB_OUTPUT"
-          echo "countries=$(printf '%s\n' $countries | jq -Rc '[inputs | select(length > 0)]' -n)" >> "$GITHUB_OUTPUT"
-          echo "engine $engine, packs $packs, golden of: ${countries:-none}"
-
-  # The code and the contracts. The code only when the engine changed; the contracts also when only
-  # a pack did, since each pack has its own tests.
-  check:
-    needs: changes
-    if: needs.changes.outputs.engine == '1' || needs.changes.outputs.packs == '1'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "code $code"
+      # The host (Cargo.toml: the SDK, and geko-app for the checks), while it is a private
+      # repository that the token of this workflow cannot read: GEKO_HOST_TOKEN, with read access to
+      # its contents. A pull request from a fork has no secrets, and reads it only once it is public.
+      - env:
+          HOST_TOKEN: ${{ secrets.GEKO_HOST_TOKEN }}
+        if: steps.affected.outputs.code == '1' && env.HOST_TOKEN != ''
+        run: git config --global url."https://x-access-token:$HOST_TOKEN@github.com/candymaps/geko.git".insteadOf https://github.com/candymaps/geko.git
       # The toolchain pinned in rust-toolchain.toml.
-      - run: rustup toolchain install
-      - uses: Swatinem/rust-cache@v2
-      - if: needs.changes.outputs.engine == '1'
-        run: ci/test.sh --variant code
-      - run: ci/test.sh --variant contracts
+      - if: steps.affected.outputs.code == '1'
+        run: rustup toolchain install
+      - if: steps.affected.outputs.code == '1'
+        uses: Swatinem/rust-cache@v2
+      - if: steps.affected.outputs.code == '1'
+        run: ci/test.sh --variant code,contracts
+      - if: always() && github.event_name == 'pull_request'
+        run: |
+          result=failure
+          if [ "${{ job.status }}" = success ]; then
+            result=not-needed
+            [ "${{ steps.affected.outputs.code }}" = 1 ] && result=passed
+          fi
+          echo "checks: $result"
+          printf '{"number": %s, "head": "%s", "result": "%s"}\n' \
+            "${{ github.event.pull_request.number }}" "${{ github.event.pull_request.head.sha }}" "$result" > pr.json
+      - if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr
+          path: pr.json
+          retention-days: 1
 
-  # The golden of each country that `changes` lists, on the frozen data of
-  # countries/<country>/golden/snapshot, with no tolerance: hits, data, sizes, robustness and
-  # instructions (counted with the commit before too, on the same runner). The snapshots are the
-  # private packages ghcr.io/candymaps/geko/countries/<country>/golden, read with the token of the
-  # workflow. Without --include-performance: the latencies would be those of another machine.
+  # The golden of the country, if the pull request can change it (ci/affected.sh), on the frozen data
+  # of countries/<country>/golden/snapshot, with no tolerance: hits, data, sizes, robustness and
+  # instructions (counted with the base branch too, on the same runner), as ci/affected.sh asks; a
+  # run by hand checks all of it. The snapshots are the packages
+  # ghcr.io/candymaps/geko-geocoder/countries/<country>/golden, read with the token of the workflow.
+  # Without --include-performance: the latencies would be those of another machine. As in `test`,
+  # the checks are skipped step by step, never the job.
   golden:
-    needs: changes
-    if: needs.changes.outputs.countries != '[]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -80,167 +93,70 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        country: ${{ fromJSON(needs.changes.outputs.countries) }}
+        # Every country with a golden, in order (`test` checks it).
+        country: [es, lu]
     env:
       GEKO_GOLDEN_DIR: ${{ github.workspace }}/.geko-golden
       GEKO_GOLDEN_PROFILE: ci
-      GEKO_BASE: ${{ github.event.before }}
       GEKO_AB_DIR: ${{ github.workspace }}/.geko-ab
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - uses: oras-project/setup-oras@v1
-      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+          fetch-depth: 2
+      - id: affected
+        run: |
+          if [ "${{ github.event_name }}" = pull_request ]; then
+            args=$(ci/affected.sh HEAD^1 HEAD)
+          else
+            args="--variant code,contracts,results,data,robustness,instructions --scope ${{ matrix.country }}"
+          fi
+          variants=$(sed -n 's/.*--variant \([^ ]*\).*/\1/p' <<< "$args")
+          scopes=$(sed -n 's/.*--scope \([^ ]*\).*/\1/p' <<< "$args")
+          # What the golden checks: all but code and contracts, which `test` runs.
+          golden=$(tr ',' '\n' <<< "$variants" | grep -vxE 'code|contracts' | paste -sd, - || true)
+          run=0
+          if [ -n "$golden" ] && tr ',' '\n' <<< "$scopes" | grep -qx "${{ matrix.country }}"; then
+            run=1
+          fi
+          {
+            echo "run=$run"
+            echo "variants=$golden"
+          } >> "$GITHUB_OUTPUT"
+          if [ "$run" = 1 ]; then echo "ci/test.sh --variant $golden --scope ${{ matrix.country }}"; else echo "not needed"; fi
+      # The instructions are compared with those of the base branch, where the pull request goes.
+      - if: steps.affected.outputs.run == '1'
+        run: echo "GEKO_BASE=$(git rev-parse HEAD^1)" >> "$GITHUB_ENV"
+      - if: steps.affected.outputs.run == '1'
+        uses: oras-project/setup-oras@v1
+      - if: steps.affected.outputs.run == '1'
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
       # A snapshot not published yet has nothing to compare with: publish it with
       # ci/golden-snapshot.sh publish.
-      - run: |
+      - if: steps.affected.outputs.run == '1'
+        run: |
           file=$(sed -n 's/^file=//p' "countries/${{ matrix.country }}/golden/snapshot")
           tag=${file#golden-}
-          ref="ghcr.io/candymaps/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
+          ref="ghcr.io/candymaps/geko-geocoder/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
           oras manifest fetch "$ref" > /dev/null || { echo "::error::$ref is not published"; exit 1; }
-      - run: rustup toolchain install
-      - run: sudo apt-get install -y valgrind
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions/cache@v4
+      - env:
+          HOST_TOKEN: ${{ secrets.GEKO_HOST_TOKEN }}
+        if: steps.affected.outputs.run == '1' && env.HOST_TOKEN != ''
+        run: git config --global url."https://x-access-token:$HOST_TOKEN@github.com/candymaps/geko.git".insteadOf https://github.com/candymaps/geko.git
+      - if: steps.affected.outputs.run == '1'
+        run: rustup toolchain install
+      - if: steps.affected.outputs.run == '1'
+        run: sudo apt-get install -y valgrind
+      - if: steps.affected.outputs.run == '1'
+        uses: Swatinem/rust-cache@v2
+      - if: steps.affected.outputs.run == '1'
+        uses: actions/cache@v4
         with:
           path: .geko-golden/snapshots
           key: geko-golden-snapshot-${{ matrix.country }}-${{ hashFiles(format('countries/{0}/golden/snapshot', matrix.country)) }}
-      - run: ci/test.sh --variant results,data,robustness,instructions --scope ${{ matrix.country }}
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - if: steps.affected.outputs.run == '1'
+        run: ci/test.sh --variant ${{ steps.affected.outputs.variants }} --scope ${{ matrix.country }}
+      - if: always() && steps.affected.outputs.run == '1'
+        uses: actions/upload-artifact@v4
         with:
           name: golden-reports-${{ matrix.country }}
           path: .geko-golden/reports
-
-  # Publishes in ghcr.io, with the version of Cargo.toml:
-  # - on every push, the country packs that changed (ghcr.io/candymaps/geko/countries/<country>,
-  #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes into it
-  #   (not only documentation or packs), the modules (ghcr.io/candymaps/geko-<module>, tags
-  #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh) and the image
-  #   (ghcr.io/candymaps/geko, tag <version>-<commit>), which carries no module, and is published
-  #   only if every contract of it has a module published;
-  # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
-  #   <version> on every pack and on the image, latest on the image, and the git tag v<version> on
-  #   the pushed commit, with its GitHub release, whose notes say how to pull the image. Raising the
-  #   version is how a release is made. A tag v<version> without a release (pushed by hand, or left
-  #   by a cut publication) is released only if it is on the pushed commit; on another, the version
-  #   must be raised.
-  # The image carries no country pack: geko downloads those of its scope (PROJECT.md §2.4). Needs
-  # the secret GEKO_PACK_SIGNING_KEY; GitHub's own token pushes. Only once every check that ran
-  # passed: a check skipped because nothing it covers changed does not hold it.
-  publish:
-    needs: [changes, check, golden]
-    if: >-
-      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'candymaps/geko'
-      && needs.changes.result == 'success'
-      && contains(fromJSON('["success", "skipped"]'), needs.check.result)
-      && contains(fromJSON('["success", "skipped"]'), needs.golden.result)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: version
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
-          commit=$(git rev-parse --short HEAD)
-          # A release when v<version> has none on GitHub. Any other error of gh stops the job, so
-          # that a failed query does not publish a version twice.
-          release=0
-          if ! out=$(gh release view "v$version" 2>&1); then
-            [[ $out == *"release not found"* ]] || { echo "$out" >&2; exit 1; }
-            tagged=$(git rev-parse -q --verify "refs/tags/v$version^{commit}" || true)
-            if [ -z "$tagged" ] || [ "$tagged" = "$(git rev-parse HEAD)" ]; then
-              release=1
-            else
-              echo "::error::v$version is tagged on $tagged, not on this commit, and has no release: raise the version in Cargo.toml"
-              exit 1
-            fi
-          fi
-          tags="ghcr.io/candymaps/geko:$version-$commit"
-          [ "$release" = 0 ] || tags="$tags,ghcr.io/candymaps/geko:$version,ghcr.io/candymaps/geko:latest"
-          # A new image only when the push changed what goes into it, or makes a release. Without
-          # the commit before the push (a new branch, a forced push), always.
-          image=1
-          before="${{ github.event.before }}"
-          if [ "$release" = 0 ] && git cat-file -e "$before^{commit}" 2> /dev/null \
-            && git diff --quiet "$before" HEAD -- crates modules providers languages Cargo.toml Cargo.lock rust-toolchain.toml Dockerfile develop; then
-            image=0
-          fi
-          {
-            echo "version=$version"
-            echo "commit=$commit"
-            echo "release=$release"
-            echo "tags=$tags"
-            echo "image=$image"
-          } >> "$GITHUB_OUTPUT"
-      - run: rustup toolchain install
-      - uses: Swatinem/rust-cache@v2
-      - uses: oras-project/setup-oras@v1
-      - run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - run: ci/packs.sh publish
-        env:
-          GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
-          GEKO_RELEASE: ${{ steps.version.outputs.release }}
-      # The modules, when their code changed (the same paths as the image), compiled on the Debian of
-      # the image, whose glibc is older than that of the runner: a module built here would not start
-      # there.
-      - if: steps.version.outputs.image == '1'
-        env:
-          GEKO_RELEASE: ${{ steps.version.outputs.release }}
-        run: |
-          toolchain=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)
-          docker run --rm -v "$PWD:/src" -w /src -e GEKO_RELEASE -e CARGO_TARGET_DIR=/src/target \
-            -u "$(id -u):$(id -g)" -e HOME=/tmp -e CARGO_HOME=/tmp/cargo \
-            "rust:$toolchain-bookworm" ci/modules.sh build target/modules
-      - if: steps.version.outputs.image == '1'
-        run: ci/modules.sh publish target/modules
-        env:
-          GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
-      # No image, tag or release of a host that no published module speaks to.
-      - run: ci/modules.sh check
-      # The SDK of the contract, which the modules outside this repository use as a git dependency:
-      # sdk-<n> follows the last commit that changed it within contract <n>.
-      - if: steps.version.outputs.image == '1'
-        run: |
-          contract=$(sed -n 's/^pub const CONTRACT: u32 = \([0-9]*\);/\1/p' crates/geko-module-sdk/src/module.rs)
-          if [ "$(git rev-parse -q --verify "refs/tags/sdk-$contract^{commit}" || true)" = "" ] \
-            || ! git diff --quiet "sdk-$contract" HEAD -- crates/geko-module-sdk; then
-            git tag -f "sdk-$contract" HEAD
-            git push -f origin "refs/tags/sdk-$contract"
-          fi
-      - if: steps.version.outputs.image == '1'
-        uses: docker/setup-buildx-action@v3
-      - if: steps.version.outputs.image == '1'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - if: steps.version.outputs.image == '1'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.version.outputs.tags }}
-          build-args: |
-            VERSION=${{ steps.version.outputs.version }}
-            REVISION=${{ steps.version.outputs.commit }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      # The tag goes last: if something could not be published, the next run makes the release again.
-      # gh creates the tag and its GitHub release in one call, so neither is left without the other.
-      # The notes start with the image of the release; GitHub appends the changes since the last one.
-      - if: steps.version.outputs.release == '1'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes \
-            --notes "$(printf 'Image: `ghcr.io/candymaps/geko:%s`\n\n```\ndocker pull ghcr.io/candymaps/geko:%s\n```\n\nThe country packs of this version are in `ghcr.io/candymaps/geko/countries/<country>:%s`.' "$VERSION" "$VERSION" "$VERSION")"

@@ -1,4 +1,4 @@
-//! Load test (PROJECT.md §13.4): `concurrency` threads send the reference queries in turn for a
+//! Load test: `concurrency` threads send the reference queries in turn for a
 //! while, each over its own keep-alive connection, after a warm-up. Reports throughput and the
 //! latency percentiles seen by the client.
 
@@ -220,7 +220,7 @@ fn summarize(route: Route, concurrency: usize, samples: Vec<Samples>) -> LoadRep
 }
 
 
-/// The objectives of PROJECT.md §1.1, only meaningful on the reference hardware: a p99 under
+/// The latency and throughput objectives, only meaningful on the reference hardware: a p99 under
 /// `max_p99_ms` with one request at a time, and a throughput of `min_qps` at some concurrency
 /// that still keeps that p99.
 pub fn objectives(report: &[LoadReport], max_p99_ms: Option<f64>, min_qps: Option<f64>) -> Vec<String> {

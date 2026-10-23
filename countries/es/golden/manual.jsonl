@@ -1,4 +1,4 @@
-// Hand-written reference queries for the Balearic Islands (PROJECT.md §13.1): landmarks,
+// Hand-written reference queries for the Balearic Islands: landmarks,
 // names in both official languages and in Spanish, and colloquial forms. Coordinates are the
 // well-known location of each place; tolerances are generous for large places. A chain typed
 // with the town of one of its shops (`manual_chain`, autocomplete) is that shop, not the one in

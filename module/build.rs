@@ -1,4 +1,4 @@
-//! Code version of every workspace crate, for incremental generation (PROJECT.md §8.3): a hash of
+//! Code version of every workspace crate, for incremental generation: a hash of
 //! its sources and those of the workspace crates it depends on, plus the entries of `Cargo.lock`
 //! of the external crates they use. Exposed as
 //! `GEKO_CODE_<CRATE>` (e.g. `GEKO_CODE_SOURCE_OSM`), so a build stage reruns exactly when the
@@ -11,16 +11,19 @@ use std::path::{Path, PathBuf};
 use sha2::{Digest, Sha256};
 
 fn main() {
-    let root = Path::new(&std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("../..").canonicalize().unwrap();
+    let root = Path::new(&std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("..").canonicalize().unwrap();
     let manifest = |dir: &Path| -> toml::Table { fs::read_to_string(dir.join("Cargo.toml")).unwrap().parse().unwrap() };
 
-    // Workspace crates by name, with the workspace crates each one depends on.
+    // Workspace crates by name, with the workspace crates each one depends on. A path dependency
+    // outside the workspace (the SDK of a tree of the host, as `make start-dev` of the host builds
+    // it) is an external crate, as when it comes from git.
     let workspace = manifest(&root);
     let paths: BTreeMap<String, PathBuf> = workspace["workspace"]["dependencies"]
         .as_table()
         .unwrap()
         .iter()
         .filter_map(|(name, dep)| Some((name.clone(), root.join(dep.get("path")?.as_str()?))))
+        .filter(|(_, dir)| dir.starts_with(&root))
         .collect();
     // Normal and build dependencies only: tests and benchmarks do not produce stage outputs.
     let mut external: BTreeMap<&str, Vec<String>> = BTreeMap::new();
@@ -60,7 +63,7 @@ fn main() {
             let dir = &paths[n];
             let mut files = vec![dir.join("Cargo.toml")];
             collect(&dir.join("src"), &mut files);
-            // A country pack (PROJECT.md §2.4) embeds its data: it is part of its code.
+            // A country pack embeds its data: it is part of its code.
             collect(&dir.join("data"), &mut files);
             files.extend(Some(dir.join("pack.toml")).filter(|p| p.is_file()));
             files.sort();

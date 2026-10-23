@@ -1,4 +1,4 @@
-//! Readers of the staging into the records fusion works on (PROJECT.md §5.2, §6.5): OSM's own
+//! Readers of the staging into the records fusion works on: OSM's own
 //! schema, and the address schema every other source of addresses writes
 //! (`schemas/staging/addresses.md`), so that a national source needs no code here.
 

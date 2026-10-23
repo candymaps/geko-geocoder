@@ -1,0 +1,19 @@
+[package]
+name = "geko-host"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+# geko, the host of candymaps/geko, with the geocoder linked into it: the binary that the checks of
+# this repository build, serve and measure (ci/test.sh). Never published: geko downloads the module.
+[[bin]]
+name = "geko"
+path = "src/main.rs"
+
+[dependencies]
+geko-app.workspace = true
+geko-module-sdk.workspace = true
+geko-module-geocoder.workspace = true
+anyhow.workspace = true
+mimalloc = { version = "0.1", default-features = false }

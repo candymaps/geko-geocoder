@@ -1,4 +1,4 @@
-//! The geocoder, as a module of geko (docs/MODULES_PLAN.md): it downloads its sources and the
+//! The geocoder, as a module of geko: it downloads its sources and the
 //! country packs of the scope, fuses and indexes every country into its part of the bundle, and
 //! serves search, autocomplete, reverse and place lookups under `/geocoder/`. Everything the
 //! host asks of it goes through `geko_module_sdk::module::Module`.

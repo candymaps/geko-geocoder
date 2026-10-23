@@ -1,7 +1,7 @@
 //! The box of each partition of a country pack (`data/region-boxes.tsv`), from the boundaries
 //! of a build: the administrative areas of the canonical dataset that carry the ISO 3166-2 code
 //! of the partition. A source that downloads by area fetches only what the partitions of the
-//! scope need (PROJECT.md 17, item 46).
+//! scope need.
 
 use std::collections::BTreeMap;
 use std::fs::File;

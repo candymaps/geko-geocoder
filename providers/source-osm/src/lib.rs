@@ -1,4 +1,4 @@
-//! OpenStreetMap source provider (PROJECT.md §6.1, §7.4, §8.1).
+//! OpenStreetMap source provider.
 
 mod geofabrik;
 mod read;

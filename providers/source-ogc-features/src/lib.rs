@@ -1,5 +1,5 @@
 //! Addresses from an OGC API Features service, as a country pack declares them in
-//! `sources/<source>.toml` with `kind = "ogc-api-features"` (PROJECT.md §2.4, §7.6). The service,
+//! `sources/<source>.toml` with `kind = "ogc-api-features"`. The service,
 //! the property a unit is walked by and the columns of the staging are data of the pack: this
 //! provider knows no country.
 //!

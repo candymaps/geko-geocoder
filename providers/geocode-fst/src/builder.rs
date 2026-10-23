@@ -1,4 +1,4 @@
-//! Builds a country segment from the canonical tables (PROJECT.md §9.4, §9.6–9.8).
+//! Builds a country segment from the canonical tables.
 
 use std::collections::{BTreeMap, HashMap};
 use std::fs;

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "modules/*", "modules/geko-geocoder/dylib", "providers/*", "countries/*"]
+members = ["crates/*", "module", "module/dylib", "providers/*", "countries/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -10,11 +10,13 @@ license = "AGPL-3.0-only"
 
 [workspace.dependencies]
 geko-core = { path = "crates/geko-core" }
-# The contract and what the host shares with its modules, from the repository of the host
-# (docs/MODULES_PLAN.md): the commit of its tag sdk-<contract>.
-geko-module-sdk = { git = "https://github.com/candymaps/geko", rev = "03b41187113b75055a2965de6d0dd08ab4164607" }
-geko-fetch = { git = "https://github.com/candymaps/geko", rev = "03b41187113b75055a2965de6d0dd08ab4164607" }
-geko-artifact = { git = "https://github.com/candymaps/geko", rev = "03b41187113b75055a2965de6d0dd08ab4164607" }
+# The contract and what the host shares with its modules, from the repository of the host:
+# the commit of its tag sdk-<contract>. geko-app is the host itself, which
+# geko-host links the geocoder into for the checks.
+geko-module-sdk = { git = "https://github.com/candymaps/geko.git", tag = "sdk-1" }
+geko-fetch = { git = "https://github.com/candymaps/geko.git", tag = "sdk-1" }
+geko-artifact = { git = "https://github.com/candymaps/geko.git", tag = "sdk-1" }
+geko-app = { git = "https://github.com/candymaps/geko.git", tag = "sdk-1" }
 geko-build = { path = "crates/geko-build" }
 geko-geom = { path = "crates/geko-geom" }
 source-osm = { path = "providers/source-osm" }
@@ -28,7 +30,7 @@ geko-eval = { path = "crates/geko-eval" }
 geko-conformance = { path = "crates/geko-conformance" }
 reverse-rstar = { path = "providers/reverse-rstar" }
 source-ogc-features = { path = "providers/source-ogc-features" }
-geko-module-geocoder = { path = "modules/geko-geocoder" }
+geko-module-geocoder = { path = "module" }
 
 anyhow = "1"
 axum = "0.8"

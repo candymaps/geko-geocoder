@@ -1,8 +1,8 @@
 # Staging CartoCiudad — `cartociudad-staging/2`
 
-Escrito por el provider genérico `source-ogc-features`, según la declaración `countries/es/sources/cartociudad.toml`, en `staging/cartociudad/ES/<región|_all>/addresses.parquet`. Clave de metadatos `geko.schema = cartociudad-staging/2`. Las seis primeras columnas y las coordenadas son las del esquema común de direcciones ([addresses.md](addresses.md)). Compresión zstd. Coordenadas en EPSG:4326. Los valores se guardan tal como los da la fuente, salvo los números ficticios, sin normalizar: la normalización para comparar es parte de la fusión (PROJECT.md §6.5.1).
+Escrito por el provider genérico `source-ogc-features`, según la declaración `countries/es/sources/cartociudad.toml`, en `staging/cartociudad/ES/<región|_all>/addresses.parquet`. Clave de metadatos `geko.schema = cartociudad-staging/2`. Las seis primeras columnas y las coordenadas son las del esquema común de direcciones ([addresses.md](addresses.md)). Compresión zstd. Coordenadas en EPSG:4326. Los valores se guardan tal como los da la fuente, salvo los números ficticios, sin normalizar: la normalización para comparar es parte de la fusión.
 
-Origen: OGC API Features del IDEE, colección `address` (`https://api-features.idee.es/collections/address/items`), descargada por código postal (PROJECT.md §7.6).
+Origen: OGC API Features del IDEE, colección `address` (`https://api-features.idee.es/collections/address/items`), descargada por código postal.
 
 | Columna | Tipo | Nulo | Propiedad de origen | Notas |
 |---|---|---|---|---|
