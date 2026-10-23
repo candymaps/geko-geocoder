@@ -1,4 +1,4 @@
-//! Reference queries and engine comparison (PROJECT.md §13).
+//! Reference queries and engine comparison.
 
 mod boxes;
 mod buildreport;
@@ -159,7 +159,7 @@ enum Command {
         #[arg(long)]
         min_qps: Option<f64>,
     },
-    /// Counts and integrity problems of a canonical dataset (its fusion report and §13.4).
+    /// Counts and integrity problems of a canonical dataset (its fusion report and the checks of the data).
     Data {
         #[arg(long)]
         canonical: PathBuf,
@@ -181,7 +181,7 @@ enum Command {
         baseline: PathBuf,
         #[arg(long)]
         report: PathBuf,
-        /// Objective for the hot part of the bundle, in GB (PROJECT.md §1.1).
+        /// Objective for the hot part of the bundle, in GB.
         #[arg(long)]
         max_hot_gb: Option<f64>,
         /// Do not compare the time of the stages: the builds did not run in the same moments.
@@ -211,7 +211,7 @@ enum Command {
         #[arg(long)]
         latency_baseline: Option<PathBuf>,
         /// The total top-1 of `report` must be at least this many points above the baseline's:
-        /// the objective against another engine (PROJECT.md §1.1).
+        /// the objective against another engine.
         #[arg(long)]
         total_lead: Option<f64>,
         /// Compare hit rates only, as against another engine: its errors, duplicated results and

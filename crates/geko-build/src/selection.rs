@@ -1,4 +1,4 @@
-//! Which configured sources take part in a run (PROJECT.md §7.1): the enabled providers that
+//! Which configured sources take part in a run: the enabled providers that
 //! cover some country of the scope, each with the countries it covers.
 
 use std::sync::Arc;

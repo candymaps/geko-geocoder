@@ -1,0 +1,6 @@
+# The package of the geocoder: the library that geko loads into its process
+# (`DylibModule`, the only adapter), from the crate in module/dylib/. `make modules` puts it in a directory
+# of GEKO_MODULES, and ci/modules.sh publishes it, with its version, contract and platform.
+name = "geocoder"
+kind = "dylib"
+entry = "libgeko_geocoder.so"

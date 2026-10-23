@@ -1,5 +1,5 @@
 //! Records staged in a partition whose boundary does not contain them, sent to the partition that
-//! does (PROJECT.md §6.5.8).
+//! does.
 //!
 //! OSM is staged clipped to the boundary of each region. Other sources are staged however they are
 //! published (CartoCiudad, by postcode prefix), so some of their points lie in another partition,

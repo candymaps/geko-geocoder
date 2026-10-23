@@ -192,7 +192,7 @@ pub struct PlaceRef<'a> {
     pub json: Cow<'a, [u8]>,
 }
 
-/// A street name split for comparison (PROJECT.md §6.5.1): the street type as a code common
+/// A street name split for comparison: the street type as a code common
 /// to every language of the country, and the remaining name normalized.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct StreetParts {
@@ -285,7 +285,7 @@ mod tests {
 }
 
 /// The OSM `admin_level` of each kind of administrative unit in a country: the levels mean
-/// different things in each country, so its pack declares them (PROJECT.md §2.4).
+/// different things in each country, so its pack declares them.
 #[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AdminLevels {

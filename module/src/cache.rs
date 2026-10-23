@@ -1,4 +1,4 @@
-//! Cache of search and autocomplete answers (PROJECT.md §10): many clients type the same
+//! Cache of search and autocomplete answers: many clients type the same
 //! beginnings ("Cal", "Calle"), and an answer is the same until the bundle changes.
 
 use std::collections::HashMap;

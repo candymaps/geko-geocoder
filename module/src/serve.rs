@@ -1,4 +1,4 @@
-//! What the geocoder serves (PROJECT.md §10): loads the country segments of a bundle and answers
+//! What the geocoder serves: loads the country segments of a bundle and answers
 //! search, autocomplete, reverse and place lookups as GeoJSON. Providers are opened through a
 //! function given by `sources`, so the answers know no concrete technology.
 
@@ -47,8 +47,8 @@ pub struct GeocoderConfig {
     pub autocomplete_budget: Option<std::time::Duration>,
     /// Requests that take longer are logged with their query; `None` logs none.
     pub slow_query: Option<std::time::Duration>,
-    /// Results with the same name closer than this, in metres, are merged in the answer
-    /// (PROJECT.md §6.5.6); 0 merges only the same id.
+    /// Results with the same name closer than this, in metres, are merged in the answer;
+    /// 0 merges only the same id.
     pub same_entity_m: f64,
     /// Most requests in one `/v1/batch`.
     pub batch_max: usize,
@@ -89,9 +89,9 @@ struct Shared {
 }
 
 /// The method of making the fused database, offered under ODbL 4.6 to whoever gets results.
-const FUSION_METHOD: &str = include_str!("../../../docs/FUSION_METHOD.md");
+const FUSION_METHOD: &str = include_str!("../FUSION_METHOD.md");
 /// The reference of the API of the geocoder, which the host lists at `/docs`.
-pub const OPENAPI: &str = include_str!("../openapi.yaml");
+pub const OPENAPI: &str = include_str!("../../openapi.yaml");
 const GEOJSON: &str = "application/geo+json; charset=utf-8";
 
 pub struct Server {
@@ -155,7 +155,7 @@ impl Server {
     }
 
     pub fn metrics(&self, out: &mut String) {
-        out.push_str("# HELP geko_merged_duplicates_total Duplicated results merged in answers (PROJECT.md 6.5.6): each is a fusion miss.\n# TYPE geko_merged_duplicates_total counter\n");
+        out.push_str("# HELP geko_merged_duplicates_total Duplicated results merged in answers: each is a fusion miss.\n# TYPE geko_merged_duplicates_total counter\n");
         let _ = writeln!(out, "geko_merged_duplicates_total {}", self.shared.merged.load(Ordering::Relaxed));
         if self.shared.cache.enabled() {
             out.push_str("# HELP geko_cache_lookups_total Search and autocomplete answers looked up in the cache, by result.\n# TYPE geko_cache_lookups_total counter\n");
@@ -276,7 +276,7 @@ enum Confidence {
 
 /// Logistic model of the probability that a text search result is the one asked for, from what
 /// any query has: its score, its lead over the next result, how far it is behind the first, its
-/// position and its match type (PROJECT.md §10.2). Fitted on the Spain reference queries and
+/// position and its match type. Fitted on the Spain reference queries and
 /// keystrokes with the default ranking weights (`tools/confidence/`): calibration error 0.065
 /// on a held-out set, where the score relative to the best had 0.48. A result marked 0.9 is right
 /// about nine times in ten.
@@ -482,7 +482,7 @@ fn respond(
     Answer(body)
 }
 
-/// The safety net of PROJECT.md §6.5.6: drops each result with the id of a better one, or with
+/// The safety net against duplicates: drops each result with the id of a better one, or with
 /// its name closer than `same_entity_m`, and keeps at most `size`. Returns how many it dropped
 /// as duplicates. Results past `size` are never read: they would only fault in cold pages.
 fn merge_duplicates(found: &mut Vec<Found>, same_entity_m: f64, size: usize) -> usize {

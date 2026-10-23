@@ -1,4 +1,4 @@
-//! Country packs read at run time (PROJECT.md §2.4): what the engine knows about a country is
+//! Country packs read at run time: what the engine knows about a country is
 //! data in a folder, not code compiled into the binary.
 //!
 //! ```text

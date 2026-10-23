@@ -1,4 +1,4 @@
-//! Text normalization from a country pack (PROJECT.md §6.5.1): folding, street types, connecting
+//! Text normalization from a country pack: folding, street types, connecting
 //! words and house numbers.
 
 use geko_core::country::CountryCode;
@@ -181,7 +181,7 @@ impl RulesNormalizer {
         self.pack.foreign_types.iter().find(|f| f.word == token && (f.after || !after)).map(|f| f.code.as_str())
     }
 
-    /// Splits a street name into its type code and normalized core (PROJECT.md §6.5.1). With
+    /// Splits a street name into its type code and normalized core. With
     /// `typo`, for queries, a first word that is a street type with two letters swapped counts as
     /// that type, and so does a street type of another language, first or, where that language
     /// writes it so, last ("Street Femenies", "Femenies Street").

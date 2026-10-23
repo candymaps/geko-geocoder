@@ -1,4 +1,4 @@
-//! Choice of Geofabrik extracts for a scope (PROJECT.md §7.4).
+//! Choice of Geofabrik extracts for a scope.
 
 use std::collections::{BTreeMap, BTreeSet};
 

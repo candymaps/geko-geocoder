@@ -40,7 +40,7 @@ pub fn check_metadata(p: &dyn SourceProvider, country: CountryCode) {
 }
 
 /// Staging of `partition` from the fixture in `raw`: it writes something, it is deterministic
-/// (incremental builds rely on it, PROJECT.md §8.3), its declared inputs exist under `raw`, and
+/// (incremental builds rely on it), its declared inputs exist under `raw`, and
 /// an empty raw directory is an error, not a panic.
 pub fn check_stage(p: &dyn SourceProvider, partition: &Partition, raw: &RawDir) {
     let tmp = tempfile::tempdir().unwrap();

@@ -1,4 +1,4 @@
-//! Street entities (PROJECT.md §6.5.2): OSM segments aggregated into streets, then every
+//! Street entities: OSM segments aggregated into streets, then every
 //! address of every source attached to its street. Addresses whose street exists in no
 //! geometry source create new streets.
 

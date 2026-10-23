@@ -5,7 +5,7 @@ edition.workspace = true
 publish.workspace = true
 license.workspace = true
 
-# Conformance suites per port (PROJECT.md §2.1 rule 5, §13.5). Providers use this crate as a
+# Conformance suites per port. Providers use this crate as a
 # dev-dependency and run the suite of their port from their own tests.
 
 [dependencies]

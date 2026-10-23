@@ -1,4 +1,4 @@
-//! Postcode zones and inferred postcodes (PROJECT.md §6.5.4).
+//! Postcode zones and inferred postcodes.
 
 use std::collections::BTreeMap;
 

@@ -1,16 +1,16 @@
 # Canónico — `canonical/1`
 
-Escrito por la fusión (`geko-build/src/fusion`) en `canonical/<país>/`. Una entidad por cada cosa del mundo real, enriquecida con todas las fuentes (PROJECT.md §6.5). Cada fichero lleva la clave de metadatos `geko.schema = canonical/1`. Compresión zstd. Coordenadas en EPSG:4326, en 1e-7 grados (`lat_e7`, `lon_e7`).
+Escrito por la fusión (`geko-build/src/fusion`) en `canonical/<país>/`. Una entidad por cada cosa del mundo real, enriquecida con todas las fuentes. Cada fichero lleva la clave de metadatos `geko.schema = canonical/1`. Compresión zstd. Coordenadas en EPSG:4326, en 1e-7 grados (`lat_e7`, `lon_e7`).
 
 Convenciones:
 
-- `public_id`: id público estable (PROJECT.md §5.5). Las claves que se repiten llevan `-2`, `-3`… en orden determinista.
+- `public_id`: id público estable. Las claves que se repiten llevan `-2`, `-3`… en orden determinista.
 - `local_id` (`uint32`, en `places`, `streets`, `pois`, `postcodes` y `addresses`): id local denso del segmento, compartido por el motor de búsqueda y la inversa. Primero las entidades buscables en orden de importancia descendente; después los portales, agrupados por calle y ordenados por número (cada calle forma un bloque contiguo).
 - `*_id`: `public_id` de otra entidad (municipio, calle, portal).
 - `names`, `aliases`, `postcodes`, `source_ids`: JSON.
 - `sources`: fuentes que aportaron la entidad, separadas por comas.
-- `importance`: `u16`, de 0 a 65535 (PROJECT.md §6.3).
-- `*_source` de un atributo: la fuente de la que sale, o `inferred` si se dedujo (PROJECT.md §6.5.4).
+- `importance`: `u16`, de 0 a 65535.
+- `*_source` de un atributo: la fuente de la que sale, o `inferred` si se dedujo.
 
 ## `places.parquet`
 
@@ -93,7 +93,7 @@ Comunidades, provincias, municipios y barrios (de límites administrativos), y l
 
 ## `postcode_cells.parquet`
 
-Zonas de CP (PROJECT.md §6.5.4): celda H3 de resolución 9 → CP mayoritario de sus portales con CP de una fuente.
+Zonas de CP: celda H3 de resolución 9 → CP mayoritario de sus portales con CP de una fuente.
 
 | Columna | Tipo | Nulo |
 |---|---|---|
@@ -102,7 +102,7 @@ Zonas de CP (PROJECT.md §6.5.4): celda H3 de resolución 9 → CP mayoritario d
 
 ## `conflicts.parquet`
 
-Atributos en los que las fuentes discrepan (PROJECT.md §6.5.3).
+Atributos en los que las fuentes discrepan.
 
 | Columna | Tipo | Nulo |
 |---|---|---|
@@ -111,4 +111,4 @@ Atributos en los que las fuentes discrepan (PROJECT.md §6.5.3).
 
 ## `fusion_report.json`
 
-Recuentos por fuente y por entidad, estadísticas de emparejamiento, atributos inferidos, métricas de calidad (PROJECT.md §13.6) con ejemplos, umbrales y fallos.
+Recuentos por fuente y por entidad, estadísticas de emparejamiento, atributos inferidos, métricas de calidad con ejemplos, umbrales y fallos.

@@ -1,29 +1,29 @@
 {
   "entities": {
-    "addresses": 441354,
+    "addresses": 441357,
     "conflicts": 1931,
-    "places": 7831,
-    "pois": 29384,
+    "places": 7830,
+    "pois": 29408,
     "postcodes": 160,
-    "streets": 31618
+    "streets": 31619
   },
   "records": {
     "addresses.cartociudad": 418098,
-    "addresses.osm": 149990,
+    "addresses.osm": 149999,
     "admins.osm": 131,
-    "places.osm": 7840,
-    "pois.osm": 32297,
-    "streets.osm": 37782
+    "places.osm": 7839,
+    "pois.osm": 32322,
+    "streets.osm": 37783
   },
   "inferred": {
-    "address_postcodes": 11476,
-    "poi_addresses": 18139,
-    "poi_postcodes": 28824
+    "address_postcodes": 11477,
+    "poi_addresses": 18160,
+    "poi_postcodes": 28848
   },
   "duplicates": {
     "duplicate_addresses": 0,
     "duplicate_streets": 2,
-    "homonymous_streets": 287
+    "homonymous_streets": 289
   },
   "problems": {
     "addresses_in_an_unknown_municipality": 0,

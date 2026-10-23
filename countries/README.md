@@ -1,10 +1,10 @@
 # Packs de país
 
-Todo lo propio de un país vive en su pack, `countries/<país>/` (PROJECT.md §2.4): sus datos de texto, sus regiones, lo que necesita saber de él cada fuente y sus consultas de referencia. El motor y los providers de `providers/` son genéricos y no se tocan al añadir un país.
+Todo lo propio de un país vive en su pack, `countries/<país>/`: sus datos de texto, sus regiones, lo que necesita saber de él cada fuente y sus consultas de referencia. El motor y los providers de `providers/` son genéricos y no se tocan al añadir un país.
 
 Un pack es **datos, no código**: `geko` lo lee al arrancar de la carpeta de los packs (`/var/lib/geko/packs/<país>/`, o la de `GEKO_PACKS`), y solo los de los países del ámbito. `ci/packs.sh` copia ahí lo que se lee (`pack.toml`, `data/`, `sources/*.toml`); `make install` lo hace solo. Las comprobaciones (`ci/test.sh`) leen los packs tal como están en el repositorio.
 
-Los packs se publican firmados en `ghcr.io/candymaps/geko/countries/<país>` (`make release-packs`, o el trabajo `publish` de `ci.yml` en cada cambio de un pack en `main`), y `geko` baja los del ámbito al generar. Un pack nuevo se publica igual: el workflow lo encuentra por su `pack.toml`. La primera vez, su paquete de ghcr.io nace privado: hay que hacerlo público en GitHub («Package settings»), o nadie más podrá bajarlo.
+Los packs se publican firmados en `ghcr.io/candymaps/geko-geocoder/countries/<país>` (`make release-packs`, o el trabajo `publish` de `ci.yml` en cada cambio de un pack en `main`), y `geko` baja los del ámbito al generar. Un pack nuevo se publica igual: el workflow lo encuentra por su `pack.toml`. La primera vez, su paquete de ghcr.io nace privado: hay que hacerlo público en GitHub («Package settings»), o nadie más podrá bajarlo.
 
 | Pack | Lenguas | Fuentes | Particiones | Golden |
 |---|---|---|---|---|
@@ -128,14 +128,13 @@ No hace falta tocarla: el trabajo `golden` de `.github/workflows/ci.yml` pasa el
 
 - Una fila en la tabla del principio de este README, con el enlace al README del pack.
 - El `README.md` del pack, **siempre**, tenga o no fuentes propias, con el formato de abajo.
-- Si hubo que tocar el motor, su punto en `docs/PROJECT.md`, sección 17 «Pendiente».
 
 #### El README del pack
 
 Todos los packs tienen el mismo README, con estas partes y en este orden ([`es`](es/README.md) y [`lu`](lu/README.md) son el modelo):
 
 1. **Título:** `# Pack de <país> (`<código>`)`.
-2. **Entrada:** «Todo lo propio de <país> (PROJECT.md §2.4). El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí.», y una frase más si el pack tiene un papel especial (por ejemplo, ser país del golden).
+2. **Entrada:** «Todo lo propio de <país>. El motor y los providers de `providers/` son genéricos; este pack aporta lo que solo tiene sentido aquí.», y una frase más si el pack tiene un papel especial (por ejemplo, ser país del golden).
 3. **Tabla `Contenido | Qué es`:** una fila por carpeta o grupo de ficheros del pack (`pack.toml` y `data/`, `src/` y `tests/`, cada fuente en `sources/<fuente>.toml`, `golden/`, `golden/baseline/`), diciendo qué datos trae cada uno.
 4. **Lista de rasgos del país:** como mínimo, `**Lenguas:**`; además, las particiones y los niveles administrativos cuando no son los habituales.
 5. **`## Fuentes`:** «Con `country = "<CÓDIGO>"` en el ámbito, <país> usa siempre **<fuentes>**, sin escribir nada más en `geko.toml`:», y una viñeta por fuente que se usa por defecto: OSM, cada fuente genérica (Overture…) y cada fuente nacional. Cada fuente nacional lleva su tabla `Campo | Por defecto | Qué hace` con todos los campos de su `[sources.<id>]`, `enabled` incluido, y un ejemplo en TOML. Después, las fuentes nacionales previstas o «no tiene todavía ninguna fuente nacional».

@@ -369,8 +369,8 @@ fn fetched(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader) -> Result<(S
 }
 
 /// Fetch, stage every partition, fuse and index each country, and leave a segment per country for
-/// the bundle. Every stage whose code and inputs are unchanged since the last build is reused
-/// (PROJECT.md §8.3), unless `force`.
+/// the bundle. Every stage whose code and inputs are unchanged since the last build is reused,
+/// unless `force`.
 pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: bool) -> Result<Built> {
     let mut log = StageLog::new();
     let mut out = String::new();
@@ -570,7 +570,7 @@ fn segment_stage(
 }
 
 /// The parts of a segment: the indexes, and the country pack they were built with, which
-/// `serve` reads from the bundle (PROJECT.md §2.4).
+/// `serve` reads from the bundle.
 const PARTS: [&str; 3] = ["geocode", "reverse", "pack"];
 
 /// Working directory where a country segment is built before being published in a bundle.
@@ -683,7 +683,7 @@ mod tests {
     }
 
     fn setup(data: DataPolicy) -> Setup {
-        geko_country_pack::init(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../countries"));
+        geko_country_pack::init(Path::new(env!("CARGO_MANIFEST_DIR")).join("../countries"));
         // The source that the pack of Spain declares is not what these tests are about.
         let config = Config::parse("[sources.fake]\n\n[sources.cartociudad]\nenabled = false\n", "").unwrap();
         let mut scope = Scope::default();

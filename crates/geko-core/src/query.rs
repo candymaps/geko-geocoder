@@ -61,7 +61,7 @@ pub struct QueryContext {
     /// Score of the k-th result already found elsewhere (other segments or interpretations):
     /// an engine may stop as soon as it cannot beat it.
     pub min_score: f32,
-    /// Time budget (PROJECT.md §9.5): past it, an engine skips its remaining secondary readings
+    /// Time budget: past it, an engine skips its remaining secondary readings
     /// and fallback searches and returns what it has. The first reading always completes.
     pub deadline: Option<std::time::Instant>,
 }

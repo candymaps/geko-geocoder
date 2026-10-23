@@ -1,4 +1,4 @@
-//! Generic text rules (PROJECT.md §2.4): one normalizer and one query parser for every country,
+//! Generic text rules: one normalizer and one query parser for every country,
 //! driven by the data of its pack (`countries/<country>/pack.toml` and `data/*.toml`). A country
 //! adds its street types, connecting words and address conventions as data, not code.
 

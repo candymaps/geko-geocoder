@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# The modules of this repository as the packages geko downloads (docs/MODULES_PLAN.md): each folder
-# of modules/ with a module.toml, compiled in release, with that module.toml completed (version,
-# contract, platform) and signed.
+# The module of this repository as the package geko downloads: module/, with
+# its library (the crate geko-module-<module>-dylib) compiled in release, and its module.toml
+# completed (version, contract, platform) and signed.
 #
 #   ci/modules.sh build <folder> [module…]   compiles every module (or those named) into
 #                                            <folder>/<module>/
@@ -28,15 +28,12 @@ registry=${GEKO_MODULES_REGISTRY:-ghcr.io/candymaps}
 
 field() { tr -d '\r' < "$2" | sed -n "s/^$1 *= *\"\{0,1\}\([^\"]*\)\"\{0,1\} *\$/\1/p" | head -1; }
 
-# The folders of the modules, or of those named.
+# The folder of the module, unless other modules are named.
 modules() {
-    local dir name
-    for dir in modules/*/; do
-        [ -f "$dir/module.toml" ] || continue
-        name=$(field name "$dir/module.toml")
-        [ $# -eq 0 ] || [[ " $* " == *" $name "* ]] || continue
-        echo "${dir%/}"
-    done
+    local name
+    name=$(field name module/module.toml)
+    [ $# -eq 0 ] || [[ " $* " == *" $name "* ]] || return 0
+    echo module
 }
 
 sign_tool() {
@@ -62,7 +59,7 @@ build() {
         name=$(field name "$dir/module.toml")
         kind=$(field kind "$dir/module.toml")
         entry=$(field entry "$dir/module.toml")
-        GEKO_MODULE_VERSION=$version cargo build --release --locked --bin "$entry"
+        GEKO_MODULE_VERSION=$version cargo build --release --locked -p "geko-module-$name-dylib"
         rm -rf "${out:?}/$name"
         mkdir -p "$out/$name"
         cp "$target/release/$entry" "$out/$name/$entry"

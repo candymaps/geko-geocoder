@@ -40,3 +40,5 @@ allow-wildcard-paths = true
 [sources]
 unknown-registry = "deny"
 unknown-git = "deny"
+# The host, which the SDK and geko-app come from (Cargo.toml).
+allow-git = ["https://github.com/candymaps/geko.git"]

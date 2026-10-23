@@ -1,4 +1,4 @@
-//! Address entities (PROJECT.md §6.5.2–6.5.3): records of every source with the same street,
+//! Address entities: records of every source with the same street,
 //! number and suffix, close to each other, are one address. Each attribute comes from the
 //! source with the highest priority that has it; disagreements are kept as conflicts.
 

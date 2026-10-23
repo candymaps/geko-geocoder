@@ -1,47 +1,47 @@
 {
   "bundle": {
-    "bytes": 70644578,
-    "hot_bytes": 16581693,
-    "version": "v2026-10-21T142127"
+    "bytes": 70657122,
+    "hot_bytes": 16584363,
+    "version": "v2026-10-22T210009"
   },
   "packs": {
     "ES": 1
   },
   "stages": [
     {
-      "elapsed_ms": 16,
-      "peak_mb": 18,
+      "elapsed_ms": 57356,
+      "peak_mb": 672,
       "reused": false,
       "stage": "fetch and stage"
     },
     {
-      "elapsed_ms": 1,
-      "peak_mb": 18,
-      "reused": true,
+      "elapsed_ms": 79,
+      "peak_mb": 502,
+      "reused": false,
       "stage": "relocate ES"
     },
     {
-      "elapsed_ms": 3,
-      "peak_mb": 18,
-      "reused": true,
+      "elapsed_ms": 6199,
+      "peak_mb": 974,
+      "reused": false,
       "stage": "fuse ES"
     },
     {
-      "elapsed_ms": 1,
-      "peak_mb": 18,
-      "reused": true,
+      "elapsed_ms": 2233,
+      "peak_mb": 325,
+      "reused": false,
       "stage": "index ES"
     },
     {
-      "elapsed_ms": 0,
-      "peak_mb": 18,
-      "reused": true,
+      "elapsed_ms": 212,
+      "peak_mb": 283,
+      "reused": false,
       "stage": "reverse ES"
     },
     {
-      "elapsed_ms": 50,
-      "peak_mb": 20,
-      "reused": true,
+      "elapsed_ms": 86,
+      "peak_mb": 282,
+      "reused": false,
       "stage": "publish"
     }
   ]

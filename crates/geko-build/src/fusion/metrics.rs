@@ -1,4 +1,4 @@
-//! Fusion quality metrics (PROJECT.md §13.6).
+//! Fusion quality metrics.
 
 use std::collections::BTreeMap;
 

@@ -198,12 +198,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ascii"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d92bec98840b8f03a5ff5413de5293bfcd8bf96467cf5452609f939ec6f5de16"
-
-[[package]]
 name = "atoi"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,12 +363,6 @@ dependencies = [
  "num-traits",
  "windows-link",
 ]
-
-[[package]]
-name = "chunked_transfer"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e4de3bc4ea267985becf712dc6d9eed8b04c953b3fcfb339ebc87acd9804901"
 
 [[package]]
 name = "clap"
@@ -723,14 +711,13 @@ dependencies = [
 [[package]]
 name = "geko-app"
 version = "0.1.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-1#cc8b94f23487290344d45e73fb3cbd6119d3b7a9"
 dependencies = [
  "anyhow",
  "clap",
  "geko-artifact",
  "geko-fetch",
- "geko-module-geocoder",
  "geko-module-sdk",
- "geko-module-tiles",
  "geko-server",
  "hex",
  "libloading",
@@ -738,7 +725,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "tempfile",
  "tokio",
  "toml",
  "tracing",
@@ -748,6 +734,7 @@ dependencies = [
 [[package]]
 name = "geko-artifact"
 version = "0.1.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-1#cc8b94f23487290344d45e73fb3cbd6119d3b7a9"
 dependencies = [
  "ed25519-dalek",
  "geko-fetch",
@@ -756,7 +743,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "tempfile",
  "tracing",
 ]
 
@@ -855,6 +841,7 @@ dependencies = [
 [[package]]
 name = "geko-fetch"
 version = "0.1.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-1#cc8b94f23487290344d45e73fb3cbd6119d3b7a9"
 dependencies = [
  "geko-module-sdk",
  "hex",
@@ -862,8 +849,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "tempfile",
- "tiny_http",
  "tracing",
  "ureq",
 ]
@@ -873,6 +858,17 @@ name = "geko-geom"
 version = "0.1.0"
 dependencies = [
  "rustc-hash",
+]
+
+[[package]]
+name = "geko-host"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "geko-app",
+ "geko-module-geocoder",
+ "geko-module-sdk",
+ "mimalloc",
 ]
 
 [[package]]
@@ -888,7 +884,6 @@ dependencies = [
  "geko-geom",
  "geko-module-sdk",
  "geocode-fst",
- "mimalloc",
  "reverse-rstar",
  "serde",
  "serde_json",
@@ -899,7 +894,6 @@ dependencies = [
  "tempfile",
  "toml",
  "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
@@ -915,47 +909,27 @@ dependencies = [
 [[package]]
 name = "geko-module-sdk"
 version = "0.1.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-1#cc8b94f23487290344d45e73fb3cbd6119d3b7a9"
 dependencies = [
  "hex",
  "serde",
  "serde_json",
  "sha2",
- "tempfile",
  "thiserror 2.0.21",
  "tracing",
 ]
 
 [[package]]
-name = "geko-module-tiles"
-version = "0.1.0"
-dependencies = [
- "geko-module-sdk",
- "tempfile",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "geko-module-tiles-dylib"
-version = "0.1.0"
-dependencies = [
- "geko-module-sdk",
- "geko-module-tiles",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "geko-server"
 version = "0.1.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-1#cc8b94f23487290344d45e73fb3cbd6119d3b7a9"
 dependencies = [
  "arc-swap",
  "axum",
  "geko-module-sdk",
  "serde",
  "serde_json",
- "tempfile",
  "tokio",
- "tower",
  "tower-http",
  "tracing",
 ]
@@ -2329,7 +2303,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix 1.1.5",
  "windows-sys 0.61.2",
@@ -2414,18 +2388,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tiny_http"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "389915df6413a2e74fb181895f933386023c71110878cd0825588928e64cdc82"
-dependencies = [
- "ascii",
- "chunked_transfer",
- "httpdate",
- "log",
-]
-
-[[package]]
 name = "tinystr"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2437,9 +2399,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.53.3"
+version = "1.54.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 dependencies = [
  "libc",
  "mio",

@@ -1,22 +1,22 @@
 {
   "entities": {
-    "addresses": 166133,
+    "addresses": 166141,
     "conflicts": 0,
     "places": 2321,
     "pois": 16857,
     "postcodes": 4152,
-    "streets": 9999
+    "streets": 10000
   },
   "records": {
-    "addresses.osm": 169788,
+    "addresses.osm": 169796,
     "admins.osm": 313,
     "places.osm": 2162,
-    "pois.osm": 24132,
-    "streets.osm": 31340
+    "pois.osm": 24133,
+    "streets.osm": 31368
   },
   "inferred": {
     "address_postcodes": 18,
-    "poi_addresses": 9623,
+    "poi_addresses": 9622,
     "poi_postcodes": 16555
   },
   "duplicates": {

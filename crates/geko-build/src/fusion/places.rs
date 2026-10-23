@@ -1,4 +1,4 @@
-//! Places and POIs (PROJECT.md §6.5.2). A `place=town` node and the municipality boundary of
+//! Places and POIs. A `place=town` node and the municipality boundary of
 //! the same town are one entity; so are a `place=suburb` node and its district boundary.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -51,7 +51,7 @@ pub struct PoiEntity {
     pub source_ids: Vec<(&'static str, String)>,
     pub postcode: Option<String>,
     pub postcode_source: Option<AttrSource>,
-    /// Nearest address entity, inferred (PROJECT.md §6.5.4).
+    /// Nearest address entity, inferred.
     pub address: Option<usize>,
 }
 
@@ -377,7 +377,7 @@ fn compatible_names(a: &str, b: &str) -> bool {
     })
 }
 
-/// Merges each POI that only other sources have into the OSM POI it is (PROJECT.md §6.5.2): OSM
+/// Merges each POI that only other sources have into the OSM POI it is: OSM
 /// keeps its position and category, and the other names join as variants.
 fn merge_across_sources(entities: Vec<PoiEntity>, normalizer: &dyn TextNormalizer) -> Vec<PoiEntity> {
     let normalized = |name: &str| {

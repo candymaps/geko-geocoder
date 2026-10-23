@@ -30,10 +30,10 @@
 # any query set of the country pack (countries/<country>/golden/) is worse than its baseline
 # (golden/baseline/). Its data are the frozen downloads named in golden/snapshot, so that only a
 # change in the code can change the results: the baseline is measured on them. Without a
-# snapshot, or with GEKO_GOLDEN_FRESH=1, it downloads the sources (PROJECT.md §7, accepting
+# snapshot, or with GEKO_GOLDEN_FRESH=1, it downloads the sources (accepting
 # their licenses) instead; CartoCiudad is a public service, so do that on a schedule or by hand.
 # A snapshot not in $GEKO_GOLDEN_DIR/snapshots is pulled from
-# ghcr.io/candymaps/geko/countries/<country>/golden:<snapshot>, a private package that the CI reads
+# ghcr.io/candymaps/geko-geocoder/countries/<country>/golden:<snapshot>, a private package that the CI reads
 # with its own token and a machine after `oras login ghcr.io`. Environment, besides that of
 # ci/golden.sh:
 #   GEKO_GOLDEN_SETS       query sets of the pack (default: those listed in golden/sets, and every
@@ -76,19 +76,12 @@ test() {
     cargo test --workspace --locked
 }
 
-# Modules and sources are chosen by Cargo feature: each one left out must still compile and pass
-# clippy. The host with each module or none, and the geocoder with only the providers it cannot do
-# without.
+# The providers are chosen by Cargo feature: each one left out must still compile and pass clippy.
+# The geocoder with only the providers it cannot do without.
 features() {
-    local set failed=0
-    for set in "" geocoder tiles; do
-        echo "geko-app features: [${set}]"
-        cargo clippy -p geko-app --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
-    done
-    set=source-osm,geocode-fst,reverse-rstar
+    local set=source-osm,geocode-fst,reverse-rstar
     echo "geko-module-geocoder features: [$set]"
-    cargo clippy -p geko-module-geocoder --no-default-features --features "$set" --all-targets --locked -- -D warnings || failed=1
-    return $failed
+    cargo clippy -p geko-module-geocoder --no-default-features --features "$set" --all-targets --locked -- -D warnings
 }
 
 direct_dependencies() { cargo tree -p "$1" -e normal --depth 1 --prefix none --locked | tail -n +2 | cut -d' ' -f1 | sort -u; }
@@ -114,19 +107,18 @@ only() {
 architecture() {
     local failed=0
     only "geko-core depends on" "geko-module-sdk serde serde_json" "$(direct_dependencies geko-core)" || failed=1
-    # The host knows no module but through the contract of the SDK (docs/MODULES_PLAN.md): nothing
-    # of the geocoder in geko-server, and in geko-app only the module itself, linked in.
-    only "geko-module-sdk depends on" "hex serde serde_json sha2 thiserror tracing" "$(direct_dependencies geko-module-sdk)" || failed=1
-    only "geko-server depends on" "arc-swap axum geko-module-sdk serde serde_json tokio tower-http tracing" "$(direct_dependencies geko-server)" || failed=1
-    only "geko-app depends on" "anyhow clap geko-artifact geko-fetch geko-module-geocoder geko-module-sdk geko-module-tiles geko-server hex libloading mimalloc serde serde_json sha2 tokio toml tracing tracing-subscriber" "$(direct_dependencies geko-app)" || failed=1
+    # The host (candymaps/geko) is only the binary of the checks, geko-host: the geocoder speaks to
+    # it through the contract of the SDK alone.
+    only "geko-app is used by" "geko-host" "$(direct_dependents geko-app)" || failed=1
+    only "geko-host depends on" "anyhow geko-app geko-module-geocoder geko-module-sdk mimalloc" "$(direct_dependencies geko-host)" || failed=1
     only "fst is used by" "geocode-fst" "$(direct_dependents fst)" || failed=1
     only "levenshtein_automata is used by" "geocode-fst" "$(direct_dependents levenshtein_automata)" || failed=1
     only "osmpbf is used by" "source-osm" "$(direct_dependents osmpbf)" || failed=1
     only "ureq is used by" "geko-fetch geko-eval" "$(direct_dependents ureq)" || failed=1
-    only "tokio is used by" "geko-server geko-app" "$(direct_dependents tokio)" || failed=1
-    local http="geko-server"
-    only "axum is used by" "$http" "$(direct_dependents axum)" || failed=1
-    only "tower-http is used by" "$http" "$(direct_dependents tower-http)" || failed=1
+    # HTTP is the host's: the geocoder answers the requests it hands over.
+    only "tokio is used by" "" "$(direct_dependents tokio)" || failed=1
+    only "axum is used by" "" "$(direct_dependents axum)" || failed=1
+    only "tower-http is used by" "" "$(direct_dependents tower-http)" || failed=1
     return $failed
 }
 
@@ -161,9 +153,9 @@ snapshot_age() {
     [ -n "$day" ] || return 0
     age=$((($(date -u +%s) - $(date -u -d "$day" +%s)) / 86400))
     [ "$age" -gt "$max" ] || return 0
-    echo "warning: the snapshot of $country is $age days old ($file): renew it (docs/PROJECT.md §20.1)" >&2
+    echo "warning: the snapshot of $country is $age days old ($file): renew it" >&2
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
-        echo "::warning::the snapshot of $country is $age days old: renew it (docs/PROJECT.md §20.1)"
+        echo "::warning::the snapshot of $country is $age days old: renew it"
     fi
 }
 
@@ -207,7 +199,8 @@ base_commit() {
 
 # The binaries of `commit`, built in a worktree of it ($AB_DIR/base) with their own target
 # directory, both kept between runs so that only what changed is built again. Prints that target
-# directory.
+# directory. A commit from before geko-host (when the host lived in the same tree) builds only
+# geko-bench: its geko cannot be built in this repository.
 base_binaries() {
     local commit=$1 tree="$AB_DIR/base" target
     target="$(realpath -m "${CARGO_TARGET_DIR:-target}")-base"
@@ -217,16 +210,24 @@ base_binaries() {
         mkdir -p "$AB_DIR"
         git worktree add --detach "$tree" "$commit" >&2
     fi
-    (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --release --locked -p geko-app >&2 \
-        && CARGO_TARGET_DIR="$target" cargo build --profile ci --locked -p geko-bench >&2)
+    if git cat-file -e "$commit:crates/geko-host/Cargo.toml" 2> /dev/null; then
+        (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --release --locked -p geko-host >&2)
+    else
+        echo "base $(git rev-parse --short "$commit") is from before geko-host: only its geko-bench is built" >&2
+    fi
+    (cd "$tree" && CARGO_TARGET_DIR="$target" cargo build --profile ci --locked -p geko-bench >&2)
     echo "$target"
 }
 
 # The layout of the configuration that the binaries of `commit` read: `modules` (the geocoder
-# behind the host, docs/MODULES_PLAN.md, with its own file and its routes under /geocoder) or
+# behind the host, with its own file and its routes under /geocoder) or
 # `legacy` (before them: everything in geko.toml, the routes at the root).
 config_format() {
-    if git cat-file -e "$1:crates/geko-module-sdk/Cargo.toml" 2> /dev/null; then echo modules; else echo legacy; fi
+    if git cat-file -e "$1:module/Cargo.toml" 2> /dev/null || git cat-file -e "$1:modules/geko-geocoder/Cargo.toml" 2> /dev/null; then
+        echo modules
+    else
+        echo legacy
+    fi
 }
 
 # Where the geocoder of a server on `port` answers, in the layout `format`.
@@ -332,7 +333,7 @@ build_digest() {
 }
 
 # A second build of the same inputs must reuse every stage, and a forced one must write the same
-# bytes (PROJECT.md §8.3): the incremental cut depends on both.
+# bytes: the incremental cut depends on both.
 determinism() {
     local bin=$1 dir=$2 failed=0 out
     build_digest "$dir" > "$dir/reports/digest-before.txt"
@@ -370,7 +371,7 @@ golden_serve() {
         offline=true
     fi
     local profile="${GEKO_GOLDEN_PROFILE:-release}"
-    cargo build --profile "$profile" --locked -p geko-app -p geko-eval
+    cargo build --profile "$profile" --locked -p geko-host -p geko-eval
     bin="${CARGO_TARGET_DIR:-target}/$profile"
     golden_config "$dir/geko.toml" modules "$offline" "$port"
     run_geko "$bin" "$dir/geko.toml" build
@@ -453,9 +454,9 @@ golden() {
     return $failed
 }
 
-# geko against an instance of Pelias (PROJECT.md §13.2) on the golden regions, with
+# geko against an instance of Pelias on the golden regions, with
 # the queries of entities that Pelias has too: geko must not be worse in any category, and must
-# lead by 10 points in all (PROJECT.md §1.1). Pelias is a shared service: its answers are asked
+# lead by 10 points in all. Pelias is a shared service: its answers are asked
 # with a pause between requests and kept for GEKO_PELIAS_MAX_AGE_DAYS (default 30), since its
 # data change little. Environment: GEKO_PELIAS_URL, the address of the instance of Pelias
 # (required), with the OSM data of the golden regions.
@@ -614,8 +615,8 @@ golden_base_bundle() {
 #   GEKO_SPAIN_LOADED_TOLERANCE  allowed drop of the hit rate under load, in percentage points
 #                          (default 1): under load, the time budget cuts wherever the machine is
 #                          slowest, which varies between runs
-#   GEKO_REFERENCE_MACHINE=1  also check the latency and throughput objectives of PROJECT.md
-#                          §1.1, only meaningful on the reference hardware
+#   GEKO_REFERENCE_MACHINE=1  also check the latency and throughput objectives, only meaningful
+#                          on the reference hardware
 spain() {
     local dir="${GEKO_SPAIN_DIR:-/var/lib/geko}" port="${GEKO_SPAIN_PORT:-18081}" base_port
     local golden=countries/es/golden baseline reports offline=true
@@ -627,7 +628,7 @@ spain() {
     if wants instructions && [ "${GEKO_BENCH:-1}" != 0 ]; then
         find_valgrind || return 1
     fi
-    cargo build --release --locked -p geko-app -p geko-eval
+    cargo build --release --locked -p geko-host -p geko-eval
     cargo build --profile ci --locked -p geko-bench
     local bin base_target base_bin
     bin=$(realpath "${CARGO_TARGET_DIR:-target}/release")
@@ -638,8 +639,8 @@ spain() {
     base_format=$(config_format "$base")
     spain_config "$dir/check-spain.toml" "$dir" "$port" "$offline" modules
     spain_config "$dir/check-spain-base.toml" "$dir" "$port" "$offline" "$base_format"
-    # On 8 cores or more, the servers run on the first 4, as the reference hardware (PROJECT.md
-    # §1.1), and the client on the others.
+    # On 8 cores or more, the servers run on the first 4, as the reference hardware, and the
+    # client on the others.
     local pin_server="" pin_client=""
     if [ "$(nproc)" -ge 8 ]; then
         pin_server="taskset -c 0-3" pin_client="taskset -c 4-$(($(nproc) - 1))"
@@ -757,27 +758,19 @@ data_hashes() {
     (cd -P "$dir/bundles/current" && find . -type f "${skip[@]}" -print0 | sort -z | xargs -0 sha256sum | sed 's|  \./|  bundle/|')
 }
 
-# The load of the geocoder linked into geko against the same geocoder as a process of its own and
-# as a library, in turns, on the new bundle: what crossing the socket or the library costs. Only
-# shown, never failed: the choice of the adapter weighs it (docs/MODULES_PLAN.md, step 2).
+# The load of the geocoder linked into geko against the same geocoder as a library, in turns, on
+# the new bundle: what crossing the library costs. Only shown, never failed (# step 2).
 spain_adapters() {
     local bin=$1 dir=$2 port=$3 reports=$4 pin_server=$5 pin_client=$6 golden=countries/es/golden
     local modules="$AB_DIR/adapters" kind server opened_ms linked route cases
-    cargo build --release --locked -p geko-module-geocoder --bin geko-geocoder -p geko-module-geocoder-dylib
-    for kind in process dylib; do
-        mkdir -p "$modules/$kind/geocoder"
-        cp "$bin/geko-geocoder" "$bin/libgeko_geocoder.so" "$modules/$kind/geocoder/"
-        if [ "$kind" = dylib ]; then
-            printf 'name = "geocoder"\nkind = "dylib"\nentry = "libgeko_geocoder.so"\n' > "$modules/$kind/geocoder/module.toml"
-        else
-            cp modules/geko-geocoder/module.toml "$modules/$kind/geocoder/"
-        fi
-    done
+    cargo build --release --locked -p geko-module-geocoder-dylib
+    mkdir -p "$modules/dylib/geocoder"
+    cp "$bin/libgeko_geocoder.so" module/module.toml "$modules/dylib/geocoder/"
     # shellcheck disable=SC2086
     serve "$bin" "$dir/check-spain.toml" "$dir/check-serve.log" "$port" $pin_server
     linked=$server
     spain_config "$dir/check-spain-adapter.toml" "$dir" $((port + 2)) true modules
-    for kind in process dylib; do
+    for kind in dylib; do
         # shellcheck disable=SC2086
         serve "$bin" "$dir/check-spain-adapter.toml" "$dir/check-serve-$kind.log" $((port + 2)) \
             env GEKO_MODULES="$modules/$kind" $pin_server

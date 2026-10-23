@@ -1,4 +1,4 @@
-//! Download from an OGC API Features service, one unit of download at a time (PROJECT.md §7.6).
+//! Download from an OGC API Features service, one unit of download at a time.
 //!
 //! Some services have no sorting, and their deep `offset` pages are slow, but filter fast by an
 //! indexed property. A unit is then fetched by walking the values of that property it can take

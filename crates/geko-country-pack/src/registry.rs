@@ -1,5 +1,5 @@
 //! Download of the packs of the scope from the registry where they are published, by default
-//! `ghcr.io/candymaps/geko/countries/<country>` (PROJECT.md §2.4), with `geko_artifact::registry`.
+//! `ghcr.io/candymaps/geko-geocoder/countries/<country>`, with `geko_artifact::registry`.
 //! The tag is the format this binary reads (`format-2`), so that each geko gets the newest pack it
 //! understands.
 //!
@@ -16,7 +16,7 @@ use crate::signature::{FORMAT, PACK};
 
 pub use geko_artifact::registry::{DIGEST_FILE, Outcome, downloaded};
 
-pub const DEFAULT_REGISTRY: &str = "ghcr.io/candymaps/geko/countries";
+pub const DEFAULT_REGISTRY: &str = "ghcr.io/candymaps/geko-geocoder/countries";
 
 pub fn reference(registry: &str, country: CountryCode) -> Result<Reference> {
     Reference::parse(&format!("{}/{}:format-{FORMAT}", registry.trim_end_matches('/'), country.lowercase()))
@@ -48,8 +48,8 @@ mod tests {
 
     #[test]
     fn references_name_the_format() {
-        let r = reference("ghcr.io/candymaps/geko/countries/", country("ES")).unwrap();
-        assert_eq!(r.to_string(), format!("ghcr.io/candymaps/geko/countries/es:format-{FORMAT}"));
+        let r = reference("ghcr.io/candymaps/geko-geocoder/countries/", country("ES")).unwrap();
+        assert_eq!(r.to_string(), format!("ghcr.io/candymaps/geko-geocoder/countries/es:format-{FORMAT}"));
     }
 
     #[test]

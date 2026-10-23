@@ -1,4 +1,4 @@
-//! `geko-geocoder.toml`: the configuration of the geocoder, beside `geko.toml` (docs/MODULES_PLAN.md).
+//! `geko-geocoder.toml`: the configuration of the geocoder, beside `geko.toml`.
 //! The host keeps the scope, the data directory and how data are downloaded; this file, the
 //! sources, where the country packs come from and how the geocoder answers.
 
@@ -20,7 +20,7 @@ pub struct Config {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct PacksConfig {
-    /// Where the country packs are published: `<registry>/<country>:format-<n>` (PROJECT.md §2.4).
+    /// Where the country packs are published: `<registry>/<country>:format-<n>`.
     pub registry: String,
 }
 
@@ -35,7 +35,7 @@ impl Default for PacksConfig {
 pub struct ServeConfig {
     /// Countries this node serves; empty means every country of the bundle.
     pub countries: Vec<String>,
-    /// Load hot index files into RAM at startup (PROJECT.md §9.6).
+    /// Load hot index files into RAM at startup.
     pub preload: bool,
     /// Time budget of a search and of an autocomplete request, in milliseconds (0: none). Past
     /// it the engine returns what it found; its likeliest reading always completes.
@@ -43,8 +43,8 @@ pub struct ServeConfig {
     pub autocomplete_budget_ms: u64,
     /// Requests slower than this, in milliseconds, are logged with their query (0: none).
     pub slow_query_ms: u64,
-    /// Results with the same name closer than this, in metres, are merged in the answer
-    /// (PROJECT.md §6.5.6); 0 merges only the same id.
+    /// Results with the same name closer than this, in metres, are merged in the answer;
+    /// 0 merges only the same id.
     pub same_entity_m: f64,
     /// Most requests in one `v1/batch`.
     pub batch_max: usize,

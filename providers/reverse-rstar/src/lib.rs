@@ -1,4 +1,4 @@
-//! Reverse geocoding (PROJECT.md §9.9): nearest entities with a static R-tree packed along a
+//! Reverse geocoding: nearest entities with a static R-tree packed along a
 //! Hilbert curve and mapped from disk (`packed`), and the administrative chain of any point
 //! with prepared boundary polygons.
 //!
@@ -292,7 +292,7 @@ impl Mapped {
         if file.metadata()?.len() == 0 {
             return Ok(Self(None));
         }
-        // SAFETY: bundle files are immutable once published (PROJECT.md §12): new versions are
+        // SAFETY: bundle files are immutable once published: new versions are
         // written beside them, never over them.
         Ok(Self(Some(unsafe { Mmap::map(&file) }.map_err(|e| err(path, e))?)))
     }

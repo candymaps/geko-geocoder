@@ -1,5 +1,5 @@
 //! Runs reference queries against any Pelias-compatible HTTP API (geko or Pelias), or a
-//! Photon-compatible one, and scores them (PROJECT.md §13.1–13.2). Engines name entities
+//! Photon-compatible one, and scores them. Engines name entities
 //! differently, so a result is correct when it lies within the case's tolerance of the expected
 //! point.
 
@@ -22,7 +22,7 @@ pub struct Outcome {
     /// `confidence` the engine gave its first result.
     #[serde(default)]
     pub first_confidence: Option<f64>,
-    /// Two of the results are the same entity (PROJECT.md §13.6).
+    /// Two of the results are the same entity.
     #[serde(default)]
     pub duplicates: bool,
     pub error: Option<String>,
@@ -76,8 +76,8 @@ struct Found {
     confidence: Option<f64>,
 }
 
-/// Results closer than this with the same label are the same entity, as the safety net of
-/// PROJECT.md §6.5.6 would see them.
+/// Results closer than this with the same label are the same entity, as the safety net against
+/// duplicates of the answers would see them.
 const SAME_ENTITY_M: f64 = 100.0;
 
 fn has_duplicates(results: &[Found]) -> bool {

@@ -1,4 +1,4 @@
-//! Quality of the data a build produced (PROJECT.md §13.4 and §13.6): what the fusion report
+//! Quality of the data a build produced: what the fusion report
 //! counts, and the integrity of the canonical dataset, so that a later build can be compared
 //! with it. A source that silently loses records, or a fusion rule that starts leaving
 //! duplicates or orphans, changes these numbers before it changes any reference query.
@@ -77,7 +77,7 @@ pub fn report(canonical: &Path) -> Result<DataReport> {
     Ok(r)
 }
 
-/// The checks of PROJECT.md §13.4 that the canonical dataset can answer by itself. Coordinates
+/// The checks of the data that the canonical dataset can answer by itself. Coordinates
 /// outside their municipality cannot happen: the municipality is always assigned from them.
 fn validate(dir: &Path, problems: &mut BTreeMap<String, usize>) -> Result<()> {
     let mut ids: HashSet<u64> = HashSet::new();
