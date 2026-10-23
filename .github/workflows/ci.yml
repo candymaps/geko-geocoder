@@ -5,7 +5,8 @@
 # same runner, and passes at once if it cannot. Latencies and all of Spain are not checked here: they
 # are only compared on one machine in one batch (`make test-regression`, local and on demand). `test`
 # and every `golden (<country>)` are the statuses that the protection of main and dev requires: they
-# always run, and pass when their checks passed or were not needed. pr-comment.yml says on the pull
+# always run, and pass when their checks passed or were not needed. A pull request from dev into
+# main that takes dev as it is runs none: dev already passed them. pr-comment.yml says on the pull
 # request which of the two it was. What reaches main, already checked, is published by publish.yml.
 name: ci
 
@@ -31,6 +32,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+      # A pull request from dev (of this repository) into main whose merge is dev as it is: dev only
+      # takes pull requests that passed these checks with the branch up to date, so its head already
+      # passed them. If main has something dev lacks (a hotfix), the merge differs and they run.
+      - id: release
+        # Names that whoever opens the pull request chooses: never in the script itself.
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          checked=0
+          if [ "$BASE" = main ] && [ "$HEAD_BRANCH" = dev ] && [ "$HEAD_REPO" = "$REPO" ] \
+            && [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse 'HEAD^2^{tree}')" ]; then
+            checked=1
+          fi
+          echo "checked=$checked" >> "$GITHUB_OUTPUT"
+          echo "checked on dev $checked"
       # Every country with a golden has its job in the matrix of `golden`, which GitHub needs before
       # the job starts, and which the protection requires by name.
       - run: |
@@ -40,6 +59,7 @@ jobs:
       # Whether the pull request changes what the checks build: the diff of its merge commit with
       # the base branch (its first parent). A run by hand checks everything.
       - id: affected
+        if: steps.release.outputs.checked == '0'
         run: |
           code=1
           if [ "${{ github.event_name }}" = pull_request ] && [ -z "$(ci/affected.sh HEAD^1 HEAD)" ]; then
@@ -67,6 +87,7 @@ jobs:
           if [ "${{ job.status }}" = success ]; then
             result=not-needed
             [ "${{ steps.affected.outputs.code }}" = 1 ] && result=passed
+            [ "${{ steps.release.outputs.checked }}" = 1 ] && result=checked-on-dev
           fi
           echo "checks: $result"
           printf '{"number": %s, "head": "%s", "result": "%s"}\n' \
@@ -103,7 +124,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+      # As in `test`: dev into main as it is, already checked.
+      - id: release
+        # Names that whoever opens the pull request chooses: never in the script itself.
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          checked=0
+          if [ "$BASE" = main ] && [ "$HEAD_BRANCH" = dev ] && [ "$HEAD_REPO" = "$REPO" ] \
+            && [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse 'HEAD^2^{tree}')" ]; then
+            checked=1
+          fi
+          echo "checked=$checked" >> "$GITHUB_OUTPUT"
+          echo "checked on dev $checked"
       - id: affected
+        if: steps.release.outputs.checked == '0'
         run: |
           if [ "${{ github.event_name }}" = pull_request ]; then
             args=$(ci/affected.sh HEAD^1 HEAD)
