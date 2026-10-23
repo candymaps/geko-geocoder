@@ -77,7 +77,7 @@ jobs:
   # The golden of each country that `changes` lists, on the frozen data of
   # countries/<country>/golden/snapshot, with no tolerance: hits, data, sizes, robustness and
   # instructions (counted with the base branch too, on the same runner), as `changes` asks. The
-  # snapshots are the packages ghcr.io/candymaps/geko/countries/<country>/golden, read with the
+  # snapshots are the packages ghcr.io/candymaps/geko-geocoder/countries/<country>/golden, read with the
   # token of the workflow. Without --include-performance: the latencies would be those of another
   # machine.
   golden:
@@ -108,7 +108,7 @@ jobs:
       - run: |
           file=$(sed -n 's/^file=//p' "countries/${{ matrix.country }}/golden/snapshot")
           tag=${file#golden-}
-          ref="ghcr.io/candymaps/geko/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
+          ref="ghcr.io/candymaps/geko-geocoder/countries/${{ matrix.country }}/golden:${tag%.tar.gz}"
           oras manifest fetch "$ref" > /dev/null || { echo "::error::$ref is not published"; exit 1; }
       - env:
           HOST_TOKEN: ${{ secrets.GEKO_HOST_TOKEN }}

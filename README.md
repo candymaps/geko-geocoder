@@ -21,7 +21,7 @@ min_confidence = 0.8                # places Overture is less sure exist are lef
 enabled = true
 
 [packs]
-registry = "ghcr.io/candymaps/geko/countries"   # where the country packs are downloaded from
+registry = "ghcr.io/candymaps/geko-geocoder/countries"   # where the country packs are downloaded from
 
 [serve]
 countries              = []         # the countries this node serves; empty: every country of the bundle

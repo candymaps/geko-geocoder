@@ -25,7 +25,7 @@ LISTEN ?= 0.0.0.0:8080
 GEKO   := /usr/local/bin/geko
 
 # Where `make release-packs` publishes the country packs.
-PACKS_REGISTRY ?= ghcr.io/candymaps/geko/countries
+PACKS_REGISTRY ?= ghcr.io/candymaps/geko-geocoder/countries
 # The commit, read from .git where git is not installed (WSL compiles a checkout made on Windows).
 COMMIT   := $(shell git rev-parse --short HEAD 2>/dev/null || { \
               r=$$(sed -n 's|^ref: ||p' .git/HEAD 2>/dev/null); \
