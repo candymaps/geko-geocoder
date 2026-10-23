@@ -2,7 +2,7 @@
 
 The geocoding module of [geko](https://github.com/candymaps/geko), a modular, multi-country geospatial engine: search, autocomplete and reverse, with data from OSM, Overture Maps and official national sources (in Spain, CartoCiudad), merged into one entity per street, address or place. Goal: beat Pelias in speed, coverage and quality, measured with the reference queries of each country (`countries/<country>/golden/`).
 
-The items pending review of each country are in its pack's README (`countries/<country>/README.md`, section «Pendiente y decisiones»). Check them before choosing the next step, and delete each item when it is closed (whatever it teaches goes to «Optimizations» in this file). How sources are merged is in `module/FUSION_METHOD.md`, which the geocoder serves; the contract with the host, in `docs/MODULES_PLAN.md` of the host. «BACKLOG <n>», here and in the code, is an item of `git show 8679454:docs/BACKLOG.md`.
+The items pending review of each country are in its pack's README (`countries/<country>/README.md`, section «Pendiente y decisiones»). Check them before choosing the next step, and delete each item when it is closed (whatever it teaches goes to «Optimizations» in this file). How sources are merged is in `module/FUSION_METHOD.md`, which the geocoder serves; the contract with the host, in `docs/MODULES.md` of the host. «BACKLOG <n>», here and in the code, is an item of `git show 8679454:docs/BACKLOG.md`.
 
 ## Environment
 
