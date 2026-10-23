@@ -32,6 +32,7 @@ jobs:
             const pr = JSON.parse(require('fs').readFileSync('pr.json', 'utf8'));
             const texts = {
               'passed': '✅ The checks passed: those of `ci/test.sh` that this pull request can fail (`ci/affected.sh`), the golden of the countries it can change included.',
+              'checked-on-dev': 'ℹ️ The checks are not run again: this pull request takes `dev` into `main` as it is, and `dev` only takes pull requests that passed them. It can be merged.',
               'failure': '❌ The checks failed: see the run. It cannot be merged until they pass.',
               'not-needed': 'ℹ️ The checks are not needed: this pull request only changes documentation or what `ci/test.sh` does not build (`ci/affected.sh`). It can be merged without them.',
             };
