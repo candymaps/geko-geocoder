@@ -45,8 +45,10 @@ jobs:
               core.info(`#${pr.number} is now at ${pull.head.sha}, not ${run.head_sha}`);
               return;
             }
+            // pr.json is that of `test`; a golden that failed fails the run.
+            const result = run.conclusion === 'failure' ? 'failure' : pr.result;
             const marker = '<!-- geko-checks -->';
-            const body = `${marker}\n${texts[pr.result]}\n\nCommit ${run.head_sha.slice(0, 7)}, [run](${run.html_url}).`;
+            const body = `${marker}\n${texts[result]}\n\nCommit ${run.head_sha.slice(0, 7)}, [run](${run.html_url}).`;
             const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number: pr.number });
             const mine = comments.find(c => c.user.type === 'Bot' && c.body.startsWith(marker));
             if (mine) {
