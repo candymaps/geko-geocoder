@@ -310,7 +310,8 @@ pub fn ensure_packs(setup: &Setup, packs: &Path) -> Result<String> {
 }
 
 pub fn purge(setup: &Setup, prepared: &Prepared) -> Result<String> {
-    let removed = geko_build::purge::purge(&setup.data_dir, &prepared.scope, &prepared.selected)?;
+    let known = crate::sources::registry().keys().map(|id| (*id).to_owned()).collect();
+    let removed = geko_build::purge::purge(&setup.data_dir, &prepared.scope, &prepared.selected, &known)?;
     let mut out = String::new();
     for path in &removed {
         writeln!(out, "purged {}", path.strip_prefix(&setup.data_dir).unwrap_or(path).display()).unwrap();
