@@ -1,8 +1,8 @@
 <p align="center">
   <img height="100" src="https://placehold.co/200x30/transparent/A4CC47?text=Geko+Geocoder&font=raleway" alt="geko-geocoder">
 </p>
-<h3 align="center">The geocoding module of geko: addresses and places into coordinates, and back.</h3>
-<p align="center">It merges OpenStreetMap, Overture and the official sources of each country into a single source of truth, and searches it in milliseconds.</p>
+<h3 align="center">The geocoding module of geko.</h3>
+<p align="center">Addresses and places into coordinates, and back.</p>
 <p align="center">
   <a href="https://github.com/candymaps/geko-geocoder/releases/latest"><img src="https://img.shields.io/github/v/release/candymaps/geko-geocoder?label=version&color=blue&style=plastic" alt="Version"></a>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/license-AGPL--3.0-orange?style=plastic" alt="License"></a>
