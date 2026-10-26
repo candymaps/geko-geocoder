@@ -1,8 +1,43 @@
+<p align="center">
+  <img height="100" src="https://placehold.co/200x30/transparent/A4CC47?text=Geko+Geocoder&font=raleway" alt="geko-geocoder">
+</p>
+<h3 align="center">The geocoding module of geko: addresses and places into coordinates, and back.</h3>
+<p align="center">It merges OpenStreetMap, Overture and the official sources of each country into a single source of truth, and searches it in milliseconds.</p>
+<p align="center">
+  <a href="https://github.com/candymaps/geko-geocoder/releases/latest"><img src="https://img.shields.io/github/v/release/candymaps/geko-geocoder?label=version&color=blue&style=plastic" alt="Version"></a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/license-AGPL--3.0-orange?style=plastic" alt="License"></a>
+  <a href="https://github.com/orgs/candymaps/packages?repo_name=geko-geocoder"><img src="https://img.shields.io/badge/module-ghcr.io-informational?style=plastic&logo=docker" alt="Module"></a>
+  <a href="https://github.com/candymaps/geko-geocoder/actions/workflows/publish.yml"><img src="https://github.com/candymaps/geko-geocoder/actions/workflows/publish.yml/badge.svg?branch=main" alt="publish"></a>
+</p>
+
 # geko-geocoder
 
-The geocoding module of [geko](https://github.com/candymaps/geko): it turns addresses and place names into coordinates (search and autocomplete), and coordinates into addresses (reverse). It downloads its sources and the country packs of the scope, merges them into one entity per street, address or place, builds an index per country and serves it under `/geocoder/`.
+The geocoding module of [geko](https://github.com/candymaps/geko). **Status: published, and enabled by default in geko.** It downloads its sources and the country packs of the scope, merges them into one entity per street, address or place, builds an index per country and serves it under `/geocoder/`.
 
-## Configuration: `geko-geocoder.toml`
+What it serves, under `/geocoder/`:
+
+- **Search** (`/geocoder/v1/search`, and `/geocoder/v1/search/structured`): addresses, streets, places and POIs from free text, with typo tolerance, decimal, DMS and UTM coordinates.
+- **Autocomplete** (`/geocoder/v1/autocomplete`): results as the user types, biased by a focus point.
+- **Reverse** (`/geocoder/v1/reverse`): the address, street, POI or place nearest to a coordinate.
+- **Places and batches** (`/geocoder/v1/place/{id}`, `/geocoder/v1/batch`), a test page with a map at `/geocoder/` and the full API in [openapi.yaml](openapi.yaml).
+
+On top of the same foundation as the rest of geko:
+
+- **Fully automatic:** it downloads the sources and the country packs that the scope of `geko.toml` needs, merges them and keeps them up to date.
+- **A single source of truth:** sources are merged into one master record per entity, never served separately and without duplicates; inferred attributes (postcodes by zone, addresses of POIs) are always marked as such.
+- **Fast and lightweight:** an index of words per country, hot part pinned in RAM and cold part mapped. With all of Spain, p99 of 4.0 ms for search and 5.6 ms for autocomplete, within a time budget per query.
+- **Any country**, through its pack (`countries/<country>/`): data, not code. The engine is the same for all of them.
+
+## Installation and usage
+
+It is enabled like any module of geko, in `geko.toml` (it is on by default):
+
+```toml
+[modules]
+geocoder = true
+```
+
+### Configuration: `geko-geocoder.toml`
 
 The host (`geko.toml`) decides which countries and regions to serve, whether downloads are allowed and where it listens. Everything specific to geocoding goes in this module's own file, beside it: `/etc/geko/geko-geocoder.toml`, or the file named by `[modules.geocoder] config` (relative to `geko.toml`). Without it, every option takes its default value:
 
@@ -40,7 +75,7 @@ docker run -d --name geko -p 8080:8080 -v geko-data:/var/lib/geko \
   -v "$PWD/geko-geocoder.toml:/etc/geko/geko-geocoder.toml:ro" ghcr.io/candymaps/geko
 ```
 
-## Usage
+### Usage
 
 With the host on port 8080:
 
@@ -58,6 +93,14 @@ Debugging commands, on the last bundle built: `geko geocoder parse "<query>"` (t
 By default, the data comes from OpenStreetMap and Overture Maps Places (POIs), for any country. Each country can also contribute its own sources in its pack (`countries/<country>/`), and the geocoder merges them all into a single source of truth, with no duplicates. Spain, for example, adds CartoCiudad ([countries/es/README.md](countries/es/README.md)).
 
 Downloading requires `accept_licenses = true` in the `[data]` of `geko.toml`, after reviewing the licenses listed by `geko plan`. How sources are merged is in [FUSION_METHOD.md](module/FUSION_METHOD.md).
+
+## License
+
+geko-geocoder is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only). You may use, study, modify and share it freely. If you distribute it, modified or not, you must pass on its source code under the same license; if you modify it and let others use it over a network, you must offer them the source code of your version. Running it, or modifying it for internal use only, requires nothing more.
+
+The data it serves is a derivative database of OpenStreetMap (ODbL), with the method of the merge at `/geocoder/v1/attribution/method`; every source declares its license in the bundle manifest. Contributions are accepted under the same license, from the collaborators of the repository; see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Read the full terms in [LICENSE](LICENSE).
 
 ## Technologies
 
