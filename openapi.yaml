@@ -114,6 +114,33 @@ paths:
         "400": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
         "503": { $ref: "#/components/responses/Error" }
+  /v1/status:
+    get:
+      summary: What the geocoder has loaded and how it is set up.
+      description: |
+        The bundle (version and creation time), the countries it serves with what each takes on disk,
+        the sources it declares, their options from `geko-geocoder.toml` and every option of `[serve]`
+        with its value and its default. Before a bundle is loaded, `ready` is false and those are null.
+      responses:
+        "200":
+          description: The state of the geocoder.
+          content:
+            application/json:
+              schema: { type: object }
+  /v1/stats:
+    get:
+      summary: What the geocoder has answered since it started.
+      description: |
+        Requests, errors and latency (p50, p95 and p99, in milliseconds, as the upper bound of their
+        bucket) of every route, the requests and p99 of each of the last 60 minutes (oldest first),
+        the searches that found nothing or that the time budget cut short, the cache and the duplicates
+        that fusion let through. Counters restart with the process.
+      responses:
+        "200":
+          description: The counters.
+          content:
+            application/json:
+              schema: { type: object }
   /v1/search/structured:
     get:
       summary: Search by fields instead of free text. A street (or `address`) makes it an address search; otherwise `locality` searches a place, and `postalcode` alone a postcode.

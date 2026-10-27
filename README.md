@@ -19,6 +19,7 @@ What it serves, under `/geocoder/`:
 - **Search** (`/geocoder/v1/search`, and `/geocoder/v1/search/structured`): addresses, streets, places and POIs from free text, with typo tolerance, decimal, DMS and UTM coordinates.
 - **Autocomplete** (`/geocoder/v1/autocomplete`): results as the user types, biased by a focus point.
 - **Reverse** (`/geocoder/v1/reverse`): the address, street, POI or place nearest to a coordinate.
+- **Status and statistics** (`/geocoder/v1/status`, `/geocoder/v1/stats`): the bundle and countries loaded, the sources and the options in effect; and, since the module started, the requests, errors and latency of every route, the last hour minute by minute, the searches that found nothing or that the time budget cut short, and the cache. They feed the dashboard of geko.
 - **Places and batches** (`/geocoder/v1/place/{id}`, `/geocoder/v1/batch`), a test page with a map at `/geocoder/` and the full API in [openapi.yaml](openapi.yaml).
 
 On top of the same foundation as the rest of geko:

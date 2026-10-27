@@ -9,6 +9,7 @@ mod config;
 mod pipeline;
 mod serve;
 mod sources;
+mod stats;
 
 use std::fmt::Write as _;
 use std::path::PathBuf;
@@ -56,7 +57,8 @@ impl Geocoder {
                 cache_entries: s.cache_entries,
                 ..Default::default()
             },
-        );
+        )
+        .with_source_options(serde_json::to_value(&config.sources).unwrap_or_default());
         let setup = Setup { config, scope: context.scope, data_dir: context.data_dir, data: context.data };
         Ok(Self { setup, packs_dir, given_packs: given.is_some(), prepared: Mutex::new(None), server })
     }
@@ -88,6 +90,8 @@ impl Module for Geocoder {
             routes: vec![
                 route(Method::Get, "openapi.yaml", false, false),
                 route(Method::Get, "v1/attribution/method", false, true),
+                route(Method::Get, "v1/status", false, false),
+                route(Method::Get, "v1/stats", false, false),
                 route(Method::Get, "v1/search", true, false),
                 route(Method::Get, "v1/autocomplete", true, false),
                 route(Method::Get, "v1/search/structured", true, false),
