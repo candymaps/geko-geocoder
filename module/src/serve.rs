@@ -46,8 +46,10 @@ pub struct GeocoderConfig {
     /// counted from when the engine starts working on it; `None` means no budget.
     pub search_budget: Option<std::time::Duration>,
     pub autocomplete_budget: Option<std::time::Duration>,
-    /// Requests that take longer are logged with their query; `None` logs none.
+    /// Requests that take longer are logged with their query, anonymized; `None` logs none.
     pub slow_query: Option<std::time::Duration>,
+    /// How many of the slowest queries of the last hour `v1/stats` lists, anonymized; 0 lists none.
+    pub slow_queries: usize,
     /// Results with the same name closer than this, in metres, are merged in the answer;
     /// 0 merges only the same id.
     pub same_entity_m: f64,
@@ -67,6 +69,7 @@ impl Default for GeocoderConfig {
             search_budget: Some(std::time::Duration::from_millis(15)),
             autocomplete_budget: Some(std::time::Duration::from_millis(5)),
             slow_query: Some(std::time::Duration::from_millis(50)),
+            slow_queries: 0,
             same_entity_m: 100.0,
             batch_max: 100,
             cache_entries: 0,
@@ -81,6 +84,8 @@ struct Loaded {
     countries: Vec<(String, u64)>,
     /// The sources of the bundle, as the manifest declares them.
     sources: serde_json::Value,
+    /// What fusion left in each country, as the build recorded it; empty in a bundle that did not.
+    entities: serde_json::Value,
     /// The attributions of the sources of the bundle, sent with every answer.
     attribution: String,
     segments: Vec<Segment>,
@@ -107,19 +112,33 @@ pub struct Server {
     shared: Shared,
     /// The `[sources.*]` sections of the configuration, as `v1/status` shows them.
     source_options: serde_json::Value,
+    /// The data directory of the host, where the build leaves the stages of its last run.
+    data_dir: std::path::PathBuf,
 }
 
 impl Server {
     pub fn new(opener: SegmentOpener, config: GeocoderConfig) -> Self {
         Self {
             opener,
-            shared: Shared { cache: cache::Cache::new(config.cache_entries), config, loaded: ArcSwapOption::empty(), merged: AtomicU64::new(0), stats: Stats::default() },
+            shared: Shared {
+                cache: cache::Cache::new(config.cache_entries),
+                loaded: ArcSwapOption::empty(),
+                merged: AtomicU64::new(0),
+                stats: Stats::default().keeping_slow(config.slow_queries),
+                config,
+            },
             source_options: serde_json::Value::Null,
+            data_dir: std::path::PathBuf::new(),
         }
     }
 
     pub fn with_source_options(mut self, options: serde_json::Value) -> Self {
         self.source_options = options;
+        self
+    }
+
+    pub fn with_data_dir(mut self, dir: std::path::PathBuf) -> Self {
+        self.data_dir = dir;
         self
     }
 
@@ -188,6 +207,7 @@ impl Server {
             created_unix: view.manifest.created_unix,
             countries: sizes,
             sources: serde_json::Value::Array(sources),
+            entities: serde_json::to_value(&meta.entities).unwrap_or_default(),
             attribution,
             segments,
         })));
@@ -213,6 +233,7 @@ impl Server {
             setting("serve.search_budget_ms", ms(c.search_budget).into(), ms(d.search_budget).into()),
             setting("serve.autocomplete_budget_ms", ms(c.autocomplete_budget).into(), ms(d.autocomplete_budget).into()),
             setting("serve.slow_query_ms", ms(c.slow_query).into(), ms(d.slow_query).into()),
+            setting("serve.slow_queries", c.slow_queries.into(), d.slow_queries.into()),
             setting("serve.same_entity_m", c.same_entity_m.into(), d.same_entity_m.into()),
             setting("serve.batch_max", c.batch_max.into(), d.batch_max.into()),
             setting("serve.cache_entries", c.cache_entries.into(), d.cache_entries.into()),
@@ -223,6 +244,8 @@ impl Server {
             "bundle": bundle.as_ref().map(|b| serde_json::json!({ "version": b.version, "created_unix": b.created_unix })),
             "countries": bundle.as_ref().map(|b| b.countries.iter().map(|(code, bytes)| serde_json::json!({ "code": code, "bytes": bytes })).collect::<Vec<_>>()),
             "sources": bundle.as_ref().map(|b| b.sources.clone()),
+            "entities": bundle.as_ref().map(|b| b.entities.clone()),
+            "last_build": crate::pipeline::last_build(&self.data_dir),
             "source_options": self.source_options,
             "serve": serve,
         })
@@ -679,11 +702,12 @@ fn search_now(shared: &Shared, p: &HashMap<String, String>, prefix: bool, starte
         && started.elapsed() >= slow
     {
         let route = if prefix { "autocomplete" } else { "search" };
-        tracing::warn!(route, text, ms = started.elapsed().as_millis() as u64, "slow query");
+        tracing::warn!(route, text = crate::stats::anonymize(text).as_str(), ms = started.elapsed().as_millis() as u64, "slow query");
     }
     // An answer the time budget cut short is not kept: under load it would outlive the load.
     let complete = ctx.deadline.is_none_or(|d| Instant::now() < d);
     shared.stats.searched(found.is_empty(), !complete);
+    shared.stats.slow_query(text, if prefix { "autocomplete" } else { "search" }, started.elapsed().as_micros() as u64);
     if let Some(first) = found.first()
         && let Some(place) = first.segment.engine.place(first.hit.id)
     {

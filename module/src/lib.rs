@@ -52,13 +52,15 @@ impl Geocoder {
                 search_budget: budget(s.search_budget_ms),
                 autocomplete_budget: budget(s.autocomplete_budget_ms),
                 slow_query: budget(s.slow_query_ms),
+                slow_queries: s.slow_queries,
                 same_entity_m: s.same_entity_m,
                 batch_max: s.batch_max,
                 cache_entries: s.cache_entries,
                 ..Default::default()
             },
         )
-        .with_source_options(serde_json::to_value(&config.sources).unwrap_or_default());
+        .with_source_options(serde_json::to_value(&config.sources).unwrap_or_default())
+        .with_data_dir(context.data_dir.clone());
         let setup = Setup { config, scope: context.scope, data_dir: context.data_dir, data: context.data };
         Ok(Self { setup, packs_dir, given_packs: given.is_some(), prepared: Mutex::new(None), server })
     }

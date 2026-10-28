@@ -64,6 +64,7 @@ countries              = []         # the countries this node serves; empty: eve
 search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
 autocomplete_budget_ms = 5          # and of an autocomplete request
 cache_entries          = 0          # answers kept for repeated queries, about 2.5 KB each (0: none)
+slow_queries           = 0          # slowest queries of the last hour that `/geocoder/v1/stats` lists, without digits or links, in memory only (0: none)
 ```
 
 Every section and option of the geocoder is in [develop/geko-geocoder.toml](develop/geko-geocoder.toml), with its default value and what it does: use it as the reference to configure the geocoder. An unknown option is an error that names the file and the key, and an option that used to be in `geko.toml` and is now here (`[sources.*]`, `[packs]`, `[serve] search_budget_ms`…) stops geko at startup, saying to move it here. Options that change what is built (those of the sources) are part of the stamps of the build stages: changing one rebuilds only what it affects.

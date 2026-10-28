@@ -158,6 +158,23 @@ fn remove_downloads(setup: &Setup, prepared: &Prepared) -> Result<String> {
 }
 
 /// The space a file takes on disk: a sparse copy (Overture's) takes far less than its length.
+const LAST_BUILD: &str = "last_build.geocoder.json";
+
+/// Writes the stages of this build for the dashboard: the report of the host is one file that every
+/// module's build overwrites, so each module keeps its own.
+fn write_last_build(data_dir: &Path, stages: &[geko_module_sdk::stages::StageRecord]) {
+    let finished = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
+    let report = serde_json::json!({ "finished_unix": finished, "stages": stages });
+    if let Err(e) = std::fs::write(data_dir.join(LAST_BUILD), report.to_string()) {
+        tracing::warn!(error = %e, "cannot write the stages of this build");
+    }
+}
+
+/// The stages of the last build of this module, as `write_last_build` left them; `null` before one.
+pub fn last_build(data_dir: &Path) -> serde_json::Value {
+    std::fs::read(data_dir.join(LAST_BUILD)).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default()
+}
+
 fn disk_size(meta: &std::fs::Metadata) -> u64 {
     #[cfg(unix)]
     {
@@ -462,6 +479,7 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         let (report, merge_reused) =
             geko_build::fusion::merge::merge_incremental(&setup.data_dir, country, &partitions, reports, sources::FUSION_CODE, force)?;
         let e = &report.entities;
+        meta.entities.insert(country.to_string(), e.clone());
         writeln!(
             out,
             "fused {country}: {} partitions ({reused} up to date), {} streets, {} addresses, {} places, {} POIs, {} postcodes in {} ms{}; worst duplicates: addresses {:.3}%, streets {:.3}%",
@@ -527,6 +545,8 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         })
         .collect();
     meta.sources = licenses.iter().map(|l| l.source.clone()).collect();
+    let stages = log.into_records();
+    write_last_build(&setup.data_dir, &stages);
     let packs: serde_json::Map<String, serde_json::Value> =
         prepared.scope.countries().map(|c| Ok((c.to_string(), geko_country_pack::get(c)?.text.version.into()))).collect::<Result<_>>()?;
     Ok(Built {
@@ -534,7 +554,7 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         parts,
         meta: meta.to_value(),
         licenses,
-        stages: log.into_records(),
+        stages,
         report_extra: serde_json::Map::from_iter([("packs".to_owned(), packs.into())]),
     })
 }

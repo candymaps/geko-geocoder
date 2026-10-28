@@ -17,6 +17,10 @@ const MINUTES: usize = 60;
 const SECONDS: usize = 60;
 /// Tenths of confidence, 0.0 to 1.0, in which the first result of a text search is counted.
 const CONFIDENCE_BUCKETS: usize = 10;
+/// How long a slow query stays in the list, in seconds.
+const SLOW_KEPT_SECS: u64 = 3600;
+/// Longest anonymized query kept, in characters.
+const SLOW_TEXT_CHARS: usize = 60;
 
 /// The routes that are counted, as `Request::route` names them.
 const ROUTES: [&str; 6] = ["v1/search", "v1/autocomplete", "v1/search/structured", "v1/reverse", "v1/place/{id}", "v1/batch"];
@@ -96,6 +100,47 @@ pub struct Stats {
     /// The first result of each text search that found one: its confidence by tenths, and its layer.
     confidence: [AtomicU64; CONFIDENCE_BUCKETS],
     layers: [AtomicU64; PlaceKind::ALL.len()],
+    /// How many of the slowest queries of the last hour to keep (0: none), the time in microseconds
+    /// of the least slow of them once there are that many (so that the rest cost one atomic read),
+    /// and the queries, anonymized.
+    keep: usize,
+    floor: AtomicU64,
+    slow: Mutex<Vec<SlowQuery>>,
+}
+
+struct SlowQuery {
+    text: String,
+    route: &'static str,
+    micros: u64,
+    at: u64,
+}
+
+/// A query as it may be shown: no digit (house numbers, floors, postcodes, phone numbers), no word
+/// that looks like an e-mail address or a link, and short. Names that someone typed in words stay,
+/// which is why the list is off unless the operator asks for it.
+pub fn anonymize(text: &str) -> String {
+    let mut out = String::new();
+    for word in text.split_whitespace() {
+        if word.contains('@') || word.contains("://") || word.starts_with("www.") {
+            continue;
+        }
+        if !out.is_empty() {
+            out.push(' ');
+        }
+        let mut digits = false;
+        for c in word.chars() {
+            if c.is_numeric() {
+                if !digits {
+                    out.push('#');
+                }
+                digits = true;
+            } else {
+                digits = false;
+                out.push(c);
+            }
+        }
+    }
+    out.chars().take(SLOW_TEXT_CHARS).collect::<String>().trim_end().to_owned()
 }
 
 fn now_secs() -> u64 {
@@ -113,6 +158,9 @@ impl Default for Stats {
             cut_short: AtomicU64::new(0),
             confidence: Default::default(),
             layers: Default::default(),
+            keep: 0,
+            floor: AtomicU64::new(0),
+            slow: Mutex::new(Vec::new()),
         }
     }
 }
@@ -146,6 +194,51 @@ impl Stats {
         if cut_short {
             self.cut_short.fetch_add(1, Ordering::Relaxed);
         }
+    }
+
+    /// Keeps the `n` slowest queries of the last hour, anonymized; 0 keeps none.
+    pub fn keeping_slow(mut self, n: usize) -> Self {
+        self.keep = n;
+        self
+    }
+
+    /// A text search that took `micros`: kept, anonymized, if it is among the slowest of the last hour.
+    pub fn slow_query(&self, text: &str, route: &'static str, micros: u64) {
+        self.slow_query_at(now_secs(), text, route, micros);
+    }
+
+    fn slow_query_at(&self, now: u64, text: &str, route: &'static str, micros: u64) {
+        if self.keep == 0 || micros < self.floor.load(Ordering::Relaxed) {
+            return;
+        }
+        let text = anonymize(text);
+        if text.is_empty() {
+            return;
+        }
+        let mut slow = self.slow.lock().unwrap_or_else(|e| e.into_inner());
+        slow.retain(|q| q.at + SLOW_KEPT_SECS > now);
+        match slow.iter_mut().find(|q| q.text == text && q.route == route) {
+            Some(q) if q.micros < micros => (q.micros, q.at) = (micros, now),
+            Some(_) => {}
+            None => slow.push(SlowQuery { text, route, micros, at: now }),
+        }
+        slow.sort_by(|a, b| b.micros.cmp(&a.micros));
+        slow.truncate(self.keep);
+        let floor = if slow.len() == self.keep { slow.last().map_or(0, |q| q.micros) } else { 0 };
+        self.floor.store(floor, Ordering::Relaxed);
+    }
+
+    /// The slow queries of the last hour, slowest first; `null` when none is kept.
+    fn slow_snapshot(&self, now: u64) -> Value {
+        if self.keep == 0 {
+            return Value::Null;
+        }
+        let mut slow = self.slow.lock().unwrap_or_else(|e| e.into_inner());
+        slow.retain(|q| q.at + SLOW_KEPT_SECS > now);
+        if slow.len() < self.keep {
+            self.floor.store(0, Ordering::Relaxed);
+        }
+        slow.iter().map(|q| json!({ "text": q.text, "route": q.route, "ms": (q.micros as f64 / 100.0).round() / 10.0, "at_unix": q.at })).collect()
     }
 
     /// The first result of a text search: how sure the geocoder is of it, and what it is.
@@ -195,6 +288,7 @@ impl Stats {
             "searches": self.searches.load(Ordering::Relaxed),
             "empty": self.empty(),
             "cut_short": self.cut_short(),
+            "slow_queries": self.slow_snapshot(now_second),
             "confidence": self.confidence.iter().map(|c| c.load(Ordering::Relaxed)).collect::<Vec<_>>(),
             "layers": PlaceKind::ALL
                 .iter()
@@ -289,6 +383,28 @@ mod tests {
         let tenths: Vec<u64> = s["confidence"].as_array().unwrap().iter().filter_map(Value::as_u64).collect();
         assert_eq!((tenths[0], tenths[9], tenths.iter().sum::<u64>()), (1, 2, 3), "1.0 falls in the last tenth");
         assert_eq!(s["layers"], json!([{ "layer": "street", "count": 1 }, { "layer": "address", "count": 2 }]));
+    }
+
+    #[test]
+    fn queries_lose_digits_links_and_length() {
+        assert_eq!(anonymize("Calle Mayor 12 3º B 28013 Madrid"), "Calle Mayor # #º B # Madrid");
+        assert_eq!(anonymize("  juan@example.com   600123456 plaza  "), "# plaza");
+        assert_eq!(anonymize("https://x.es/a 1"), "#");
+        assert_eq!(anonymize(&"a ".repeat(100)).chars().count(), SLOW_TEXT_CHARS - 1);
+    }
+
+    #[test]
+    fn keeps_the_slowest_queries_of_the_last_hour() {
+        let stats = Stats::default().keeping_slow(2);
+        stats.slow_query_at(1_000, "calle mayor 1", "search", 9_000);
+        stats.slow_query_at(1_001, "calle mayor 2", "search", 12_000);
+        stats.slow_query_at(1_002, "plaza", "search", 3_000);
+        stats.slow_query_at(1_003, "gran via", "autocomplete", 20_000);
+        let texts = |s: &Stats, now| s.slow_snapshot(now).as_array().unwrap().iter().map(|q| q["text"].as_str().unwrap().to_owned()).collect::<Vec<_>>();
+        assert_eq!(texts(&stats, 1_004), ["gran via", "calle mayor #"], "the same query without digits is one, with its slowest time");
+        assert_eq!(stats.slow_snapshot(1_004)[1]["ms"].as_f64(), Some(12.0));
+        assert!(texts(&stats, 1_004 + SLOW_KEPT_SECS).is_empty(), "an hour later they are gone");
+        assert_eq!(Stats::default().slow_snapshot(0), Value::Null, "off by default");
     }
 
     #[test]
