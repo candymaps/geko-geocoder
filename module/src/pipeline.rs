@@ -518,7 +518,7 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
         pack.copy_to(&segment_dir(&setup.data_dir, country).join("pack"))?;
         writeln!(out, "pack {country}: version {}", pack.text.version).unwrap();
     }
-    let licenses = prepared
+    let licenses: Vec<LicenseNotice> = prepared
         .selected
         .iter()
         .map(|s| {
@@ -526,6 +526,7 @@ pub fn build(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader, force: boo
             LicenseNotice { source: s.provider.id().0, name: l.name, attribution: l.attribution, url: l.url }
         })
         .collect();
+    meta.sources = licenses.iter().map(|l| l.source.clone()).collect();
     let packs: serde_json::Map<String, serde_json::Value> =
         prepared.scope.countries().map(|c| Ok((c.to_string(), geko_country_pack::get(c)?.text.version.into()))).collect::<Result<_>>()?;
     Ok(Built {

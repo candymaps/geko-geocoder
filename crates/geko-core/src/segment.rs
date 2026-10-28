@@ -24,6 +24,10 @@ pub struct Segment {
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Meta {
     pub segments: Vec<Segment>,
+    /// The sources this part of the bundle was built from, since the manifest also carries the
+    /// licenses of the other modules. A bundle without it lists every license as its own.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sources: Vec<String>,
 }
 
 impl Meta {

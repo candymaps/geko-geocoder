@@ -7,6 +7,7 @@ use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use geko_core::model::PlaceKind;
 use serde_json::{Value, json};
 
 /// Upper bounds of the latency buckets, in microseconds; the last bucket has none.
@@ -14,6 +15,8 @@ const BOUNDS_US: [u64; 11] = [100, 250, 500, 1_000, 2_500, 5_000, 10_000, 25_000
 const BUCKETS: usize = BOUNDS_US.len() + 1;
 const MINUTES: usize = 60;
 const SECONDS: usize = 60;
+/// Tenths of confidence, 0.0 to 1.0, in which the first result of a text search is counted.
+const CONFIDENCE_BUCKETS: usize = 10;
 
 /// The routes that are counted, as `Request::route` names them.
 const ROUTES: [&str; 6] = ["v1/search", "v1/autocomplete", "v1/search/structured", "v1/reverse", "v1/place/{id}", "v1/batch"];
@@ -90,6 +93,9 @@ pub struct Stats {
     searches: AtomicU64,
     empty: AtomicU64,
     cut_short: AtomicU64,
+    /// The first result of each text search that found one: its confidence by tenths, and its layer.
+    confidence: [AtomicU64; CONFIDENCE_BUCKETS],
+    layers: [AtomicU64; PlaceKind::ALL.len()],
 }
 
 fn now_secs() -> u64 {
@@ -105,6 +111,8 @@ impl Default for Stats {
             searches: AtomicU64::new(0),
             empty: AtomicU64::new(0),
             cut_short: AtomicU64::new(0),
+            confidence: Default::default(),
+            layers: Default::default(),
         }
     }
 }
@@ -137,6 +145,15 @@ impl Stats {
         }
         if cut_short {
             self.cut_short.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    /// The first result of a text search: how sure the geocoder is of it, and what it is.
+    pub fn first_result(&self, confidence: f32, kind: PlaceKind) {
+        let tenth = ((confidence.clamp(0.0, 1.0) * CONFIDENCE_BUCKETS as f32) as usize).min(CONFIDENCE_BUCKETS - 1);
+        self.confidence[tenth].fetch_add(1, Ordering::Relaxed);
+        if let Some(i) = PlaceKind::ALL.iter().position(|k| *k == kind) {
+            self.layers[i].fetch_add(1, Ordering::Relaxed);
         }
     }
 
@@ -178,6 +195,14 @@ impl Stats {
             "searches": self.searches.load(Ordering::Relaxed),
             "empty": self.empty(),
             "cut_short": self.cut_short(),
+            "confidence": self.confidence.iter().map(|c| c.load(Ordering::Relaxed)).collect::<Vec<_>>(),
+            "layers": PlaceKind::ALL
+                .iter()
+                .zip(&self.layers)
+                .map(|(kind, n)| (kind.as_str(), n.load(Ordering::Relaxed)))
+                .filter(|(_, n)| *n > 0)
+                .map(|(layer, n)| json!({ "layer": layer, "count": n }))
+                .collect::<Vec<_>>(),
             "last_hour": {
                 "end_unix": (now + 1) * 60,
                 "requests": series.iter().map(|m| m.requests).collect::<Vec<_>>(),
@@ -252,6 +277,18 @@ mod tests {
         let s = stats.snapshot_at(60_000 + 60 * MINUTES as u64);
         let total: u64 = s["last_hour"]["requests"].as_array().unwrap().iter().filter_map(Value::as_u64).sum();
         assert_eq!(total, 1);
+    }
+
+    #[test]
+    fn first_results_by_confidence_and_layer() {
+        let stats = Stats::default();
+        stats.first_result(0.0, PlaceKind::Street);
+        stats.first_result(0.95, PlaceKind::Address);
+        stats.first_result(1.0, PlaceKind::Address);
+        let s = stats.snapshot();
+        let tenths: Vec<u64> = s["confidence"].as_array().unwrap().iter().filter_map(Value::as_u64).collect();
+        assert_eq!((tenths[0], tenths[9], tenths.iter().sum::<u64>()), (1, 2, 3), "1.0 falls in the last tenth");
+        assert_eq!(s["layers"], json!([{ "layer": "street", "count": 1 }, { "layer": "address", "count": 2 }]));
     }
 
     #[test]

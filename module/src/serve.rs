@@ -163,7 +163,8 @@ impl Server {
         let wanted = &self.shared.config.countries;
         let mut segments = Vec::new();
         let mut sizes = Vec::new();
-        for s in &Meta::of(&view.module)?.segments {
+        let meta = Meta::of(&view.module)?;
+        for s in &meta.segments {
             let country = CountryCode::new(&s.country)?;
             if !wanted.is_empty() && !wanted.contains(&country) {
                 continue;
@@ -179,6 +180,7 @@ impl Server {
             .manifest
             .licenses
             .iter()
+            .filter(|l| meta.sources.is_empty() || meta.sources.contains(&l.source))
             .map(|l| serde_json::json!({ "id": l.source, "name": l.name, "attribution": l.attribution, "url": l.url }))
             .collect();
         self.shared.loaded.store(Some(Arc::new(Loaded {
@@ -682,6 +684,12 @@ fn search_now(shared: &Shared, p: &HashMap<String, String>, prefix: bool, starte
     // An answer the time budget cut short is not kept: under load it would outlive the load.
     let complete = ctx.deadline.is_none_or(|d| Instant::now() < d);
     shared.stats.searched(found.is_empty(), !complete);
+    if let Some(first) = found.first()
+        && let Some(place) = first.segment.engine.place(first.hit.id)
+    {
+        let confidence = text_confidence(first.hit.score, found.get(1).map(|n| n.hit.score), first.hit.score, true, prefix, first.hit.match_type);
+        shared.stats.first_result(confidence, place.kind);
+    }
     let query = serde_json::json!({ "text": text, "size": ctx.size });
     let answer = respond(&loaded, query, &found, None, started, Output::of(&ctx, p), Confidence::Text { autocomplete: prefix });
     if let Some(key) = key.filter(|_| complete) {
