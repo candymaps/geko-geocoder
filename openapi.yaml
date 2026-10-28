@@ -260,7 +260,7 @@ components:
     debug:
       name: debug
       in: query
-      description: "`true` adds `score` and `local_id` to each result."
+      description: "`true` adds `score` and `local_id` to each result and, to `geocoding`, `debug`: how each country read the query (every reading with its probability) and how long the engine took to try each one in microseconds (`null`: skipped, by the time budget or because it could not beat what was found). Search and autocomplete only."
       schema: { type: boolean, default: false }
   responses:
     Results:

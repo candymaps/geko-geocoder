@@ -14,7 +14,7 @@ use geko_core::country::CountryCode;
 use geko_core::geo::{BBox, Coord};
 use geko_core::model::{AdminLevelRef, MatchType, PlaceKind, PublicId};
 use geko_core::ports::{AddressParser, GeocodeEngine, ReverseIndex};
-use geko_core::query::{AddressComponents, Hit, Interpretation, InterpretationKind, KindFilter, ParsedQuery, QueryContext, RankingWeights};
+use geko_core::query::{AddressComponents, Hit, Interpretation, InterpretationKind, KindFilter, ParsedQuery, QueryContext, RankingWeights, Trace};
 use geko_core::{GekoError, Result};
 use geko_core::segment::Meta;
 use geko_module_sdk::module::{BundleView, Request, Response};
@@ -374,6 +374,7 @@ fn context(shared: &Shared, p: &HashMap<String, String>) -> std::result::Result<
             .collect::<std::result::Result<Vec<_>, _>>()?,
         None => Vec::new(),
     };
+    let debug = p.get("debug").is_some_and(|v| v == "true" || v == "1");
     Ok(QueryContext {
         focus,
         boundary,
@@ -381,7 +382,8 @@ fn context(shared: &Shared, p: &HashMap<String, String>) -> std::result::Result<
         lang: p.get("lang").cloned(),
         size,
         weights: c.weights,
-        debug: p.get("debug").is_some_and(|v| v == "true" || v == "1"),
+        debug,
+        trace: debug.then(Trace::default),
         min_score: f32::NEG_INFINITY,
         deadline: None,
     })
@@ -677,6 +679,37 @@ fn geocode<'a>(
     Ok(found)
 }
 
+/// How each served country read `text`, likeliest reading first, and how long the engine took to try
+/// each one; a reading with no time was skipped.
+fn how_it_was_read(loaded: &Loaded, ctx: &QueryContext, text: &str, trace: &Trace) -> serde_json::Value {
+    let tried = trace.tried();
+    let countries = loaded.segments.iter().filter(|s| ctx.countries.is_empty() || ctx.countries.contains(&s.country)).filter_map(|segment| {
+        let parsed = segment.parser.parse(text).ok()?;
+        let readings: Vec<_> = parsed
+            .interpretations
+            .iter()
+            .enumerate()
+            .map(|(n, i)| {
+                let micros = tried.iter().find(|t| t.country == segment.country && t.reading == n).map(|t| t.micros);
+                serde_json::json!({ "probability": i.probability, "reading": reading_json(&i.kind), "tried_us": micros })
+            })
+            .collect();
+        Some(serde_json::json!({ "country": segment.country.as_str().to_uppercase(), "readings": readings }))
+    });
+    serde_json::Value::Array(countries.collect())
+}
+
+fn reading_json(kind: &InterpretationKind) -> serde_json::Value {
+    match kind {
+        InterpretationKind::Address(a) => {
+            serde_json::json!({ "type": "address", "street": a.street, "housenumber": a.housenumber, "postcode": a.postcode, "locality": a.locality })
+        }
+        InterpretationKind::Place { text, within } => serde_json::json!({ "type": "place", "text": text, "within": within }),
+        InterpretationKind::Postcode(pc) => serde_json::json!({ "type": "postcode", "postcode": pc }),
+        InterpretationKind::Coordinates(c) => serde_json::json!({ "type": "coordinates", "lat": c.lat(), "lon": c.lon() }),
+    }
+}
+
 fn distance(segment: &Segment, hit: Hit, from: Coord) -> Option<f64> {
     segment.engine.place(hit.id).map(|p| p.point.distance_m(from))
 }
@@ -715,7 +748,8 @@ fn search_now(shared: &Shared, p: &HashMap<String, String>, prefix: bool, starte
         shared.stats.first_result(confidence, place.kind);
     }
     let query = serde_json::json!({ "text": text, "size": ctx.size });
-    let answer = respond(&loaded, query, &found, None, started, Output::of(&ctx, p), Confidence::Text { autocomplete: prefix });
+    let debug = ctx.trace.as_ref().map(|trace| ("debug", how_it_was_read(&loaded, &ctx, text, trace)));
+    let answer = respond(&loaded, query, &found, debug, started, Output::of(&ctx, p), Confidence::Text { autocomplete: prefix });
     if let Some(key) = key.filter(|_| complete) {
         shared.cache.put(key, answer.0.as_str().into());
     }
@@ -903,6 +937,18 @@ fn place(shared: &Shared, id: &str, started: Instant) -> std::result::Result<Ans
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_reading_says_what_each_part_was_taken_for() {
+        let address = InterpretationKind::Address(AddressComponents { street: Some("gran via".into()), housenumber: Some("1".into()), postcode: None, locality: Some("palma".into()) });
+        assert_eq!(
+            reading_json(&address),
+            serde_json::json!({ "type": "address", "street": "gran via", "housenumber": "1", "postcode": null, "locality": "palma" })
+        );
+        let place = InterpretationKind::Place { text: "sants".into(), within: Some("barcelona".into()) };
+        assert_eq!(reading_json(&place), serde_json::json!({ "type": "place", "text": "sants", "within": "barcelona" }));
+        assert_eq!(reading_json(&InterpretationKind::Postcode("07012".into())), serde_json::json!({ "type": "postcode", "postcode": "07012" }));
+    }
 
     #[test]
     fn the_names_member_is_cut_with_one_comma() {
