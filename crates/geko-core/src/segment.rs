@@ -1,6 +1,8 @@
 //! What the geocoder keeps in its entry of the bundle manifest (`BundleModule::meta`): a segment
 //! per country, with the formats its indexes were written in, which the providers check at load.
 
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 
 use crate::bundle::BundleModule;
@@ -24,6 +26,13 @@ pub struct Segment {
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Meta {
     pub segments: Vec<Segment>,
+    /// The sources this part of the bundle was built from, since the manifest also carries the
+    /// licenses of the other modules. A bundle without it lists every license as its own.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sources: Vec<String>,
+    /// What fusion left in each country (by its code): its streets, addresses, places, POIs and postcodes.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub entities: BTreeMap<String, BTreeMap<String, u64>>,
 }
 
 impl Meta {

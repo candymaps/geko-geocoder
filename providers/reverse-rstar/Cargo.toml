@@ -8,9 +8,9 @@ license.workspace = true
 [dependencies]
 geko-core.workspace = true
 geko-geom.workspace = true
-arrow-array = "55"
+arrow-array = "60"
 bytemuck = { version = "1", features = ["derive", "extern_crate_alloc"] }
-parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+parquet = { version = "60", default-features = false, features = ["arrow", "zstd"] }
 memmap2 = "0.9"
 rstar = "0.12"
 serde.workspace = true

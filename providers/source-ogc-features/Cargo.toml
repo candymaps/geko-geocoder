@@ -7,13 +7,13 @@ license.workspace = true
 
 [dependencies]
 geko-core.workspace = true
-arrow-array = "55"
-arrow-schema = "55"
-parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+arrow-array = "60"
+arrow-schema = "60"
+parquet = { version = "60", default-features = false, features = ["arrow", "zstd"] }
 serde.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-zstd = "0.13"
+zstd = "0.14"
 
 [dev-dependencies]
 geko-conformance.workspace = true

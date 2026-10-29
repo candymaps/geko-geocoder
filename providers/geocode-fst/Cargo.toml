@@ -8,12 +8,12 @@ license.workspace = true
 [dependencies]
 geko-core.workspace = true
 geko-geom.workspace = true
-arrow-array = "55"
+arrow-array = "60"
 bytemuck = "1"
 fst = "0.4"
 levenshtein_automata = "0.2"
 memmap2 = "0.9"
-parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+parquet = { version = "60", default-features = false, features = ["arrow", "zstd"] }
 roaring = "0.10"
 serde.workspace = true
 serde_json.workspace = true

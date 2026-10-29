@@ -11,8 +11,8 @@ use arrow_schema::{DataType, Field, Schema, SchemaRef};
 use geko_core::{GekoError, Result};
 use parquet::arrow::ArrowWriter;
 use parquet::basic::{Compression, ZstdLevel};
+use parquet::file::metadata::KeyValue;
 use parquet::file::properties::WriterProperties;
-use parquet::format::KeyValue;
 
 use crate::Column;
 use crate::api::{Feature, Page};

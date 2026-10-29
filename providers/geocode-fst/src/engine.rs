@@ -10,7 +10,7 @@ use geko_core::country::CountryCode;
 use geko_core::geo::Coord;
 use geko_core::model::{LocalId, MatchType, PlaceKind, PlaceRef, PublicId};
 use geko_core::ports::{GeocodeEngine, TextNormalizer};
-use geko_core::query::{AddressComponents, Hit, InterpretationKind, ParsedQuery, QueryContext};
+use geko_core::query::{AddressComponents, Hit, InterpretationKind, ParsedQuery, QueryContext, Tried};
 use geko_core::{GekoError, Result};
 use roaring::RoaringBitmap;
 
@@ -1312,15 +1312,15 @@ impl FstEngine {
             if top.full() && self.bound(0, factor, ctx) + 0.5 < top.min() {
                 break;
             }
-            let started = ctx.debug.then(std::time::Instant::now);
+            let started = ctx.trace.as_ref().map(|_| std::time::Instant::now());
             match &interpretation.kind {
                 InterpretationKind::Place { text, within } => self.search_place(text, within.as_deref(), prefix, factor, ctx, top),
                 InterpretationKind::Address(c) => self.search_address(c, prefix, factor, ctx, top),
                 InterpretationKind::Postcode(pc) => self.search_postcode(pc, factor, ctx, top),
                 InterpretationKind::Coordinates(_) => {}
             }
-            if let Some(started) = started {
-                eprintln!("{:>8} us  p={:.2}  {:?}", started.elapsed().as_micros(), interpretation.probability, interpretation.kind);
+            if let (Some(started), Some(trace)) = (started, &ctx.trace) {
+                trace.push(Tried { country: self.country, reading: n, micros: started.elapsed().as_micros() as u64 });
             }
         }
     }

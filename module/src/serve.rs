@@ -14,12 +14,13 @@ use geko_core::country::CountryCode;
 use geko_core::geo::{BBox, Coord};
 use geko_core::model::{AdminLevelRef, MatchType, PlaceKind, PublicId};
 use geko_core::ports::{AddressParser, GeocodeEngine, ReverseIndex};
-use geko_core::query::{AddressComponents, Hit, Interpretation, InterpretationKind, KindFilter, ParsedQuery, QueryContext, RankingWeights};
+use geko_core::query::{AddressComponents, Hit, Interpretation, InterpretationKind, KindFilter, ParsedQuery, QueryContext, RankingWeights, Trace};
 use geko_core::{GekoError, Result};
 use geko_core::segment::Meta;
 use geko_module_sdk::module::{BundleView, Request, Response};
 
 use crate::cache;
+use crate::stats::Stats;
 
 /// Longest accepted `text`, in characters: a long text only costs time, never finds more.
 const MAX_TEXT_CHARS: usize = 256;
@@ -45,8 +46,10 @@ pub struct GeocoderConfig {
     /// counted from when the engine starts working on it; `None` means no budget.
     pub search_budget: Option<std::time::Duration>,
     pub autocomplete_budget: Option<std::time::Duration>,
-    /// Requests that take longer are logged with their query; `None` logs none.
+    /// Requests that take longer are logged with their query, anonymized; `None` logs none.
     pub slow_query: Option<std::time::Duration>,
+    /// How many of the slowest queries of the last hour `v1/stats` lists, anonymized; 0 lists none.
+    pub slow_queries: usize,
     /// Results with the same name closer than this, in metres, are merged in the answer;
     /// 0 merges only the same id.
     pub same_entity_m: f64,
@@ -66,6 +69,7 @@ impl Default for GeocoderConfig {
             search_budget: Some(std::time::Duration::from_millis(15)),
             autocomplete_budget: Some(std::time::Duration::from_millis(5)),
             slow_query: Some(std::time::Duration::from_millis(50)),
+            slow_queries: 0,
             same_entity_m: 100.0,
             batch_max: 100,
             cache_entries: 0,
@@ -75,6 +79,13 @@ impl Default for GeocoderConfig {
 
 struct Loaded {
     version: String,
+    created_unix: u64,
+    /// Each served country with what its segment takes on disk, in bytes.
+    countries: Vec<(String, u64)>,
+    /// The sources of the bundle, as the manifest declares them.
+    sources: serde_json::Value,
+    /// What fusion left in each country, as the build recorded it; empty in a bundle that did not.
+    entities: serde_json::Value,
     /// The attributions of the sources of the bundle, sent with every answer.
     attribution: String,
     segments: Vec<Segment>,
@@ -86,6 +97,7 @@ struct Shared {
     /// Results merged by the safety net: each one is a duplicate that fusion let through.
     merged: AtomicU64,
     cache: cache::Cache,
+    stats: Stats,
 }
 
 /// The method of making the fused database, offered under ODbL 4.6 to whoever gets results.
@@ -93,15 +105,41 @@ const FUSION_METHOD: &str = include_str!("../FUSION_METHOD.md");
 /// The reference of the API of the geocoder, which the host lists at `/docs`.
 pub const OPENAPI: &str = include_str!("../../openapi.yaml");
 const GEOJSON: &str = "application/geo+json; charset=utf-8";
+const JSON: &str = "application/json; charset=utf-8";
 
 pub struct Server {
     opener: SegmentOpener,
     shared: Shared,
+    /// The `[sources.*]` sections of the configuration, as `v1/status` shows them.
+    source_options: serde_json::Value,
+    /// The data directory of the host, where the build leaves the stages of its last run.
+    data_dir: std::path::PathBuf,
 }
 
 impl Server {
     pub fn new(opener: SegmentOpener, config: GeocoderConfig) -> Self {
-        Self { opener, shared: Shared { cache: cache::Cache::new(config.cache_entries), config, loaded: ArcSwapOption::empty(), merged: AtomicU64::new(0) } }
+        Self {
+            opener,
+            shared: Shared {
+                cache: cache::Cache::new(config.cache_entries),
+                loaded: ArcSwapOption::empty(),
+                merged: AtomicU64::new(0),
+                stats: Stats::default().keeping_slow(config.slow_queries),
+                config,
+            },
+            source_options: serde_json::Value::Null,
+            data_dir: std::path::PathBuf::new(),
+        }
+    }
+
+    pub fn with_source_options(mut self, options: serde_json::Value) -> Self {
+        self.source_options = options;
+        self
+    }
+
+    pub fn with_data_dir(mut self, dir: std::path::PathBuf) -> Self {
+        self.data_dir = dir;
+        self
     }
 
     /// Answers a request to one of the routes of `crate::routes`.
@@ -114,6 +152,8 @@ impl Server {
         let answer = match request.route.as_str() {
             "openapi.yaml" => return Response::new(200, "application/yaml", OPENAPI),
             "v1/attribution/method" => return Response::new(200, "text/markdown; charset=utf-8", FUSION_METHOD),
+            "v1/status" => return Response::new(200, JSON, self.status().to_string()),
+            "v1/stats" => return Response::new(200, JSON, self.stats().to_string()),
             "v1/search" => search_now(shared, &p, false, started),
             "v1/autocomplete" => search_now(shared, &p, true, started),
             "v1/search/structured" => structured_now(shared, &p, started),
@@ -125,27 +165,52 @@ impl Server {
             },
             other => Err(ApiError::not_found(format!("no route {other}"))),
         };
+        let micros = started.elapsed().as_micros() as u64;
         match answer {
-            Ok(Answer(body)) => Response::new(200, GEOJSON, body),
-            Err(e) => Response::error(e.status, &e.message),
+            Ok(Answer(body)) => {
+                shared.stats.record(&request.route, 200, micros);
+                Response::new(200, GEOJSON, body)
+            }
+            Err(e) => {
+                shared.stats.record(&request.route, e.status, micros);
+                Response::error(e.status, &e.message)
+            }
         }
     }
 
     pub fn load(&self, view: &BundleView) -> Result<()> {
         let wanted = &self.shared.config.countries;
         let mut segments = Vec::new();
-        for s in &Meta::of(&view.module)?.segments {
+        let mut sizes = Vec::new();
+        let meta = Meta::of(&view.module)?;
+        for s in &meta.segments {
             let country = CountryCode::new(&s.country)?;
             if !wanted.is_empty() && !wanted.contains(&country) {
                 continue;
             }
+            sizes.push((s.country.to_uppercase(), dir_size(&view.root.join(&s.dir))));
             segments.push((self.opener)(&view.root.join(&s.dir), s)?);
         }
         if segments.is_empty() {
             return Err(GekoError::Data(format!("bundle {} has no segment for the served countries", view.manifest.version)));
         }
         let attribution = view.manifest.licenses.iter().map(|l| l.attribution.as_str()).collect::<Vec<_>>().join("; ");
-        self.shared.loaded.store(Some(Arc::new(Loaded { version: view.manifest.version.clone(), attribution, segments })));
+        let sources = view
+            .manifest
+            .licenses
+            .iter()
+            .filter(|l| meta.sources.is_empty() || meta.sources.contains(&l.source))
+            .map(|l| serde_json::json!({ "id": l.source, "name": l.name, "attribution": l.attribution, "url": l.url }))
+            .collect();
+        self.shared.loaded.store(Some(Arc::new(Loaded {
+            version: view.manifest.version.clone(),
+            created_unix: view.manifest.created_unix,
+            countries: sizes,
+            sources: serde_json::Value::Array(sources),
+            entities: serde_json::to_value(&meta.entities).unwrap_or_default(),
+            attribution,
+            segments,
+        })));
         self.shared.cache.clear();
         Ok(())
     }
@@ -154,7 +219,60 @@ impl Server {
         self.shared.loaded.store(None);
     }
 
+    /// What is loaded and how it is set up, for the dashboard: the bundle, its countries and
+    /// sources, and every option of `[serve]` with the value it has and the one it would have
+    /// without a file.
+    fn status(&self) -> serde_json::Value {
+        let c = &self.shared.config;
+        let d = GeocoderConfig::default();
+        let ms = |t: Option<Duration>| t.map_or(0, |t| t.as_millis() as u64);
+        let countries = |c: &GeocoderConfig| c.countries.iter().map(|c| c.as_str().to_uppercase()).collect::<Vec<_>>();
+        let setting = |key: &str, value: serde_json::Value, default: serde_json::Value| serde_json::json!({ "key": key, "value": value, "default": default });
+        let serve = vec![
+            setting("serve.countries", countries(c).into(), countries(&d).into()),
+            setting("serve.search_budget_ms", ms(c.search_budget).into(), ms(d.search_budget).into()),
+            setting("serve.autocomplete_budget_ms", ms(c.autocomplete_budget).into(), ms(d.autocomplete_budget).into()),
+            setting("serve.slow_query_ms", ms(c.slow_query).into(), ms(d.slow_query).into()),
+            setting("serve.slow_queries", c.slow_queries.into(), d.slow_queries.into()),
+            setting("serve.same_entity_m", c.same_entity_m.into(), d.same_entity_m.into()),
+            setting("serve.batch_max", c.batch_max.into(), d.batch_max.into()),
+            setting("serve.cache_entries", c.cache_entries.into(), d.cache_entries.into()),
+        ];
+        let bundle = self.shared.loaded.load();
+        serde_json::json!({
+            "ready": bundle.is_some(),
+            "bundle": bundle.as_ref().map(|b| serde_json::json!({ "version": b.version, "created_unix": b.created_unix })),
+            "countries": bundle.as_ref().map(|b| b.countries.iter().map(|(code, bytes)| serde_json::json!({ "code": code, "bytes": bytes })).collect::<Vec<_>>()),
+            "sources": bundle.as_ref().map(|b| b.sources.clone()),
+            "entities": bundle.as_ref().map(|b| b.entities.clone()),
+            "last_build": crate::pipeline::last_build(&self.data_dir),
+            "source_options": self.source_options,
+            "serve": serve,
+        })
+    }
+
+    /// The counters of `v1/stats`, with the cache and the duplicates that fusion let through.
+    fn stats(&self) -> serde_json::Value {
+        let shared = &self.shared;
+        let mut stats = shared.stats.snapshot();
+        stats["merged_duplicates"] = shared.merged.load(Ordering::Relaxed).into();
+        stats["cache"] = serde_json::json!({
+            "enabled": shared.cache.enabled(),
+            "hits": shared.cache.hits.load(Ordering::Relaxed),
+            "misses": shared.cache.misses.load(Ordering::Relaxed),
+        });
+        stats
+    }
+
     pub fn metrics(&self, out: &mut String) {
+        out.push_str("# HELP geko_search_empty_total Searches and autocompletes that found nothing.
+# TYPE geko_search_empty_total counter
+");
+        let _ = writeln!(out, "geko_search_empty_total {}", self.shared.stats.empty());
+        out.push_str("# HELP geko_search_cut_short_total Searches and autocompletes the time budget cut short.
+# TYPE geko_search_cut_short_total counter
+");
+        let _ = writeln!(out, "geko_search_cut_short_total {}", self.shared.stats.cut_short());
         out.push_str("# HELP geko_merged_duplicates_total Duplicated results merged in answers: each is a fusion miss.\n# TYPE geko_merged_duplicates_total counter\n");
         let _ = writeln!(out, "geko_merged_duplicates_total {}", self.shared.merged.load(Ordering::Relaxed));
         if self.shared.cache.enabled() {
@@ -163,6 +281,19 @@ impl Server {
             let _ = writeln!(out, "geko_cache_lookups_total{{result=\"miss\"}} {}", self.shared.cache.misses.load(Ordering::Relaxed));
         }
     }
+}
+
+/// What the files under `dir` take on disk, in bytes; what cannot be read counts zero.
+fn dir_size(dir: &Path) -> u64 {
+    let Ok(entries) = std::fs::read_dir(dir) else { return 0 };
+    entries
+        .filter_map(|e| e.ok())
+        .map(|e| match e.metadata() {
+            Ok(m) if m.is_dir() => dir_size(&e.path()),
+            Ok(m) => m.len(),
+            Err(_) => 0,
+        })
+        .sum()
 }
 
 /// The cache key of a search: the route, the text as the engine compares it (case and runs of
@@ -243,6 +374,7 @@ fn context(shared: &Shared, p: &HashMap<String, String>) -> std::result::Result<
             .collect::<std::result::Result<Vec<_>, _>>()?,
         None => Vec::new(),
     };
+    let debug = p.get("debug").is_some_and(|v| v == "true" || v == "1");
     Ok(QueryContext {
         focus,
         boundary,
@@ -250,7 +382,8 @@ fn context(shared: &Shared, p: &HashMap<String, String>) -> std::result::Result<
         lang: p.get("lang").cloned(),
         size,
         weights: c.weights,
-        debug: p.get("debug").is_some_and(|v| v == "true" || v == "1"),
+        debug,
+        trace: debug.then(Trace::default),
         min_score: f32::NEG_INFINITY,
         deadline: None,
     })
@@ -546,6 +679,37 @@ fn geocode<'a>(
     Ok(found)
 }
 
+/// How each served country read `text`, likeliest reading first, and how long the engine took to try
+/// each one; a reading with no time was skipped.
+fn how_it_was_read(loaded: &Loaded, ctx: &QueryContext, text: &str, trace: &Trace) -> serde_json::Value {
+    let tried = trace.tried();
+    let countries = loaded.segments.iter().filter(|s| ctx.countries.is_empty() || ctx.countries.contains(&s.country)).filter_map(|segment| {
+        let parsed = segment.parser.parse(text).ok()?;
+        let readings: Vec<_> = parsed
+            .interpretations
+            .iter()
+            .enumerate()
+            .map(|(n, i)| {
+                let micros = tried.iter().find(|t| t.country == segment.country && t.reading == n).map(|t| t.micros);
+                serde_json::json!({ "probability": i.probability, "reading": reading_json(&i.kind), "tried_us": micros })
+            })
+            .collect();
+        Some(serde_json::json!({ "country": segment.country.as_str().to_uppercase(), "readings": readings }))
+    });
+    serde_json::Value::Array(countries.collect())
+}
+
+fn reading_json(kind: &InterpretationKind) -> serde_json::Value {
+    match kind {
+        InterpretationKind::Address(a) => {
+            serde_json::json!({ "type": "address", "street": a.street, "housenumber": a.housenumber, "postcode": a.postcode, "locality": a.locality })
+        }
+        InterpretationKind::Place { text, within } => serde_json::json!({ "type": "place", "text": text, "within": within }),
+        InterpretationKind::Postcode(pc) => serde_json::json!({ "type": "postcode", "postcode": pc }),
+        InterpretationKind::Coordinates(c) => serde_json::json!({ "type": "coordinates", "lat": c.lat(), "lon": c.lon() }),
+    }
+}
+
 fn distance(segment: &Segment, hit: Hit, from: Coord) -> Option<f64> {
     segment.engine.place(hit.id).map(|p| p.point.distance_m(from))
 }
@@ -571,12 +735,21 @@ fn search_now(shared: &Shared, p: &HashMap<String, String>, prefix: bool, starte
         && started.elapsed() >= slow
     {
         let route = if prefix { "autocomplete" } else { "search" };
-        tracing::warn!(route, text, ms = started.elapsed().as_millis() as u64, "slow query");
+        tracing::warn!(route, text = crate::stats::anonymize(text).as_str(), ms = started.elapsed().as_millis() as u64, "slow query");
     }
     // An answer the time budget cut short is not kept: under load it would outlive the load.
     let complete = ctx.deadline.is_none_or(|d| Instant::now() < d);
+    shared.stats.searched(found.is_empty(), !complete);
+    shared.stats.slow_query(text, if prefix { "autocomplete" } else { "search" }, started.elapsed().as_micros() as u64);
+    if let Some(first) = found.first()
+        && let Some(place) = first.segment.engine.place(first.hit.id)
+    {
+        let confidence = text_confidence(first.hit.score, found.get(1).map(|n| n.hit.score), first.hit.score, true, prefix, first.hit.match_type);
+        shared.stats.first_result(confidence, place.kind);
+    }
     let query = serde_json::json!({ "text": text, "size": ctx.size });
-    let answer = respond(&loaded, query, &found, None, started, Output::of(&ctx, p), Confidence::Text { autocomplete: prefix });
+    let debug = ctx.trace.as_ref().map(|trace| ("debug", how_it_was_read(&loaded, &ctx, text, trace)));
+    let answer = respond(&loaded, query, &found, debug, started, Output::of(&ctx, p), Confidence::Text { autocomplete: prefix });
     if let Some(key) = key.filter(|_| complete) {
         shared.cache.put(key, answer.0.as_str().into());
     }
@@ -764,6 +937,18 @@ fn place(shared: &Shared, id: &str, started: Instant) -> std::result::Result<Ans
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_reading_says_what_each_part_was_taken_for() {
+        let address = InterpretationKind::Address(AddressComponents { street: Some("gran via".into()), housenumber: Some("1".into()), postcode: None, locality: Some("palma".into()) });
+        assert_eq!(
+            reading_json(&address),
+            serde_json::json!({ "type": "address", "street": "gran via", "housenumber": "1", "postcode": null, "locality": "palma" })
+        );
+        let place = InterpretationKind::Place { text: "sants".into(), within: Some("barcelona".into()) };
+        assert_eq!(reading_json(&place), serde_json::json!({ "type": "place", "text": "sants", "within": "barcelona" }));
+        assert_eq!(reading_json(&InterpretationKind::Postcode("07012".into())), serde_json::json!({ "type": "postcode", "postcode": "07012" }));
+    }
 
     #[test]
     fn the_names_member_is_cut_with_one_comma() {
