@@ -10,8 +10,8 @@ use arrow_schema::{DataType, Field, Schema};
 use geko_core::{GekoError, Result};
 use parquet::arrow::ArrowWriter;
 use parquet::basic::{Compression, ZstdLevel};
+use parquet::file::metadata::KeyValue;
 use parquet::file::properties::WriterProperties;
-use parquet::format::KeyValue;
 
 use geko_geom::wkb;
 use crate::read::{Common, Extracted};

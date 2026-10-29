@@ -12,8 +12,8 @@ use geko_core::{GekoError, Result};
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use parquet::arrow::{ArrowWriter, ProjectionMask};
 use parquet::basic::{Compression, ZstdLevel};
+use parquet::file::metadata::KeyValue;
 use parquet::file::properties::WriterProperties;
-use parquet::format::KeyValue;
 
 fn err(path: &Path, e: impl std::fmt::Display) -> GekoError {
     GekoError::Data(format!("{}: {e}", path.display()))

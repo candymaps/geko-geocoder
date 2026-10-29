@@ -15,9 +15,9 @@ geko-geom.workspace = true
 geko-country-pack.workspace = true
 text-rules.workspace = true
 anyhow.workspace = true
-arrow-array = "55"
+arrow-array = "60"
 clap.workspace = true
-parquet = { version = "55", default-features = false, features = ["arrow", "zstd"] }
+parquet = { version = "60", default-features = false, features = ["arrow", "zstd"] }
 serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
