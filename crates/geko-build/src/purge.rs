@@ -12,8 +12,11 @@ use crate::fusion::merge::partition_name;
 use crate::incremental;
 use crate::selection::SelectedSource;
 
-/// Removes what `scope` and `selected` do not need, and returns the paths removed.
-pub fn purge(data_dir: &Path, scope: &Scope, selected: &[SelectedSource]) -> Result<Vec<PathBuf>> {
+/// Removes what `scope` and `selected` do not need, and returns the paths removed. `known` are the
+/// ids of every source of this geocoder, selected or not: `raw/` is shared with the other modules
+/// (tiles keeps its downloads in `raw/natural-earth`, `raw/osmdata`…), so only the folders of
+/// those sources are ever removed from it.
+pub fn purge(data_dir: &Path, scope: &Scope, selected: &[SelectedSource], known: &BTreeSet<String>) -> Result<Vec<PathBuf>> {
     let mut parts: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     for p in scope.partitions() {
         let names = parts.entry(p.country.as_str().to_owned()).or_default();
@@ -26,7 +29,7 @@ pub fn purge(data_dir: &Path, scope: &Scope, selected: &[SelectedSource]) -> Res
     let part = |country: &str, name: &str| parts.get(country).is_some_and(|names| names.contains(name));
 
     let mut removed = Vec::new();
-    remove_unless(&data_dir.join("raw"), |name| sources.contains(name), &mut removed)?;
+    remove_unless(&data_dir.join("raw"), |name| sources.contains(name) || !known.contains(name), &mut removed)?;
     for s in selected {
         let raw = raw_dir(data_dir, &s.provider.id());
         for path in s.provider.unused_raw(scope, &raw)? {
@@ -144,6 +147,9 @@ mod tests {
             "raw/osm/index.json",
             "raw/cartociudad/07/page",
             "raw/.snapshot",
+            // What another module keeps in the shared `raw/`.
+            "raw/natural-earth/ne_10m_land.shp",
+            "raw/osmdata/water-polygons.zip",
             "staging/osm/ES/ES-PM/x",
             "staging/osm/ES/ES-PM.stamp.json",
             "staging/osm/ES/ES-B/x",
@@ -170,7 +176,8 @@ mod tests {
         scope.add(CountryCode::new("ES").unwrap(), vec![RegionCode::new("ES-PM").unwrap()]).unwrap();
         let selected = [SelectedSource { provider: Arc::new(Fake), countries: vec![CountryCode::new("ES").unwrap()] }];
 
-        let mut removed: Vec<String> = purge(data, &scope, &selected)
+        let known = BTreeSet::from(["osm".to_owned(), "cartociudad".to_owned()]);
+        let mut removed: Vec<String> = purge(data, &scope, &selected, &known)
             .unwrap()
             .iter()
             .map(|p| p.strip_prefix(data).unwrap().to_string_lossy().into_owned())
@@ -194,7 +201,7 @@ mod tests {
                 "staging/osm/LU",
             ]
         );
-        for kept in ["raw/osm/ES.pbf", "raw/osm/index.json", "raw/.snapshot", "canonical/ES/streets.parquet", "bundles/1/x", "golden/lu/raw/osm/LU.pbf"] {
+        for kept in ["raw/osm/ES.pbf", "raw/osm/index.json", "raw/.snapshot", "raw/natural-earth/ne_10m_land.shp", "raw/osmdata/water-polygons.zip", "canonical/ES/streets.parquet", "bundles/1/x", "golden/lu/raw/osm/LU.pbf"] {
             assert!(data.join(kept).exists(), "{kept}");
         }
     }
