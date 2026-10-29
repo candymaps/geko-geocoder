@@ -438,7 +438,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "country-pack-es"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-conformance",
  "geko-core",
@@ -448,7 +448,7 @@ dependencies = [
 
 [[package]]
 name = "country-pack-lu"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-core",
  "geko-country-pack",
@@ -742,7 +742,7 @@ dependencies = [
 
 [[package]]
 name = "geko-bench"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "geko-core",
@@ -755,7 +755,7 @@ dependencies = [
 
 [[package]]
 name = "geko-build"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -777,7 +777,7 @@ dependencies = [
 
 [[package]]
 name = "geko-conformance"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-build",
  "geko-core",
@@ -787,7 +787,7 @@ dependencies = [
 
 [[package]]
 name = "geko-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-module-sdk",
  "serde",
@@ -796,7 +796,7 @@ dependencies = [
 
 [[package]]
 name = "geko-country-pack"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ed25519-dalek",
  "geko-artifact",
@@ -814,7 +814,7 @@ dependencies = [
 
 [[package]]
 name = "geko-eval"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "arrow-array",
@@ -849,14 +849,14 @@ dependencies = [
 
 [[package]]
 name = "geko-geom"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "rustc-hash",
 ]
 
 [[package]]
 name = "geko-host"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "geko-app",
@@ -867,7 +867,7 @@ dependencies = [
 
 [[package]]
 name = "geko-module-geocoder"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arc-swap",
  "clap",
@@ -892,7 +892,7 @@ dependencies = [
 
 [[package]]
 name = "geko-module-geocoder-dylib"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-module-geocoder",
  "geko-module-sdk",
@@ -940,7 +940,7 @@ dependencies = [
 
 [[package]]
 name = "geocode-fst"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "bytemuck",
@@ -1749,7 +1749,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "reverse-rstar"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "bytemuck",
@@ -2050,7 +2050,7 @@ dependencies = [
 
 [[package]]
 name = "source-ogc-features"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -2068,7 +2068,7 @@ dependencies = [
 
 [[package]]
 name = "source-osm"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -2089,7 +2089,7 @@ dependencies = [
 
 [[package]]
 name = "source-overture"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -2184,7 +2184,7 @@ dependencies = [
 
 [[package]]
 name = "text-rules"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "geko-core",
  "serde",
