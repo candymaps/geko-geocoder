@@ -46,7 +46,7 @@ fn places_parquet(path: &Path) {
         Field::new("addresses", DataType::List(Arc::new(Field::new("element", DataType::Struct(address_fields.clone()), true))), true),
         Field::new("bbox", DataType::Struct(bbox_fields.clone()), true),
     ]));
-    let props = WriterProperties::builder().set_max_row_group_size(4).build();
+    let props = WriterProperties::builder().set_max_row_group_row_count(Some(4)).build();
     let mut writer = ArrowWriter::try_new(std::fs::File::create(path).unwrap(), Arc::clone(&schema), Some(props)).unwrap();
     for group in [&places[..4], &places[4..]] {
         let mut names = StructBuilder::new(names_fields.clone(), vec![Box::new(StringBuilder::new()), Box::new(MapBuilder::new(None, StringBuilder::new(), StringBuilder::new()))]);

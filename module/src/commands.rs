@@ -110,9 +110,14 @@ pub fn run(data_dir: &Path, name: &str, args: &[String]) -> Result<String> {
             let warm_us = warm.elapsed().as_micros() / runs;
             if debug {
                 // Once more, warm, timing each interpretation.
-                let debug_ctx = geko_core::query::QueryContext { debug: true, ..ctx.clone() };
+                let trace = geko_core::query::Trace::default();
+                let debug_ctx = geko_core::query::QueryContext { debug: true, trace: Some(trace.clone()), ..ctx.clone() };
                 let parsed = parser.parse(&text)?;
                 if autocomplete { engine.autocomplete(&parsed, &debug_ctx, &mut hits)? } else { engine.search(&parsed, &debug_ctx, &mut hits)? }
+                for tried in trace.tried() {
+                    let reading = &parsed.interpretations[tried.reading];
+                    writeln!(out, "{:>8} us  p={:.2}  {:?}", tried.micros, reading.probability, reading.kind).unwrap();
+                }
             }
             for h in &hits {
                 let Some(place) = engine.place(h.id) else { continue };
