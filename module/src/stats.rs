@@ -222,7 +222,7 @@ impl Stats {
             Some(_) => {}
             None => slow.push(SlowQuery { text, route, micros, at: now }),
         }
-        slow.sort_by(|a, b| b.micros.cmp(&a.micros));
+        slow.sort_by_key(|q| std::cmp::Reverse(q.micros));
         slow.truncate(self.keep);
         let floor = if slow.len() == self.keep { slow.last().map_or(0, |q| q.micros) } else { 0 };
         self.floor.store(floor, Ordering::Relaxed);
