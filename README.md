@@ -19,6 +19,7 @@ What it serves, under `/geocoder/`:
 - **Search** (`/geocoder/v1/search`, and `/geocoder/v1/search/structured`): addresses, streets, places and POIs from free text, with typo tolerance, decimal, DMS and UTM coordinates.
 - **Autocomplete** (`/geocoder/v1/autocomplete`): results as the user types, biased by a focus point.
 - **Reverse** (`/geocoder/v1/reverse`): the address, street, POI or place nearest to a coordinate.
+- **Status and statistics** (`/geocoder/v1/status`, `/geocoder/v1/stats`): the bundle and countries loaded, the sources and the options in effect; and, since the module started, the requests, errors and latency of every route, the last hour minute by minute, the searches that found nothing or that the time budget cut short, and the cache. They feed the dashboard of geko.
 - **Places and batches** (`/geocoder/v1/place/{id}`, `/geocoder/v1/batch`), a test page with a map at `/geocoder/` and the full API in [openapi.yaml](openapi.yaml).
 
 On top of the same foundation as the rest of geko:
@@ -63,6 +64,7 @@ countries              = []         # the countries this node serves; empty: eve
 search_budget_ms       = 15         # time budget of a search (0: none); the likeliest reading always completes
 autocomplete_budget_ms = 5          # and of an autocomplete request
 cache_entries          = 0          # answers kept for repeated queries, about 2.5 KB each (0: none)
+slow_queries           = 0          # slowest queries of the last hour that `/geocoder/v1/stats` lists, without digits or links, in memory only (0: none)
 ```
 
 Every section and option of the geocoder is in [develop/geko-geocoder.toml](develop/geko-geocoder.toml), with its default value and what it does: use it as the reference to configure the geocoder. An unknown option is an error that names the file and the key, and an option that used to be in `geko.toml` and is now here (`[sources.*]`, `[packs]`, `[serve] search_budget_ms`…) stops geko at startup, saying to move it here. Options that change what is built (those of the sources) are part of the stamps of the build stages: changing one rebuilds only what it affects.

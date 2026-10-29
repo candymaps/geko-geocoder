@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use crate::country::CountryCode;
 use crate::geo::{BBox, Coord};
 use crate::model::{LocalId, MatchType, PlaceKind};
@@ -48,6 +50,36 @@ impl Default for RankingWeights {
     }
 }
 
+/// A reading of a query that an engine tried, and how long it took.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Tried {
+    pub country: CountryCode,
+    /// Its place among `ParsedQuery::interpretations`.
+    pub reading: usize,
+    pub micros: u64,
+}
+
+/// What the engines tried for a query, when `QueryContext::trace` is set: a reading that is not
+/// here was skipped (the time budget, or it could not beat what was already found).
+#[derive(Debug, Clone, Default)]
+pub struct Trace(Arc<Mutex<Vec<Tried>>>);
+
+impl Trace {
+    pub fn push(&self, tried: Tried) {
+        self.0.lock().unwrap_or_else(|e| e.into_inner()).push(tried);
+    }
+
+    pub fn tried(&self) -> Vec<Tried> {
+        self.0.lock().unwrap_or_else(|e| e.into_inner()).clone()
+    }
+}
+
+impl PartialEq for Trace {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.0, &other.0)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct QueryContext {
     pub focus: Option<Coord>,
@@ -58,6 +90,8 @@ pub struct QueryContext {
     pub size: usize,
     pub weights: RankingWeights,
     pub debug: bool,
+    /// Where the engines say which readings they tried and how long each took.
+    pub trace: Option<Trace>,
     /// Score of the k-th result already found elsewhere (other segments or interpretations):
     /// an engine may stop as soon as it cannot beat it.
     pub min_score: f32,
@@ -76,6 +110,7 @@ impl Default for QueryContext {
             size: 10,
             weights: RankingWeights::default(),
             debug: false,
+            trace: None,
             min_score: f32::NEG_INFINITY,
             deadline: None,
         }

@@ -41,8 +41,11 @@ pub struct ServeConfig {
     /// it the engine returns what it found; its likeliest reading always completes.
     pub search_budget_ms: u64,
     pub autocomplete_budget_ms: u64,
-    /// Requests slower than this, in milliseconds, are logged with their query (0: none).
+    /// Requests slower than this, in milliseconds, are logged with their query, anonymized like `slow_queries` (0: none).
     pub slow_query_ms: u64,
+    /// How many of the slowest queries of the last hour `v1/stats` lists, anonymized (no digits, no
+    /// links; names typed in words stay) (0: none). They are in memory only, gone on restart.
+    pub slow_queries: usize,
     /// Results with the same name closer than this, in metres, are merged in the answer;
     /// 0 merges only the same id.
     pub same_entity_m: f64,
@@ -61,6 +64,7 @@ impl Default for ServeConfig {
             search_budget_ms: 15,
             autocomplete_budget_ms: 5,
             slow_query_ms: 50,
+            slow_queries: 0,
             same_entity_m: 100.0,
             batch_max: 100,
             cache_entries: 0,
