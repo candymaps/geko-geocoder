@@ -11,5 +11,8 @@ COPY geocoder /usr/lib/geko/modules/geocoder
 ENV GEKO_MODULES=/usr/lib/geko/modules
 ARG VERSION=unknown
 ARG REVISION=unknown
+# The image of geko it was made on, which ci/modules.sh refresh-image compares.
+ARG BASE=unknown
 LABEL org.opencontainers.image.version=$VERSION
 LABEL org.opencontainers.image.revision=$REVISION
+LABEL org.opencontainers.image.base.digest=$BASE
