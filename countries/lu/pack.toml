@@ -4,7 +4,7 @@
 country = "LU"
 # Raise it with every change to the pack (this file, data/ or sources/): it is published as the
 # tag pack-<version>, and publishing refuses other files under a version already published.
-version = 1
+version = 2
 languages = ["lb", "fr", "de"]
 
 # Four digits, often written with the country letter: "L-1930".
