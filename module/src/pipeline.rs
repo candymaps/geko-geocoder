@@ -360,16 +360,23 @@ fn fetched(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader) -> Result<(S
     let identities = geko_build::fetch::identities(&results);
     let mut out = String::new();
     let mut failed = Vec::new();
+    let mut unanswered = false;
     for (id, result) in results {
         match result {
-            Ok(report) => writeln!(
-                out,
-                "{:<16} downloaded: {}, up to date: {}",
-                id.0,
-                report.downloaded.len(),
-                report.not_modified.len()
-            )
-            .unwrap(),
+            Ok(report) => {
+                writeln!(
+                    out,
+                    "{:<16} downloaded: {}, up to date: {}",
+                    id.0,
+                    report.downloaded.len(),
+                    report.not_modified.len()
+                )
+                .unwrap();
+                if !report.kept_after_failure.is_empty() {
+                    unanswered = true;
+                    writeln!(out, "{:<16} did not answer: kept {} as it was", id.0, report.kept_after_failure.join(", ")).unwrap();
+                }
+            }
             Err(e) => {
                 writeln!(out, "{:<16} FAILED: {e}", id.0).unwrap();
                 failed.push(id.0);
@@ -377,7 +384,7 @@ fn fetched(setup: &Setup, prepared: &Prepared, dl: &dyn Downloader) -> Result<(S
         }
     }
     if failed.is_empty() {
-        if dl.checks_for_updates() {
+        if dl.checks_for_updates() && !unanswered {
             mark_checked(setup)?;
         }
         Ok((out, identities))
@@ -671,7 +678,9 @@ mod tests {
         }
     }
 
-    struct Fake;
+    struct Fake {
+        unanswered: bool,
+    }
 
     impl SourceProvider for Fake {
         fn id(&self) -> SourceId {
@@ -692,6 +701,9 @@ mod tests {
             }])
         }
         fn fetch(&self, _: &Scope, _: &dyn Downloader, _: &RawDir) -> Result<FetchReport> {
+            if self.unanswered {
+                return Ok(FetchReport { not_modified: vec!["fake.bin".into()], kept_after_failure: vec!["fake.bin".into()], ..FetchReport::default() });
+            }
             Ok(FetchReport { downloaded: vec!["fake.bin".into()], ..FetchReport::default() })
         }
         fn stage(&self, _: &Partition, _: &RawDir, _: &StagingDir) -> Result<SourceStats> {
@@ -700,7 +712,7 @@ mod tests {
     }
 
     fn registry() -> BTreeMap<&'static str, Factory> {
-        let factory = Factory { create: |_, _| Ok(Arc::new(Fake)), code: "test", required: false };
+        let factory = Factory { create: |_, _| Ok(Arc::new(Fake { unanswered: false })), code: "test", required: false };
         BTreeMap::from([("fake", factory)])
     }
 
@@ -749,6 +761,21 @@ mod tests {
         let prepared = prepare(&accepted, &registry()).unwrap();
         let out = fetch(&accepted, &prepared, &NoNetwork).unwrap();
         assert!(out.contains("downloaded: 1"), "{out}");
+    }
+
+    #[test]
+    fn a_source_that_did_not_answer_is_not_a_check() {
+        let mut setup = setup(DataPolicy { accept_licenses: true, ..DataPolicy::default() });
+        setup.data_dir = std::env::temp_dir().join(format!("geko-unanswered-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&setup.data_dir);
+        let factory = Factory { create: |_, _| Ok(Arc::new(Fake { unanswered: true })), code: "test", required: false };
+        let prepared = prepare(&setup, &BTreeMap::from([("fake", factory)])).unwrap();
+        let out = fetch(&setup, &prepared, &NoNetwork).unwrap();
+        assert!(out.contains("did not answer: kept fake.bin"), "{out}");
+        assert!(check_due(&setup), "the next build asks again");
+        fetch(&setup, &prepare(&setup, &registry()).unwrap(), &NoNetwork).unwrap();
+        assert!(!check_due(&setup));
+        std::fs::remove_dir_all(&setup.data_dir).unwrap();
     }
 
     #[test]

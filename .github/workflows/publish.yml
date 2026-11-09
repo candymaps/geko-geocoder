@@ -21,10 +21,11 @@ jobs:
   #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes
   #   into it (not only documentation or packs), the geocoder (ghcr.io/candymaps/geko-geocoder, tags
   #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh), which geko
-  #   downloads;
+  #   downloads, and the image of the operator mode (the same repository, tag <version>-<commit>):
+  #   the newest image of geko with this module;
   # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
-  #   <version> on every pack and on the geocoder (<version>-<platform>), and the git tag v<version>
-  #   on the pushed commit, with its GitHub release. Raising the version is how a release is made. A
+  #   <version> on every pack and on the geocoder (<version>-<platform>), <version> and latest on
+  #   the image, and the git tag v<version> on the pushed commit, with its GitHub release. Raising the version is how a release is made. A
   #   tag v<version> without a release (pushed by hand, or left by a cut publication) is released
   #   only if it is on the pushed commit; on another, the version must be raised.
   # Needs the secret GEKO_PACK_SIGNING_KEY, and GEKO_HOST_TOKEN while the host is private; GitHub's
@@ -101,6 +102,18 @@ jobs:
         run: ci/modules.sh publish target/modules
         env:
           GEKO_PACK_SIGNING_KEY: ${{ secrets.GEKO_PACK_SIGNING_KEY }}
+      # The image of the operator mode, from the package just signed. A change of the host alone
+      # makes a new one through refresh-image.yml.
+      - if: steps.version.outputs.module == '1'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - if: steps.version.outputs.module == '1'
+        env:
+          GEKO_RELEASE: ${{ steps.version.outputs.release }}
+        run: ci/modules.sh image target/modules && ci/modules.sh push-image target/modules
       # The tag goes last: if something could not be published, the next run makes the release again.
       # gh creates the tag and its GitHub release in one call, so neither is left without the other.
       # The notes start with where the release is; GitHub appends the changes since the last one.

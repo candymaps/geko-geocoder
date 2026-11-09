@@ -253,15 +253,24 @@ impl SourceProvider for OgcFeaturesSource {
             parallel: self.config.parallel_requests,
         };
         let mut catalog_date: Option<Option<String>> = None;
+        // Once the service did not answer, the other complete units do not wait for it too.
+        let mut down = false;
         for unit in self.scope_units(scope)? {
             // Counted off however it ends: up to date, downloaded or failed.
             let _counted = Counted;
             let dir = api::unit_dir(&raw.path, &unit);
             let label = format!("{}-{}", self.config.collection, unit.prefix);
+            let mut complete = None;
             if let Some(marker) = api::complete_marker(&dir) {
                 // Its pages were removed after publishing, and a staging needs them again.
                 let removed = marker.pages > 0 && api::page_files(&dir)?.is_empty();
                 let restore = removed && !dl.keeps_removed();
+                if !restore && down {
+                    report.kept_after_failure.push(label.clone());
+                    report.not_modified.push(label);
+                    report.identities.push((dir, identity(&marker)));
+                    continue;
+                }
                 // Not due for a check: the complete download is kept without asking the service.
                 if !restore && !dl.checks_for_updates() {
                     report.not_modified.push(label);
@@ -274,10 +283,24 @@ impl SourceProvider for OgcFeaturesSource {
                     report.identities.push((dir, identity(&marker)));
                     continue;
                 }
+                complete = (!restore).then_some(marker);
             }
-            let marker = fetch.run(&unit, &dir)?;
-            report.downloaded.push(label);
-            report.identities.push((dir, identity(&marker)));
+            // It downloads into a folder of its own, and the complete one is only replaced at the
+            // end: if the service fails, that one is still there.
+            match (fetch.run(&unit, &dir), complete) {
+                (Ok(marker), _) => {
+                    report.downloaded.push(label);
+                    report.identities.push((dir, identity(&marker)));
+                }
+                (Err(e @ GekoError::Data(_)), Some(marker)) => {
+                    tracing::warn!(source = self.id, unit = unit.name.as_str(), "{e}; keeping the complete download there is");
+                    down = true;
+                    report.kept_after_failure.push(label.clone());
+                    report.not_modified.push(label);
+                    report.identities.push((dir, identity(&marker)));
+                }
+                (Err(e), _) => return Err(e),
+            }
         }
         Ok(report)
     }
