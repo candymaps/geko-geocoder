@@ -305,7 +305,8 @@ check_data() {
     fi
 }
 
-# Switches the server to a new version of the bundle (the same files, linked under another name)
+# Switches the server to a new version of the bundle (the same files, linked under another name,
+# with a manifest of their own that names that version: geko knows a version by its manifest)
 # while 16 autocomplete requests at a time keep it busy: no request may fail, and the server
 # must end up serving the new version.
 reload_under_load() {
@@ -314,6 +315,10 @@ reload_under_load() {
     current=$(readlink "$bundles/current")
     copy="$current-reload"
     rm -rf "${bundles:?}/$copy" && cp -al "$bundles/$current" "$bundles/$copy"
+    rm "$bundles/$copy/manifest.json"
+    sed "s/\"version\"\([[:space:]]*:[[:space:]]*\)\"$current\"/\"version\"\1\"$copy\"/" \
+        "$bundles/$current/manifest.json" > "$bundles/$copy/manifest.json"
+    grep -q "\"$copy\"" "$bundles/$copy/manifest.json" || { echo "cannot name $copy in its manifest" >&2; return 1; }
     "$bin/geko-eval" load --url "$url" --cases "$cases" --route autocomplete --concurrency 16 \
         --seconds 8 --no-errors --out "$dir/reports/reload.json" &
     local load=$!
