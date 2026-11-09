@@ -33,6 +33,9 @@ pub struct FetchReport {
     /// staging is keyed by these rather than by the files, so that it is reused after its
     /// downloads were removed. An input not listed is keyed by the size and time of its files.
     pub identities: Vec<(PathBuf, String)>,
+    /// What stayed as it was because the source did not answer, also in `not_modified`: a check that
+    /// did not happen, so the next build asks again.
+    pub kept_after_failure: Vec<String>,
 }
 
 #[derive(Debug, Clone)]

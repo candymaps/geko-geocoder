@@ -77,6 +77,8 @@ docker run -d --name geko -p 8080:8080 -v geko-data:/var/lib/geko \
   -v "$PWD/geko-geocoder.toml:/etc/geko/geko-geocoder.toml:ro" ghcr.io/candymaps/geko
 ```
 
+If a source does not answer when it is checked for changes, the build keeps what it has and says so, and asks again in an hour. Without a complete download of that source, the build stops: an index without one of its sources would be a different one, so the published bundle goes on being served.
+
 ### Usage
 
 With the host on port 8080:
