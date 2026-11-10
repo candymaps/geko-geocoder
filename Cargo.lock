@@ -547,7 +547,7 @@ checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
 
 [[package]]
 name = "country-pack-es"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-conformance",
  "geko-core",
@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "country-pack-lu"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-core",
  "geko-country-pack",
@@ -1010,8 +1010,8 @@ dependencies = [
 
 [[package]]
 name = "geko-app"
-version = "0.4.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+version = "0.5.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "anyhow",
  "clap",
@@ -1034,7 +1034,7 @@ dependencies = [
 [[package]]
 name = "geko-artifact"
 version = "2.0.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "ed25519-dalek",
  "geko-fetch",
@@ -1048,7 +1048,7 @@ dependencies = [
 
 [[package]]
 name = "geko-bench"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "geko-core",
@@ -1061,7 +1061,7 @@ dependencies = [
 
 [[package]]
 name = "geko-build"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -1083,7 +1083,7 @@ dependencies = [
 
 [[package]]
 name = "geko-conformance"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-build",
  "geko-core",
@@ -1093,7 +1093,7 @@ dependencies = [
 
 [[package]]
 name = "geko-core"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-module-sdk",
  "serde",
@@ -1102,7 +1102,7 @@ dependencies = [
 
 [[package]]
 name = "geko-country-pack"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "ed25519-dalek",
  "geko-artifact",
@@ -1120,7 +1120,7 @@ dependencies = [
 
 [[package]]
 name = "geko-eval"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "arrow-array",
@@ -1141,7 +1141,7 @@ dependencies = [
 [[package]]
 name = "geko-fetch"
 version = "2.0.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "geko-module-sdk",
  "hex",
@@ -1155,14 +1155,14 @@ dependencies = [
 
 [[package]]
 name = "geko-geom"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "rustc-hash",
 ]
 
 [[package]]
 name = "geko-host"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "geko-app",
@@ -1173,8 +1173,8 @@ dependencies = [
 
 [[package]]
 name = "geko-kube"
-version = "0.4.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+version = "0.5.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "anyhow",
  "futures",
@@ -1185,7 +1185,7 @@ dependencies = [
 
 [[package]]
 name = "geko-module-geocoder"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arc-swap",
  "clap",
@@ -1210,7 +1210,7 @@ dependencies = [
 
 [[package]]
 name = "geko-module-geocoder-dylib"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-module-geocoder",
  "geko-module-sdk",
@@ -1221,7 +1221,7 @@ dependencies = [
 [[package]]
 name = "geko-module-sdk"
 version = "2.0.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "hex",
  "serde",
@@ -1233,8 +1233,8 @@ dependencies = [
 
 [[package]]
 name = "geko-server"
-version = "0.4.0"
-source = "git+https://github.com/candymaps/geko.git?rev=b26ea76afa13475be96e74f6bc9dbb420bcf07d5#b26ea76afa13475be96e74f6bc9dbb420bcf07d5"
+version = "0.5.0"
+source = "git+https://github.com/candymaps/geko.git?tag=sdk-v2.0.0#260e73040380446faddff5a43bc622d5b98543f2"
 dependencies = [
  "arc-swap",
  "axum",
@@ -1259,7 +1259,7 @@ dependencies = [
 
 [[package]]
 name = "geocode-fst"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "bytemuck",
@@ -2568,7 +2568,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "reverse-rstar"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "bytemuck",
@@ -3009,7 +3009,7 @@ dependencies = [
 
 [[package]]
 name = "source-ogc-features"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -3027,7 +3027,7 @@ dependencies = [
 
 [[package]]
 name = "source-osm"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -3048,7 +3048,7 @@ dependencies = [
 
 [[package]]
 name = "source-overture"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -3156,7 +3156,7 @@ dependencies = [
 
 [[package]]
 name = "text-rules"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "geko-core",
  "serde",
