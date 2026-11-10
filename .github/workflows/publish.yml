@@ -20,7 +20,7 @@ jobs:
   # - on every push, the country packs that changed (ghcr.io/candymaps/geko-geocoder/countries/<country>,
   #   tags format-<n>, pack-<n> and <version>-<commit>, signed) and, if the push changed what goes
   #   into it (not only documentation or packs), the geocoder (ghcr.io/candymaps/geko-geocoder, tags
-  #   <version>-<commit>-<platform> and contract-<n>-<platform>, signed: ci/modules.sh), which geko
+  #   <version>-<commit>-<platform>, signed: ci/modules.sh), which geko
   #   downloads;
   # - when that version has no GitHub release yet (it was raised in Cargo.toml), also the tag
   #   <version> on every pack and on the geocoder (<version>-<platform>), and the git tag v<version> on the pushed commit, with its GitHub release. Raising the version is how a release is made. A
