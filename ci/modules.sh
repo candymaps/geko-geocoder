@@ -1,30 +1,18 @@
 #!/usr/bin/env bash
 # The module of this repository as the package geko downloads: module/, with
 # its library (the crate geko-module-<module>-dylib) compiled in release, and its module.toml
-# completed (version, contract, platform) and signed.
+# completed (version, platform) and signed.
 #
 #   ci/modules.sh build <folder> [module…]   compiles every module (or those named) into
 #                                            <folder>/<module>/
 #   ci/modules.sh publish <folder>           signs the packages of <folder> and pushes them to
 #                                            $GEKO_MODULES_REGISTRY/geko-<module>
-#   ci/modules.sh check [module…]            fails unless every module is published for the
-#                                            contract of this geko and its platform
-#   ci/modules.sh image <folder>             makes the image of the operator mode from the package
-#                                            of <folder> (ci/image.Dockerfile, on $GEKO_HOST_IMAGE,
-#                                            by default the newest image of geko) and checks that
-#                                            it loads the module
-#   ci/modules.sh refresh-image              makes the image of `latest` again, from the package it
-#                                            carries, if there is a newer image of geko, and pushes it
-#   ci/modules.sh push-image <folder>        pushes that image to $GEKO_MODULES_REGISTRY/geko-<module>,
-#                                            with the tag <version> and, with GEKO_RELEASE=1, also
-#                                            latest
 #
 # The version of a module is that of Cargo.toml, followed by the commit (<version>-<commit>) unless
 # GEKO_RELEASE=1; it is compiled into the module (GEKO_MODULE_VERSION), which says it to the host
-# and to the bundles it builds. Each package goes to geko-<module>:<version>-<platform> and
-# contract-<n>-<platform>, the newest of its contract, which every geko of that contract downloads;
-# its manifest says the three in its annotations (geko.version, geko.contract, geko.platform), so
-# that geko can refuse one that is not for it before downloading it.
+# and to the bundles it builds. Each package goes to geko-<module>:<version>-<platform>, which
+# the modules.lock of a geko names by its digest; its manifest says both in its annotations
+# (geko.version, geko.platform).
 #
 # `build` must run on a system as old as the image of geko (debian:bookworm-slim): a module that
 # needs a newer glibc does not start in it. The CI runs it in rust:<toolchain>-bookworm. Publishing
@@ -58,10 +46,9 @@ version() {
 }
 
 build() {
-    local out=$1 tool contract platform version dir name kind entry
+    local out=$1 tool platform version dir name kind entry
     shift
     tool=$(sign_tool)
-    contract=$("$tool" contract)
     platform=$("$tool" platform)
     version=$(version)
     for dir in $(modules "$@"); do
@@ -72,9 +59,9 @@ build() {
         rm -rf "${out:?}/$name"
         mkdir -p "$out/$name"
         cp "$target/release/$entry" "$out/$name/$entry"
-        printf 'kind = "%s"\nentry = "%s"\nname = "%s"\nversion = "%s"\ncontract = %s\nplatform = "%s"\n' \
-            "$kind" "$entry" "$name" "$version" "$contract" "$platform" > "$out/$name/module.toml"
-        echo "built $name $version (contract $contract, $platform) in $out/$name"
+        printf 'kind = "%s"\nentry = "%s"\nname = "%s"\nversion = "%s"\nplatform = "%s"\n' \
+            "$kind" "$entry" "$name" "$version" "$platform" > "$out/$name/module.toml"
+        echo "built $name $version ($platform) in $out/$name"
     done
 }
 
@@ -83,13 +70,12 @@ build() {
 
 publish() {
     : "${GEKO_PACK_SIGNING_KEY:?GEKO_PACK_SIGNING_KEY is not set}"
-    local out=$1 tool dir name version contract platform files ref
+    local out=$1 tool dir name version platform files ref
     tool=$(sign_tool)
     for dir in "$out"/*/; do
         dir=${dir%/}
         name=$(field name "$dir/module.toml")
         version=$(field version "$dir/module.toml")
-        contract=$(field contract "$dir/module.toml")
         platform=$(field platform "$dir/module.toml")
         "$tool" sign "$dir"
         "$tool" verify "$dir"
@@ -97,107 +83,17 @@ publish() {
         files=$(cd "$dir" && find . -type f | sed 's|^\./||' | sort)
         # A fixed date, instead of that of the push, so that the same files give the same manifest.
         # shellcheck disable=SC2086
-        (cd "$dir" && oras push --disable-path-validation "$ref:$version-$platform,contract-$contract-$platform" \
+        (cd "$dir" && oras push --disable-path-validation "$ref:$version-$platform" \
             --artifact-type application/vnd.geko.module.v1 \
             --annotation "org.opencontainers.image.created=1970-01-01T00:00:00Z" \
-            --annotation "geko.version=$version" --annotation "geko.contract=$contract" --annotation "geko.platform=$platform" \
+            --annotation "geko.version=$version" --annotation "geko.platform=$platform" \
             $files)
-        echo "published $ref ($version-$platform, contract-$contract-$platform)"
+        echo "published $ref ($version-$platform)"
     done
-}
-
-check() {
-    local tool contract platform dir name ref missing=0
-    tool=$(sign_tool)
-    contract=$("$tool" contract)
-    platform=$("$tool" platform)
-    for dir in $(modules "$@"); do
-        name=$(field name "$dir/module.toml")
-        ref="$registry/geko-$name:contract-$contract-$platform"
-        if oras manifest fetch "$ref" > /dev/null 2>&1; then
-            echo "published: $ref"
-        else
-            echo "not published: $ref" >&2
-            missing=1
-        fi
-    done
-    return $missing
-}
-
-# The image shares its repository with the package, whose tags all end in the platform: geko asks
-# for those by name, so <version> and latest never reach it.
-host_image() { echo "${GEKO_HOST_IMAGE:-ghcr.io/candymaps/geko:latest}"; }
-host_digest() { docker image inspect --format '{{index .RepoDigests 0}}' "$1" | sed 's/.*@//'; }
-image_ref() {
-    local name
-    name=$(field name module/module.toml)
-    echo "$registry/geko-$name:$(field version "$1/$name/module.toml")"
-}
-
-image() {
-    local out=$1 ref name config host
-    ref=$(image_ref "$out")
-    name=$(field name module/module.toml)
-    host=$(host_image)
-    docker pull --quiet "$host" > /dev/null
-    docker build --file ci/image.Dockerfile --build-arg "HOST=$host" --build-arg "BASE=$(host_digest "$host")" \
-        --build-arg "VERSION=${ref##*:}" --build-arg "REVISION=${GEKO_IMAGE_REVISION:-$(git rev-parse --short HEAD)}" --tag "$ref" "$out"
-    # geko refuses a module of another contract or platform, here and not in the pods of a cluster.
-    # The image carries no configuration, and geko stops without one, and the geocoder asks for a
-    # scope: the smallest pack of this repository, offline, so that nothing is downloaded.
-    config=$(mktemp)
-    chmod 644 "$config"
-    printf '[[scope]]\ncountry = "LU"\n\n[data]\noffline = true\n' > "$config"
-    docker run --rm -v "$config:/etc/geko/geko.toml:ro" -v "$PWD/countries:/packs:ro" -e GEKO_PACKS=/packs \
-        "$ref" --modules "$name" plan \
-        || { rm -f "$config"; echo "$ref does not load its module" >&2; return 1; }
-    rm -f "$config"
-    echo "built $ref"
-}
-
-push_image() {
-    local ref
-    ref=$(image_ref "$1")
-    docker push "$ref"
-    if [ "${GEKO_RELEASE:-0}" = 1 ]; then
-        docker tag "$ref" "${ref%:*}:latest"
-        docker push "${ref%:*}:latest"
-    fi
-}
-
-# The image of `latest` again on the newest geko, from the package it carries: nothing is compiled.
-refresh_image() {
-    local name repo host label tmp id
-    name=$(field name module/module.toml)
-    repo=$registry/geko-$name
-    host=$(host_image)
-    if ! docker pull --quiet "$repo:latest" > /dev/null 2>&1; then
-        echo "$repo:latest does not exist yet: nothing to refresh"
-        return 0
-    fi
-    docker pull --quiet "$host" > /dev/null
-    label=$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$repo:latest")
-    if [ "$label" = "$(host_digest "$host")" ]; then
-        echo "$repo:latest already has the newest geko"
-        return 0
-    fi
-    tmp=$(mktemp -d)
-    id=$(docker create "$repo:latest")
-    docker cp "$id:/usr/lib/geko/modules/$name" "$tmp/$name"
-    docker rm "$id" > /dev/null
-    GEKO_IMAGE_REVISION=$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$repo:latest")
-    export GEKO_IMAGE_REVISION
-    image "$tmp" || { rm -rf "$tmp"; return 1; }
-    GEKO_RELEASE=1 push_image "$tmp"
-    rm -rf "$tmp"
 }
 
 case "${1:-}" in
     build) shift; build "${1:?usage: ci/modules.sh build <folder> [module…]}" "${@:2}" ;;
     publish) shift; publish "${1:?usage: ci/modules.sh publish <folder>}" ;;
-    check) shift; check "$@" ;;
-    image) shift; image "${1:?usage: ci/modules.sh image <folder>}" ;;
-    push-image) shift; push_image "${1:?usage: ci/modules.sh push-image <folder>}" ;;
-    refresh-image) refresh_image ;;
-    *) echo "usage: ci/modules.sh build <folder> [module…] | publish <folder> | check [module…] | image <folder> | push-image <folder> | refresh-image" >&2; exit 2 ;;
+    *) echo "usage: ci/modules.sh build <folder> [module…] | publish <folder>" >&2; exit 2 ;;
 esac

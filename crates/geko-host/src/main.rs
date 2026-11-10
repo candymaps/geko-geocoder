@@ -8,7 +8,6 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 fn main() -> anyhow::Result<()> {
     geko_app::main(vec![geko_app::Linked {
         name: "geocoder",
-        version: geko_module_sdk::module_version!(),
         open: geko_module_geocoder::open,
     }])
 }
