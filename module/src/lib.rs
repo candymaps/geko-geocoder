@@ -17,7 +17,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use geko_core::{GekoError, Result};
-use geko_module_sdk::module::{self, BundleView, Built, Context, Description, Method, Module, ModuleName, Purge, Request, Response, Route};
+use geko_module_sdk::module::{BundleView, Built, Context, Description, Method, Module, ModuleName, Purge, Request, Response, Route};
 
 use crate::pipeline::{Prepared, Setup};
 
@@ -86,7 +86,6 @@ impl Module for Geocoder {
         Description {
             name: ModuleName::new(NAME).expect("a valid name"),
             version: geko_module_sdk::module_version!().to_owned(),
-            contract: module::CONTRACT,
             // Search, autocomplete and batches parse and rank: on the pool. Reverse and lookups
             // by id are cheap and answered where they arrive.
             routes: vec![

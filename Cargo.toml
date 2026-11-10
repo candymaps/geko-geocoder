@@ -10,13 +10,13 @@ license = "AGPL-3.0-only"
 
 [workspace.dependencies]
 geko-core = { path = "crates/geko-core" }
-# The contract and what the host shares with its modules, from the repository of the host:
-# the commit of its tag sdk-<contract>. geko-app is the host itself, which
+# The SDK and what the host shares with its modules, from the repository of the host:
+# the commit of its tag sdk-v<version>. geko-app is the host itself, which
 # geko-host links the geocoder into for the checks.
-geko-module-sdk = { git = "https://github.com/candymaps/geko.git", rev = "f44ef030a8fce3a8597e0ee2d198c49d4b5920df" }
-geko-fetch = { git = "https://github.com/candymaps/geko.git", rev = "f44ef030a8fce3a8597e0ee2d198c49d4b5920df" }
-geko-artifact = { git = "https://github.com/candymaps/geko.git", rev = "f44ef030a8fce3a8597e0ee2d198c49d4b5920df" }
-geko-app = { git = "https://github.com/candymaps/geko.git", rev = "f44ef030a8fce3a8597e0ee2d198c49d4b5920df" }
+geko-module-sdk = { git = "https://github.com/candymaps/geko.git", rev = "b26ea76afa13475be96e74f6bc9dbb420bcf07d5" }
+geko-fetch = { git = "https://github.com/candymaps/geko.git", rev = "b26ea76afa13475be96e74f6bc9dbb420bcf07d5" }
+geko-artifact = { git = "https://github.com/candymaps/geko.git", rev = "b26ea76afa13475be96e74f6bc9dbb420bcf07d5" }
+geko-app = { git = "https://github.com/candymaps/geko.git", rev = "b26ea76afa13475be96e74f6bc9dbb420bcf07d5" }
 geko-build = { path = "crates/geko-build" }
 geko-geom = { path = "crates/geko-geom" }
 source-osm = { path = "providers/source-osm" }
